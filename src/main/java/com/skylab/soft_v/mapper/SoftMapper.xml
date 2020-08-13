@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skylab.soft_v.mapper.SoftMapper">
+
+    <resultMap type="com.skylab.soft_v.entity.Soft" id="SoftMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="code" column="code" jdbcType="VARCHAR"/>
+        <result property="modelId" column="model_id" jdbcType="INTEGER"/>
+        <result property="chipId" column="chip_id" jdbcType="INTEGER"/>
+        <result property="version" column="version" jdbcType="VARCHAR"/>
+        <result property="engineer" column="engineer" jdbcType="INTEGER"/>
+        <result property="sale" column="sale" jdbcType="INTEGER"/>
+        <result property="initialCustomer" column="initial_customer" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="inUse" column="in_use" jdbcType="BOOLEAN"/>
+        <result property="uploadDate" column="upload_date" jdbcType="TIMESTAMP"/>
+        <result property="burningProcess" column="burning_process" jdbcType="VARCHAR"/>
+        <result property="configInfo" column="config_info" jdbcType="VARCHAR"/>
+        <result property="customHardware" column="custom_hardware" jdbcType="BOOLEAN"/>
+        <result property="flash" column="flash" jdbcType="INTEGER"/>
+        <result property="WAN" column="WAN" jdbcType="VARCHAR"/>
+        <result property="DDR" column="DDR" jdbcType="INTEGER"/>
+        <result property="IRAM" column="IRAM" jdbcType="INTEGER"/>
+        <result property="openShortDetection" column="open_short_detection" jdbcType="BOOLEAN"/>
+        <result property="baudRate" column="baud_rate" jdbcType="INTEGER"/>
+        <result property="ephemeris" column="ephemeris" jdbcType="BOOLEAN"/>
+        <result property="accuracy" column="accuracy" jdbcType="INTEGER"/>
+        <result property="TCXO" column="TCXO" jdbcType="VARCHAR"/>
+        <result property="frequency" column="frequency" jdbcType="VARCHAR"/>
+        <result property="needBurnFirmware" column="need_burn_firmware" jdbcType="BOOLEAN"/>
+        <result property="labelPrintTool" column="label_print_tool" jdbcType="INTEGER"/>
+        <result property="gpioDetection" column="GPIO_detection" jdbcType="INTEGER"/>
+        <result property="burnTool" column="burn_tool" jdbcType="INTEGER"/>
+        <result property="serialPortConfig" column="serial_port_config" jdbcType="INTEGER"/>
+        <result property="detectionTool" column="detection_tool" jdbcType="INTEGER"/>
+        <result property="productTestTool" column="product_test_tool" jdbcType="INTEGER"/>
+        <result property="productTestCode" column="product_test_code" jdbcType="VARCHAR"/>
+        <result property="category" column="category" jdbcType="INTEGER"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="column1" column="column1" jdbcType="VARCHAR"/>
+        <result property="column2" column="column2" jdbcType="VARCHAR"/>
+        <result property="column3" column="column3" jdbcType="VARCHAR"/>
+        <result property="column4" column="column4" jdbcType="VARCHAR"/>
+        <result property="column5" column="column5" jdbcType="VARCHAR"/>
+        <result property="column6" column="column6" jdbcType="VARCHAR"/>
+        <result property="column7" column="column7" jdbcType="VARCHAR"/>
+        <result property="column8" column="column8" jdbcType="VARCHAR"/>
+        <result property="column9" column="column9" jdbcType="VARCHAR"/>
+        <result property="column10" column="column10" jdbcType="VARCHAR"/>
+        <result property="column11" column="column11" jdbcType="VARCHAR"/>
+        <result property="column12" column="column12" jdbcType="VARCHAR"/>
+        <result property="column13" column="column13" jdbcType="VARCHAR"/>
+        <result property="column14" column="column14" jdbcType="VARCHAR"/>
+        <result property="column15" column="column15" jdbcType="VARCHAR"/>
+        <result property="column16" column="column16" jdbcType="VARCHAR"/>
+        <result property="column17" column="column17" jdbcType="VARCHAR"/>
+        <result property="column18" column="column18" jdbcType="VARCHAR"/>
+        <result property="column19" column="column19" jdbcType="VARCHAR"/>
+        <result property="column20" column="column20" jdbcType="VARCHAR"/>
+        <result property="column21" column="column21" jdbcType="VARCHAR"/>
+        <result property="column22" column="column22" jdbcType="VARCHAR"/>
+        <result property="column23" column="column23" jdbcType="VARCHAR"/>
+        <result property="column24" column="column24" jdbcType="VARCHAR"/>
+        <result property="column25" column="column25" jdbcType="VARCHAR"/>
+        <result property="column26" column="column26" jdbcType="VARCHAR"/>
+        <result property="column27" column="column27" jdbcType="VARCHAR"/>
+        <result property="column28" column="column28" jdbcType="VARCHAR"/>
+        <result property="column29" column="column29" jdbcType="VARCHAR"/>
+        <result property="column30" column="column30" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SoftMap">
+        select
+          id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30
+        from soft_v_sys.soft
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByPage" resultMap="SoftMap">
+        select
+          id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30
+        from soft_v_sys.soft
+        limit #{page}, #{limit}
+    </select>
+
+    <!--查询所有行数据-->
+    <select id="queryList" resultMap="SoftMap">
+        select
+          id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30
+        from soft_v_sys.soft
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryByExample" resultMap="SoftMap">
+        select
+        id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date,
+        burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate,
+        ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool,
+        detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4,
+        column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15,
+        column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26,
+        column27, column28, column29, column30
+        from soft_v_sys.soft
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="code != null and code != ''">
+                and code = #{code}
+            </if>
+            <if test="modelId != null">
+                and model_id = #{modelId}
+            </if>
+            <if test="chipId != null">
+                and chip_id = #{chipId}
+            </if>
+            <if test="version != null and version != ''">
+                and version = #{version}
+            </if>
+            <if test="engineer != null">
+                and engineer = #{engineer}
+            </if>
+            <if test="sale != null">
+                and sale = #{sale}
+            </if>
+            <if test="initialCustomer != null and initialCustomer != ''">
+                and initial_customer = #{initialCustomer}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="inUse != null">
+                and in_use = #{inUse}
+            </if>
+            <if test="uploadDate != null">
+                and upload_date = #{uploadDate}
+            </if>
+            <if test="burningProcess != null and burningProcess != ''">
+                and burning_process = #{burningProcess}
+            </if>
+            <if test="configInfo != null and configInfo != ''">
+                and config_info = #{configInfo}
+            </if>
+            <if test="customHardware != null">
+                and custom_hardware = #{customHardware}
+            </if>
+            <if test="flash != null">
+                and flash = #{flash}
+            </if>
+            <if test="wan != null and wan != ''">
+                and WAN = #{wan}
+            </if>
+            <if test="ddr != null">
+                and DDR = #{ddr}
+            </if>
+            <if test="iram != null">
+                and IRAM = #{iram}
+            </if>
+            <if test="openShortDetection != null">
+                and open_short_detection = #{openShortDetection}
+            </if>
+            <if test="baudRate != null">
+                and baud_rate = #{baudRate}
+            </if>
+            <if test="ephemeris != null">
+                and ephemeris = #{ephemeris}
+            </if>
+            <if test="accuracy != null">
+                and accuracy = #{accuracy}
+            </if>
+            <if test="tcxo != null and tcxo != ''">
+                and TCXO = #{tcxo}
+            </if>
+            <if test="frequency != null and frequency != ''">
+                and frequency = #{frequency}
+            </if>
+            <if test="needBurnFirmware != null">
+                and need_burn_firmware = #{needBurnFirmware}
+            </if>
+            <if test="labelPrintTool != null">
+                and label_print_tool = #{labelPrintTool}
+            </if>
+            <if test="gpioDetection != null">
+                and GPIO_detection = #{gpioDetection}
+            </if>
+            <if test="burnTool != null">
+                and burn_tool = #{burnTool}
+            </if>
+            <if test="detectionTool != null">
+                and detection_tool = #{detectionTool}
+            </if>
+            <if test="productTestTool != null">
+                and product_test_tool = #{productTestTool}
+            </if>
+            <if test="productTestCode != null and productTestCode != ''">
+                and product_test_code = #{productTestCode}
+            </if>
+            <if test="category != null">
+                and category = #{category}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="column1 != null and column1 != ''">
+                and column1 = #{column1}
+            </if>
+            <if test="column2 != null and column2 != ''">
+                and column2 = #{column2}
+            </if>
+            <if test="column3 != null and column3 != ''">
+                and column3 = #{column3}
+            </if>
+            <if test="column4 != null and column4 != ''">
+                and column4 = #{column4}
+            </if>
+            <if test="column5 != null and column5 != ''">
+                and column5 = #{column5}
+            </if>
+            <if test="column6 != null and column6 != ''">
+                and column6 = #{column6}
+            </if>
+            <if test="column7 != null and column7 != ''">
+                and column7 = #{column7}
+            </if>
+            <if test="column8 != null and column8 != ''">
+                and column8 = #{column8}
+            </if>
+            <if test="column9 != null and column9 != ''">
+                and column9 = #{column9}
+            </if>
+            <if test="column10 != null and column10 != ''">
+                and column10 = #{column10}
+            </if>
+            <if test="column11 != null and column11 != ''">
+                and column11 = #{column11}
+            </if>
+            <if test="column12 != null and column12 != ''">
+                and column12 = #{column12}
+            </if>
+            <if test="column13 != null and column13 != ''">
+                and column13 = #{column13}
+            </if>
+            <if test="column14 != null and column14 != ''">
+                and column14 = #{column14}
+            </if>
+            <if test="column15 != null and column15 != ''">
+                and column15 = #{column15}
+            </if>
+            <if test="column16 != null and column16 != ''">
+                and column16 = #{column16}
+            </if>
+            <if test="column17 != null and column17 != ''">
+                and column17 = #{column17}
+            </if>
+            <if test="column18 != null and column18 != ''">
+                and column18 = #{column18}
+            </if>
+            <if test="column19 != null and column19 != ''">
+                and column19 = #{column19}
+            </if>
+            <if test="column20 != null and column20 != ''">
+                and column20 = #{column20}
+            </if>
+            <if test="column21 != null and column21 != ''">
+                and column21 = #{column21}
+            </if>
+            <if test="column22 != null and column22 != ''">
+                and column22 = #{column22}
+            </if>
+            <if test="column23 != null and column23 != ''">
+                and column23 = #{column23}
+            </if>
+            <if test="column24 != null and column24 != ''">
+                and column24 = #{column24}
+            </if>
+            <if test="column25 != null and column25 != ''">
+                and column25 = #{column25}
+            </if>
+            <if test="column26 != null and column26 != ''">
+                and column26 = #{column26}
+            </if>
+            <if test="column27 != null and column27 != ''">
+                and column27 = #{column27}
+            </if>
+            <if test="column28 != null and column28 != ''">
+                and column28 = #{column28}
+            </if>
+            <if test="column29 != null and column29 != ''">
+                and column29 = #{column29}
+            </if>
+            <if test="column30 != null and column30 != ''">
+                and column30 = #{column30}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into soft_v_sys.soft(code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30)
+        values (#{code}, #{modelId}, #{chipId}, #{version}, #{engineer}, #{sale}, #{initialCustomer}, #{remark}, #{inUse}, #{uploadDate}, #{burningProcess}, #{configInfo}, #{customHardware}, #{flash}, #{wan}, #{ddr}, #{iram}, #{openShortDetection}, #{baudRate}, #{ephemeris}, #{accuracy}, #{tcxo}, #{frequency}, #{needBurnFirmware}, #{labelPrintTool}, #{gpioDetection}, #{burnTool}, #{detectionTool}, #{productTestTool}, #{productTestCode}, #{category}, #{address}, #{column1}, #{column2}, #{column3}, #{column4}, #{column5}, #{column6}, #{column7}, #{column8}, #{column9}, #{column10}, #{column11}, #{column12}, #{column13}, #{column14}, #{column15}, #{column16}, #{column17}, #{column18}, #{column19}, #{column20}, #{column21}, #{column22}, #{column23}, #{column24}, #{column25}, #{column26}, #{column27}, #{column28}, #{column29}, #{column30})
+    </insert>
+
+    <!--新增非空列-->
+    <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true">
+        insert into soft_v_sys.soft
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">
+                code,
+            </if>
+            <if test="modelId != null">
+                model_id,
+            </if>
+            <if test="chipId != null">
+                chip_id,
+            </if>
+            <if test="version != null and version != ''">
+                version,
+            </if>
+            <if test="engineer != null">
+                engineer,
+            </if>
+            <if test="sale != null">
+                sale,
+            </if>
+            <if test="initialCustomer != null and initialCustomer != ''">
+                initial_customer,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+            <if test="inUse != null">
+                in_use,
+            </if>
+            <if test="uploadDate != null">
+                upload_date,
+            </if>
+            <if test="burningProcess != null and burningProcess != ''">
+                burning_process,
+            </if>
+            <if test="configInfo != null and configInfo != ''">
+                config_info,
+            </if>
+            <if test="customHardware != null">
+                custom_hardware,
+            </if>
+            <if test="flash != null">
+                flash,
+            </if>
+            <if test="wan != null and wan != ''">
+                WAN,
+            </if>
+            <if test="ddr != null">
+                DDR,
+            </if>
+            <if test="iram != null">
+                IRAM,
+            </if>
+            <if test="openShortDetection != null">
+                open_short_detection,
+            </if>
+            <if test="baudRate != null">
+                baud_rate,
+            </if>
+            <if test="ephemeris != null">
+                ephemeris,
+            </if>
+            <if test="accuracy != null">
+                accuracy,
+            </if>
+            <if test="tcxo != null and tcxo != ''">
+                TCXO,
+            </if>
+            <if test="frequency != null and frequency != ''">
+                frequency,
+            </if>
+            <if test="needBurnFirmware != null">
+                need_burn_firmware,
+            </if>
+            <if test="labelPrintTool != null">
+                label_print_tool,
+            </if>
+            <if test="gpioDetection != null">
+                GPIO_detection,
+            </if>
+            <if test="burnTool != null">
+                burn_tool,
+            </if>
+            <if test="detectionTool != null">
+                detection_tool,
+            </if>
+            <if test="productTestTool != null">
+                product_test_tool,
+            </if>
+            <if test="productTestCode != null and productTestCode != ''">
+                product_test_code,
+            </if>
+            <if test="category != null">
+                category,
+            </if>
+            <if test="address != null and address != ''">
+                address,
+            </if>
+            <if test="column1 != null and column1 != ''">
+                column1,
+            </if>
+            <if test="column2 != null and column2 != ''">
+                column2,
+            </if>
+            <if test="column3 != null and column3 != ''">
+                column3,
+            </if>
+            <if test="column4 != null and column4 != ''">
+                column4,
+            </if>
+            <if test="column5 != null and column5 != ''">
+                column5,
+            </if>
+            <if test="column6 != null and column6 != ''">
+                column6,
+            </if>
+            <if test="column7 != null and column7 != ''">
+                column7,
+            </if>
+            <if test="column8 != null and column8 != ''">
+                column8,
+            </if>
+            <if test="column9 != null and column9 != ''">
+                column9,
+            </if>
+            <if test="column10 != null and column10 != ''">
+                column10,
+            </if>
+            <if test="column11 != null and column11 != ''">
+                column11,
+            </if>
+            <if test="column12 != null and column12 != ''">
+                column12,
+            </if>
+            <if test="column13 != null and column13 != ''">
+                column13,
+            </if>
+            <if test="column14 != null and column14 != ''">
+                column14,
+            </if>
+            <if test="column15 != null and column15 != ''">
+                column15,
+            </if>
+            <if test="column16 != null and column16 != ''">
+                column16,
+            </if>
+            <if test="column17 != null and column17 != ''">
+                column17,
+            </if>
+            <if test="column18 != null and column18 != ''">
+                column18,
+            </if>
+            <if test="column19 != null and column19 != ''">
+                column19,
+            </if>
+            <if test="column20 != null and column20 != ''">
+                column20,
+            </if>
+            <if test="column21 != null and column21 != ''">
+                column21,
+            </if>
+            <if test="column22 != null and column22 != ''">
+                column22,
+            </if>
+            <if test="column23 != null and column23 != ''">
+                column23,
+            </if>
+            <if test="column24 != null and column24 != ''">
+                column24,
+            </if>
+            <if test="column25 != null and column25 != ''">
+                column25,
+            </if>
+            <if test="column26 != null and column26 != ''">
+                column26,
+            </if>
+            <if test="column27 != null and column27 != ''">
+                column27,
+            </if>
+            <if test="column28 != null and column28 != ''">
+                column28,
+            </if>
+            <if test="column29 != null and column29 != ''">
+                column29,
+            </if>
+            <if test="column30 != null and column30 != ''">
+                column30,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">
+                #{code},
+            </if>
+            <if test="modelId != null">
+                #{modelId},
+            </if>
+            <if test="chipId != null">
+                #{chipId},
+            </if>
+            <if test="version != null and version != ''">
+                #{version},
+            </if>
+            <if test="engineer != null">
+                #{engineer},
+            </if>
+            <if test="sale != null">
+                #{sale},
+            </if>
+            <if test="initialCustomer != null and initialCustomer != ''">
+                #{initialCustomer},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+            <if test="inUse != null">
+                #{inUse},
+            </if>
+            <if test="uploadDate != null">
+                #{uploadDate},
+            </if>
+            <if test="burningProcess != null and burningProcess != ''">
+                #{burningProcess},
+            </if>
+            <if test="configInfo != null and configInfo != ''">
+                #{configInfo},
+            </if>
+            <if test="customHardware != null">
+                #{customHardware},
+            </if>
+            <if test="flash != null">
+                #{flash},
+            </if>
+            <if test="wan != null and wan != ''">
+                #{wan},
+            </if>
+            <if test="ddr != null">
+                #{ddr},
+            </if>
+            <if test="iram != null">
+                #{iram},
+            </if>
+            <if test="openShortDetection != null">
+                #{openShortDetection},
+            </if>
+            <if test="baudRate != null">
+                #{baudRate},
+            </if>
+            <if test="ephemeris != null">
+                #{ephemeris},
+            </if>
+            <if test="accuracy != null">
+                #{accuracy},
+            </if>
+            <if test="tcxo != null and tcxo != ''">
+                #{tcxo},
+            </if>
+            <if test="frequency != null and frequency != ''">
+                #{frequency},
+            </if>
+            <if test="needBurnFirmware != null">
+                #{needBurnFirmware},
+            </if>
+            <if test="labelPrintTool != null">
+                #{labelPrintTool},
+            </if>
+            <if test="gpioDetection != null">
+                #{gpioDetection},
+            </if>
+            <if test="burnTool != null">
+                #{burnTool},
+            </if>
+            <if test="detectionTool != null">
+                #{detectionTool},
+            </if>
+            <if test="productTestTool != null">
+                #{productTestTool},
+            </if>
+            <if test="productTestCode != null and productTestCode != ''">
+                #{productTestCode},
+            </if>
+            <if test="category != null">
+                #{category},
+            </if>
+            <if test="address != null and address != ''">
+                #{address},
+            </if>
+            <if test="column1 != null and column1 != ''">
+                #{column1},
+            </if>
+            <if test="column2 != null and column2 != ''">
+                #{column2},
+            </if>
+            <if test="column3 != null and column3 != ''">
+                #{column3},
+            </if>
+            <if test="column4 != null and column4 != ''">
+                #{column4},
+            </if>
+            <if test="column5 != null and column5 != ''">
+                #{column5},
+            </if>
+            <if test="column6 != null and column6 != ''">
+                #{column6},
+            </if>
+            <if test="column7 != null and column7 != ''">
+                #{column7},
+            </if>
+            <if test="column8 != null and column8 != ''">
+                #{column8},
+            </if>
+            <if test="column9 != null and column9 != ''">
+                #{column9},
+            </if>
+            <if test="column10 != null and column10 != ''">
+                #{column10},
+            </if>
+            <if test="column11 != null and column11 != ''">
+                #{column11},
+            </if>
+            <if test="column12 != null and column12 != ''">
+                #{column12},
+            </if>
+            <if test="column13 != null and column13 != ''">
+                #{column13},
+            </if>
+            <if test="column14 != null and column14 != ''">
+                #{column14},
+            </if>
+            <if test="column15 != null and column15 != ''">
+                #{column15},
+            </if>
+            <if test="column16 != null and column16 != ''">
+                #{column16},
+            </if>
+            <if test="column17 != null and column17 != ''">
+                #{column17},
+            </if>
+            <if test="column18 != null and column18 != ''">
+                #{column18},
+            </if>
+            <if test="column19 != null and column19 != ''">
+                #{column19},
+            </if>
+            <if test="column20 != null and column20 != ''">
+                #{column20},
+            </if>
+            <if test="column21 != null and column21 != ''">
+                #{column21},
+            </if>
+            <if test="column22 != null and column22 != ''">
+                #{column22},
+            </if>
+            <if test="column23 != null and column23 != ''">
+                #{column23},
+            </if>
+            <if test="column24 != null and column24 != ''">
+                #{column24},
+            </if>
+            <if test="column25 != null and column25 != ''">
+                #{column25},
+            </if>
+            <if test="column26 != null and column26 != ''">
+                #{column26},
+            </if>
+            <if test="column27 != null and column27 != ''">
+                #{column27},
+            </if>
+            <if test="column28 != null and column28 != ''">
+                #{column28},
+            </if>
+            <if test="column29 != null and column29 != ''">
+                #{column29},
+            </if>
+            <if test="column30 != null and column30 != ''">
+                #{column30},
+            </if>
+        </trim>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update soft_v_sys.soft
+        <set>
+            <if test="code != null and code != ''">
+                code = #{code},
+            </if>
+            <if test="modelId != null">
+                model_id = #{modelId},
+            </if>
+            <if test="chipId != null">
+                chip_id = #{chipId},
+            </if>
+            <if test="version != null and version != ''">
+                version = #{version},
+            </if>
+            <if test="engineer != null">
+                engineer = #{engineer},
+            </if>
+            <if test="sale != null">
+                sale = #{sale},
+            </if>
+            <if test="initialCustomer != null and initialCustomer != ''">
+                initial_customer = #{initialCustomer},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="inUse != null">
+                in_use = #{inUse},
+            </if>
+            <if test="uploadDate != null">
+                upload_date = #{uploadDate},
+            </if>
+            <if test="burningProcess != null and burningProcess != ''">
+                burning_process = #{burningProcess},
+            </if>
+            <if test="configInfo != null and configInfo != ''">
+                config_info = #{configInfo},
+            </if>
+            <if test="customHardware != null">
+                custom_hardware = #{customHardware},
+            </if>
+            <if test="flash != null">
+                flash = #{flash},
+            </if>
+            <if test="wan != null and wan != ''">
+                WAN = #{wan},
+            </if>
+            <if test="ddr != null">
+                DDR = #{ddr},
+            </if>
+            <if test="iram != null">
+                IRAM = #{iram},
+            </if>
+            <if test="openShortDetection != null">
+                open_short_detection = #{openShortDetection},
+            </if>
+            <if test="baudRate != null">
+                baud_rate = #{baudRate},
+            </if>
+            <if test="ephemeris != null">
+                ephemeris = #{ephemeris},
+            </if>
+            <if test="accuracy != null">
+                accuracy = #{accuracy},
+            </if>
+            <if test="tcxo != null and tcxo != ''">
+                TCXO = #{tcxo},
+            </if>
+            <if test="frequency != null and frequency != ''">
+                frequency = #{frequency},
+            </if>
+            <if test="needBurnFirmware != null">
+                need_burn_firmware = #{needBurnFirmware},
+            </if>
+            <if test="labelPrintTool != null">
+                label_print_tool = #{labelPrintTool},
+            </if>
+            <if test="gpioDetection != null">
+                GPIO_detection = #{gpioDetection},
+            </if>
+            <if test="burnTool != null">
+                burn_tool = #{burnTool},
+            </if>
+            <if test="detectionTool != null">
+                detection_tool = #{detectionTool},
+            </if>
+            <if test="productTestTool != null">
+                product_test_tool = #{productTestTool},
+            </if>
+            <if test="productTestCode != null and productTestCode != ''">
+                product_test_code = #{productTestCode},
+            </if>
+            <if test="category != null">
+                category = #{category},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="column1 != null and column1 != ''">
+                column1 = #{column1},
+            </if>
+            <if test="column2 != null and column2 != ''">
+                column2 = #{column2},
+            </if>
+            <if test="column3 != null and column3 != ''">
+                column3 = #{column3},
+            </if>
+            <if test="column4 != null and column4 != ''">
+                column4 = #{column4},
+            </if>
+            <if test="column5 != null and column5 != ''">
+                column5 = #{column5},
+            </if>
+            <if test="column6 != null and column6 != ''">
+                column6 = #{column6},
+            </if>
+            <if test="column7 != null and column7 != ''">
+                column7 = #{column7},
+            </if>
+            <if test="column8 != null and column8 != ''">
+                column8 = #{column8},
+            </if>
+            <if test="column9 != null and column9 != ''">
+                column9 = #{column9},
+            </if>
+            <if test="column10 != null and column10 != ''">
+                column10 = #{column10},
+            </if>
+            <if test="column11 != null and column11 != ''">
+                column11 = #{column11},
+            </if>
+            <if test="column12 != null and column12 != ''">
+                column12 = #{column12},
+            </if>
+            <if test="column13 != null and column13 != ''">
+                column13 = #{column13},
+            </if>
+            <if test="column14 != null and column14 != ''">
+                column14 = #{column14},
+            </if>
+            <if test="column15 != null and column15 != ''">
+                column15 = #{column15},
+            </if>
+            <if test="column16 != null and column16 != ''">
+                column16 = #{column16},
+            </if>
+            <if test="column17 != null and column17 != ''">
+                column17 = #{column17},
+            </if>
+            <if test="column18 != null and column18 != ''">
+                column18 = #{column18},
+            </if>
+            <if test="column19 != null and column19 != ''">
+                column19 = #{column19},
+            </if>
+            <if test="column20 != null and column20 != ''">
+                column20 = #{column20},
+            </if>
+            <if test="column21 != null and column21 != ''">
+                column21 = #{column21},
+            </if>
+            <if test="column22 != null and column22 != ''">
+                column22 = #{column22},
+            </if>
+            <if test="column23 != null and column23 != ''">
+                column23 = #{column23},
+            </if>
+            <if test="column24 != null and column24 != ''">
+                column24 = #{column24},
+            </if>
+            <if test="column25 != null and column25 != ''">
+                column25 = #{column25},
+            </if>
+            <if test="column26 != null and column26 != ''">
+                column26 = #{column26},
+            </if>
+            <if test="column27 != null and column27 != ''">
+                column27 = #{column27},
+            </if>
+            <if test="column28 != null and column28 != ''">
+                column28 = #{column28},
+            </if>
+            <if test="column29 != null and column29 != ''">
+                column29 = #{column29},
+            </if>
+            <if test="column30 != null and column30 != ''">
+                column30 = #{column30},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from soft_v_sys.soft where id = #{id}
+    </delete>
+    <!--查询总行数-->
+    <select id="count" resultType="int">
+        select count(1)
+        from soft_v_sys.soft
+    </select>
+</mapper>

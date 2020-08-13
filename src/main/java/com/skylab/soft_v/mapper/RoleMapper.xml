@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skylab.soft_v.mapper.RoleMapper">
+
+    <resultMap type="com.skylab.soft_v.entity.Role" id="RoleMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="RoleMap">
+        select
+          id, role_name, remark
+        from soft_v_sys.role
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByPage" resultMap="RoleMap">
+        select
+          id, role_name, remark
+        from soft_v_sys.role
+        limit #{page}, #{limit}
+    </select>
+
+    <!--查询所有行数据-->
+    <select id="queryList" resultMap="RoleMap">
+        select
+          id, role_name, remark
+        from soft_v_sys.role
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryByExample" resultMap="RoleMap">
+        select
+        id, role_name, remark
+        from soft_v_sys.role
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="roleName != null and roleName != ''">
+                and role_name = #{roleName}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into soft_v_sys.role(role_name, remark)
+        values (#{roleName}, #{remark})
+    </insert>
+
+    <!--新增非空列-->
+    <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true">
+        insert into soft_v_sys.role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleName != null and roleName != ''">
+                role_name,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleName != null and roleName != ''">
+                #{roleName},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update soft_v_sys.role
+        <set>
+            <if test="roleName != null and roleName != ''">
+                role_name = #{roleName},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from soft_v_sys.role where id = #{id}
+    </delete>
+    <!--查询总行数-->
+    <select id="count" resultType="int">
+        select count(1)
+        from soft_v_sys.role
+    </select>
+
+    <select id="queryByUserId" resultMap="RoleMap">
+        select r.id, role_name, remark
+        from soft_manager_sys.role r left join soft_manager_sys.user_role ur on r.id = ur.role_id
+            left join soft_manager_sys.user u on ur.user_id = u.id
+        where u.username = #{username}
+    </select>
+
+    <select id="inUser" resultType="java.lang.Integer">
+        select
+          id, user_id, role_id
+        from soft_manager_sys.user_role
+        where role_id = #{id}
+    </select>
+</mapper>

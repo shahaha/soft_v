@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skylab.soft_v.mapper.LogMapper">
+
+    <resultMap type="com.skylab.soft_v.entity.Log" id="LogMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="realName" column="real_name" jdbcType="VARCHAR"/>
+        <result property="time" column="time" jdbcType="TIMESTAMP"/>
+        <result property="ip" column="ip" jdbcType="VARCHAR"/>
+        <result property="method" column="method" jdbcType="VARCHAR"/>
+        <result property="des" column="des" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="LogMap">
+        select
+          id, real_name, time, ip, method, des
+        from soft_v_sys.log
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByPage" resultMap="LogMap">
+        select
+          id, real_name, time, ip, method, des
+        from soft_v_sys.log
+        limit #{page}, #{limit}
+    </select>
+
+    <!--查询所有行数据-->
+    <select id="queryList" resultMap="LogMap">
+        select
+          id, real_name, time, ip, method, des
+        from soft_v_sys.log
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryByExample" resultMap="LogMap">
+        select
+        id, real_name, time, ip, method, des
+        from soft_v_sys.log
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="realName != null and realName != ''">
+                and real_name = #{realName}
+            </if>
+            <if test="time != null">
+                and time = #{time}
+            </if>
+            <if test="ip != null and ip != ''">
+                and ip = #{ip}
+            </if>
+            <if test="method != null and method != ''">
+                and method = #{method}
+            </if>
+            <if test="des != null and des != ''">
+                and des = #{des}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into soft_v_sys.log(real_name, time, ip, method, des)
+        values (#{realName}, #{time}, #{ip}, #{method}, #{des})
+    </insert>
+
+    <!--新增非空列-->
+    <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true">
+        insert into soft_v_sys.log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="realName != null and realName != ''">
+                real_name,
+            </if>
+            <if test="time != null">
+                time,
+            </if>
+            <if test="ip != null and ip != ''">
+                ip,
+            </if>
+            <if test="method != null and method != ''">
+                method,
+            </if>
+            <if test="des != null and des != ''">
+                des,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="realName != null and realName != ''">
+                #{realName},
+            </if>
+            <if test="time != null">
+                #{time},
+            </if>
+            <if test="ip != null and ip != ''">
+                #{ip},
+            </if>
+            <if test="method != null and method != ''">
+                #{method},
+            </if>
+            <if test="des != null and des != ''">
+                #{des},
+            </if>
+        </trim>
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update soft_v_sys.log
+        <set>
+            <if test="realName != null and realName != ''">
+                real_name = #{realName},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="ip != null and ip != ''">
+                ip = #{ip},
+            </if>
+            <if test="method != null and method != ''">
+                method = #{method},
+            </if>
+            <if test="des != null and des != ''">
+                des = #{des},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from soft_v_sys.log where id = #{id}
+    </delete>
+    <!--查询总行数-->
+    <select id="count" resultType="int">
+        select count(1)
+        from soft_v_sys.log
+    </select>
+</mapper>
