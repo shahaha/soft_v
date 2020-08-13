@@ -1,0 +1,483 @@
+{
+    "code": 200,
+    "msg": null,
+    "data": [
+        {
+            "id": "1",
+            "title": "所有权限",
+            "children": [
+                {
+                    "id": "2",
+                    "title": "人员",
+                    "children": [
+                        {
+                            "id": "17",
+                            "title": "添加人员",
+                            "children": [],
+                            "parentId": "2",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "18",
+                            "title": "删除人员",
+                            "children": [],
+                            "parentId": "2",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "19",
+                            "title": "修改人员",
+                            "children": [],
+                            "parentId": "2",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "20",
+                            "title": "查询人员",
+                            "children": [],
+                            "parentId": "2",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "3",
+                    "title": "标签",
+                    "children": [
+                        {
+                            "id": "32",
+                            "title": "添加标签",
+                            "children": [],
+                            "parentId": "3",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "33",
+                            "title": "查看标签",
+                            "children": [],
+                            "parentId": "3",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "67",
+                            "title": "绑定/解绑标签",
+                            "children": [],
+                            "parentId": "3",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "78",
+                            "title": "批量添加标签",
+                            "children": [],
+                            "parentId": "3",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "4",
+                    "title": "物品",
+                    "children": [
+                        {
+                            "id": "34",
+                            "title": "添加物品",
+                            "children": [],
+                            "parentId": "4",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "35",
+                            "title": "删除物品",
+                            "children": [],
+                            "parentId": "4",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "36",
+                            "title": "修改物品",
+                            "children": [],
+                            "parentId": "4",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "37",
+                            "title": "查看物品",
+                            "children": [],
+                            "parentId": "4",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "5",
+                    "title": "基站",
+                    "children": [
+                        {
+                            "id": "38",
+                            "title": "删除基站",
+                            "children": [],
+                            "parentId": "5",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "39",
+                            "title": "编辑基站",
+                            "children": [],
+                            "parentId": "5",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "40",
+                            "title": "查看基站",
+                            "children": [],
+                            "parentId": "5",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "6",
+                    "title": "标签告警",
+                    "children": [
+                        {
+                            "id": "41",
+                            "title": "删除标签告警",
+                            "children": [],
+                            "parentId": "6",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "42",
+                            "title": "处理标签告警",
+                            "children": [],
+                            "parentId": "6",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "43",
+                            "title": "查看标签告警",
+                            "children": [],
+                            "parentId": "6",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "7",
+                    "title": "围栏告警",
+                    "children": [
+                        {
+                            "id": "44",
+                            "title": "删除围栏告警",
+                            "children": [],
+                            "parentId": "7",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "45",
+                            "title": "处理围栏告警",
+                            "children": [],
+                            "parentId": "7",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "46",
+                            "title": "查看围栏告警",
+                            "children": [],
+                            "parentId": "7",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "8",
+                    "title": "地图",
+                    "children": [
+                        {
+                            "id": "47",
+                            "title": "添加地图",
+                            "children": [],
+                            "parentId": "8",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "48",
+                            "title": "删除地图",
+                            "children": [],
+                            "parentId": "8",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "49",
+                            "title": "查看地图",
+                            "children": [],
+                            "parentId": "8",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "9",
+                    "title": "围栏",
+                    "children": [
+                        {
+                            "id": "50",
+                            "title": "添加围栏",
+                            "children": [],
+                            "parentId": "9",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "51",
+                            "title": "删除围栏",
+                            "children": [],
+                            "parentId": "9",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "52",
+                            "title": "查看围栏",
+                            "children": [],
+                            "parentId": "9",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "53",
+                            "title": "围栏启用开关",
+                            "children": [],
+                            "parentId": "9",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "10",
+                    "title": "系统设置",
+                    "children": [
+                        {
+                            "id": "27",
+                            "title": "报警开关",
+                            "children": [],
+                            "parentId": "10",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "54",
+                            "title": "电量报警开关",
+                            "children": [],
+                            "parentId": "10",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "55",
+                            "title": "sos报警开关",
+                            "children": [],
+                            "parentId": "10",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "56",
+                            "title": "防拆报警开关",
+                            "children": [],
+                            "parentId": "10",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "57",
+                            "title": "心率报警开关",
+                            "children": [],
+                            "parentId": "10",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "58",
+                            "title": "电子点名开关",
+                            "children": [],
+                            "parentId": "10",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "65",
+                            "title": "设置心率范围",
+                            "children": [],
+                            "parentId": "10",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "66",
+                            "title": "查看所有开关信息",
+                            "children": [],
+                            "parentId": "10",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "68",
+                            "title": "设置电子点名时间间隔",
+                            "children": [],
+                            "parentId": "10",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "11",
+                    "title": "组织部门",
+                    "children": [
+                        {
+                            "id": "59",
+                            "title": "添加部门",
+                            "children": [],
+                            "parentId": "11",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "60",
+                            "title": "删除部门",
+                            "children": [],
+                            "parentId": "11",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "61",
+                            "title": "修改部门",
+                            "children": [],
+                            "parentId": "11",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "62",
+                            "title": "查看部门",
+                            "children": [],
+                            "parentId": "11",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "12",
+                    "title": "数据相关",
+                    "children": [
+                        {
+                            "id": "63",
+                            "title": "查看心率图",
+                            "children": [],
+                            "parentId": "12",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "64",
+                            "title": "查看电子点名",
+                            "children": [],
+                            "parentId": "12",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "69",
+                            "title": "查看点名数据",
+                            "children": [],
+                            "parentId": "12",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "70",
+                            "title": "开始电子点名",
+                            "children": [],
+                            "parentId": "12",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "13",
+                    "title": "摄像头",
+                    "children": [
+                        {
+                            "id": "71",
+                            "title": "查看摄像头",
+                            "children": [],
+                            "parentId": "13",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "72",
+                            "title": "修改摄像头",
+                            "children": [],
+                            "parentId": "13",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "73",
+                            "title": "添加摄像头",
+                            "children": [],
+                            "parentId": "13",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "74",
+                            "title": "删除摄像头",
+                            "children": [],
+                            "parentId": "13",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                },
+                {
+                    "id": "14",
+                    "title": "CLE",
+                    "children": [
+                        {
+                            "id": "75",
+                            "title": "配置cle",
+                            "children": [],
+                            "parentId": "14",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "76",
+                            "title": "查看cle配置",
+                            "children": [],
+                            "parentId": "14",
+                            "checkArr": "0"
+                        },
+                        {
+                            "id": "77",
+                            "title": "开始/停止定位",
+                            "children": [],
+                            "parentId": "14",
+                            "checkArr": "0"
+                        }
+                    ],
+                    "parentId": "1",
+                    "checkArr": "0"
+                }
+            ],
+            "parentId": "0",
+            "checkArr": "0"
+        }
+    ],
+    "success": true
+}

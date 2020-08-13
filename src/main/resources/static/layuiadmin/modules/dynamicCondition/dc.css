@@ -1,0 +1,145 @@
+/***
+ * 公共样式
+ */
+.conditionRow .logicalOperator{
+	width:60px; /**逻辑运算符下拉框宽度 */
+}
+.xpl-dc-nestedQuery-true .logicalOperator{
+/* 	display:; */
+}
+.xpl-dc-nestedQuery-false .logicalOperator{
+	display: none;
+}
+.xpl-dc-nestedQuery-false .conditionRow .layui-icon-add-circle-fine{
+	display: none;
+}
+/**新增子条件按钮样式**/
+.conditionRow .addSubRowBtn .layui-icon-add-circle-fine{
+	font-size: 30px;
+}
+.layui-xpl-dc-logic{
+	color:red;
+}
+
+
+
+.conditionRow .conditionField{
+	width:120px; /**查询条件字段下拉框宽度 */
+}
+.xpl-popup-query, .xpl-unpopup-query{
+	margin-left:10px;
+}
+
+.xpl-dc-complex .conditionRow .conditionOption{
+	width:100px; /**复杂模式下查询条件操作下拉框宽度 */
+}
+.xpl-dc-simple .conditionRow .conditionOption{
+	display: none;/**简单模式下，操作下拉框隐藏 */
+}
+/***删除条件样式"X" */
+.conditionRow .delRowBtn .layui-icon-close{
+	font-size: 30px;
+	color: red;
+}
+
+.xpl-clear {clear:both;}
+.xpl-hide{
+	display: none;
+}
+
+
+/***
+* 非弹窗模式
+*/
+.xpl-dc-unpopup .layui-xpl-dc-top-btns{
+	display: none;
+}
+/**非弹窗模式查询条件浮动 */
+.xpl-dc-unpopup.xpl-dc-nestedQuery-false .conditionRow{
+	float:left;
+	padding-right: 20px;
+	margin-bottom:3px;
+}
+/**非弹窗模式查询条件浮动 */
+.xpl-dc-unpopup.xpl-dc-nestedQuery-true .conditionRow{
+	padding-right: 20px;
+	margin-bottom:3px;
+}
+/**非弹窗模式查询值控件显示宽度 */
+.xpl-dc-unpopup .conditionRow .conditionValue{
+	width:220px;
+}
+
+/**非弹窗模式,且无弹窗模式隐藏【X】按钮 */
+.xpl-dc-unpopup.xpl-dc-nestedQuery-false .conditionRow .conditionDel{
+	display: none;
+}
+
+.xpl-dc-unpopup-btns{
+	float:left;
+}
+
+
+
+.xpl-dc-unpopup-btns .layui-btn{
+	margin-bottom:3px;
+}
+
+/***
+ * 弹窗模式
+ */
+.xpl-dc-popup .conditionRow{
+
+}
+.xpl-dc-popup .conditionRow .conditionValue{
+	width:320px;
+}
+.xpl-dc-popup-query-condition-div{
+	float:left;
+}
+.xpl-dc-popup-btns{
+	float:right;
+}
+.layui-xpl-dc-circle {
+	border-radius: 90px;
+	display:inline-block;
+	text-align:center;
+	height: 25px;
+	line-height: 25px;
+	background-color:#1E9FFF;
+	color:#fff;
+	margin:3px 5px;
+	padding-top:0px;
+	padding-bottom:0px;
+	padding-left:8px;
+	padding-right:18px;
+	position:relative;
+}
+.layui-xpl-dc-delete{
+	width:20px;
+	height:20px;
+	line-height: 20px;
+	cursor:pointer;
+	border-radius:60%;
+	position:absolute;
+	top:2px;
+	right:-1px;
+	color:#c2c2c2;
+}
+.layui-xpl-dc-delete:hover{
+	border-radius: 12px;
+	color: #fff;
+}
+
+
+.xpl-dc-value{
+	border-width: 1px;
+    border-style: solid;
+    border-radius: 2px;
+    border-color: #D2D2D2!important;
+    display: block;
+    width: 100%;
+	height: 36px;
+	text-align: center;
+}
+

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <style>
+        .layui-form-item {
+            margin: 5px 0 0 0;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- 表格模板 -->
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+    <!-- 表头工具栏模板 -->
+    <script type="text/html" id="toolbarDemo" style="height:100px;">
+        <div class="layui-inline" style="width: 20%;">
+            <input name="search" id="LAY-search-labTable" placeholder="输入软件编码" class="layui-input">
+        </div>
+        <button lay-event="select" type="button" class="layui-btn">
+            <i class="layui-icon">&#xe615;</i>搜索
+        </button>
+        <button lay-event="add" type="button" class="layui-btn">
+            <i class="layui-icon">&#xe608;</i>添加软件
+        </button>
+    </script>
+    <!-- 操作栏模板 -->
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+
+
+    <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+    <script>
+        var rowData;//用于接受表格的行信息
+        layui.config({
+            base: '../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index', //主入口模块
+        }).use(['index'], function () {
+            var $ = layui.$,
+                table = layui.table,
+                admin = layui.admin,
+                setter = layui.setter,
+                form = layui.form;
+            var cols = []; //表头
+            //请求cols
+            admin.req({
+                url: '/extFieldRelation/getValidFields',
+                done: function (data) {
+                    console.log(data);
+                    //填充表头
+                    cols = []; //清空
+                    $.each(data.data, function (index, item) {
+                        // console.log(item);
+                        obj = new Object();
+                        obj.field = item.fieldName;
+                        obj.title = item.fieldDes;
+                        obj.align = "center";
+                        obj.width = "120";
+                        cols.push(obj);
+                    });
+                    //添加操作栏
+                    var obj = {
+                        fixed: 'right',
+                        title: '操作',
+                        toolbar: '#barDemo',
+                        width: 150,
+                        align: "center"
+                    }
+                    cols.push(obj);
+                    // cols.forEach((item, index, array) => {
+                    //     console.log(item)
+                    // })
+                    //加载表格
+                    tableRender();
+                },
+                fail: function (data) {
+                    layer.msg(data.msg);
+                }
+            });
+
+
+            function tableRender() {
+                table.render({
+                    id: "testTable", //定义id 方便重载
+                    elem: '#test',
+                    headers: { //通过 request 头传递
+                        "token": layui.data(setter.tableName)['token'] || ""
+                    },
+                    url: '/soft/queryPageByEngineerAndOther',
+                    toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
+                    height: 'full-20', //铺满离最下方差多少
+                    cols: [cols],
+                    page: true, //开启分页
+                    limit: 10, //每页数据条目
+                    response: { //如果你想重新规定返回的数据格式
+                        statusCode: "200", //规定成功的状态码，默认：0
+                    },
+                    parseData: function (res) { //res 即为原始返回的数据
+                        return {
+                            "code": res.code, //解析接口状态
+                            "msg": res.msg, //解析提示文本
+                            "count": res.data.total, //解析数据长度
+                            "data": res.data.rows //回调数据
+                        };
+                    },
+                    done: function (res) { //返回数据执行回调函数
+                        console.log(res);
+                    }
+                });
+            }
+
+            //监听头工具栏事件
+            table.on('toolbar(test)', function (obj) {
+                switch (obj.event) {
+                    case 'select':
+                        var msg = document.getElementById('LAY-search-labTable').value;
+                        table.reload('testTable', {
+                            url: "/soft/queryPageByEngineerAndOther?code=" + msg,
+                        });
+                        $('#LAY-search-labTable').val(msg);
+                        break;
+                    case 'add':
+                        layer.open({
+                            type: 2,
+                            title: '<i class="layui-icon layui-icon-add-1">添加软件</i>',
+                            area: ['420px', '580px'],
+                            content: ['/index/addSoft'],
+                            skin: 'layui-layer-molv',
+                            shade: 0,
+                            offset: 'auto',
+                        });
+                        break;
+                };
+            });
+
+            //监听行工具事件
+            table.on('tool(test)', function (obj) {
+                var data = obj.data;
+                console.log(data)
+                if (obj.event === 'del') {
+                    layer.confirm('真的要删除"<span style="color: #FF5722;">' + data.code + '</span>"吗？', {
+                        title: "删除确认"
+                    }, function (index) {
+                        admin.req({
+                            url: '/soft/delete',
+                            data: {
+                                id: data.id
+                            },
+                            method: "post",
+                            done: function (data) {
+                                layer.msg(data.msg);
+                                obj.del();
+                                layer.close(index);
+                            },
+                            fail: function (data) {
+                                layer.msg(data.msg);
+                            }
+                        });
+                    });
+                } else if (obj.event === 'edit') {
+                    rowData = JSON.stringify(data);
+                    layer.open({
+                            type: 2,
+                            title: '<i class="layui-icon layui-icon-edit">编辑</i>',
+                            area: ['420px', '580px'],
+                            content: ['/index/editSoft'],
+                            skin: 'layui-layer-molv',
+                            shade: 0,
+                            offset: 'auto',
+                        });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

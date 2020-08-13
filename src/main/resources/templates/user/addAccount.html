@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加账号</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+</head>
+
+
+<body>
+    <form class="layui-form layui-from-pane" id="addPersonTypeForm" style="margin: 5px 50px 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">账号:</label>
+            <div class="layui-input-block">
+                <input type="text" name="userName" required lay-verify="required" autocomplete="off" placeholder="请输入账号"
+                    class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名:</label>
+            <div class="layui-input-block">
+                <input type="text" name="realName" required lay-verify="required" autocomplete="off"
+                    placeholder="请输入用户名" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码:</label>
+            <div class="layui-input-block">
+                <input type="text" id="pwd" name="pwd" required lay-verify="required" autocomplete="off"
+                    placeholder="请输入密码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色:</label>
+            <div class="layui-input-block">
+                <!-- <select name="role" id="role" lay-verify="required">
+                </select> -->
+                <div id="role" name="role" class="xm-select-demo" >
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin-top: 150px;">
+            <div class="layui-input-block">
+                <button class="layui-btn  layui-btn-submit " lay-submit="" lay-filter="demo1">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+    <script th:src="@{/js/xm-select.js}"></script>
+    <script>
+        layui.config({
+            base: '../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'dtree'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.jquery,
+                table = layui.table,
+                upload = layui.upload,
+                admin = layui.admin,
+            dtree = layui.dtree;
+            var select_role; //选中的角色
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            //填充默认密码123456
+            $("#pwd").attr("value", "123456");
+            //初始化下拉框
+            admin.req({
+                url: '/role/list',
+                done: function (res) {
+                    // console.log(res);
+                    var selectData = [];
+                    for (let index = 0; index < res.data.length; index++) {
+                        var oneData = {};
+                        oneData.name = res.data[index].roleName;
+                        oneData.value = res.data[index].id;
+                        selectData.push(oneData);
+                    }
+                    // console.log(selectData);
+                    select_role = xmSelect.render({
+                        el: '#role',
+                        filterable: true,
+                        data: selectData
+                    })
+                    layui.form.render();
+                },
+                fail: function (res) {
+                    layer.msg(res.msg, {
+                        offset: '15px',
+                        icon: 2,
+                        time: 2000
+                    });
+                }
+            })
+            //监听提交
+            form.on('submit(demo1)', function (data) {
+                var data = data.field;
+                var roles = select_role.getValue('value');
+                console.log(data);
+                console.log(roles);
+                if(!data.select){
+                   layer.msg("角色不能为空！");
+                   return false;
+                }
+                admin.req({
+                    url: '/user/addAccount',
+                    method: "post",
+                    data: {
+                        username: data.userName,
+                        password: data.pwd,
+                        realName: data.realName,
+                        roleIds:data.select,
+                    },
+                    done: function (data) {
+                        console.log(data);
+                        setTimeout(function () {
+                            parent.layui.table.reload("table");
+                            parent.layer.close(index); //执行关闭
+                        }, 1000);
+                        layer.msg(data.msg);
+                    },
+                    fail: function (data) {
+                        layer.msg(data.msg);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</body>
+
+</html>

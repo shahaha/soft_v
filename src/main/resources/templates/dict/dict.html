@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <style>
+        .dict-value {
+            max-width: 358px;
+            height: 130px;
+            border: 1px solid #e6e6e6;
+        }
+        .dict-value:hover,
+        .dict-value:hover .control {
+            border-color: #C9C9C9;
+        }
+        .dict-value .control {
+            padding: 4px 8px;
+            border-bottom: 1px solid #e6e6e6;
+        }
+        .dict-value .control button {
+            margin: 0;
+            border-color: #ffffff;
+        }
+        .dict-value .control button:hover {
+            border-color: #888888;
+        }
+        .dict-value .control button .fa {
+            margin-right: 4px;
+            color: #888888;
+        }
+        .dict-value .content {
+            height: 95px;
+            padding: 2px 0;
+            overflow: auto;
+        }
+        .dict-value .content .dict-option {
+            margin: 0;
+            padding: 2px 0;
+            display: block;
+            width: 100%;
+            border: none;
+            text-indent: 4px;
+            font-size: 14px;
+        }
+        .dict-value .content .dict-option:hover {
+            background-color: rgba(1, 170, 237, 0.17);
+        }
+        .dict-value .content .dict-option.active {
+            background-color: rgba(1, 170, 237, 0.37);
+            font-weight: bold;
+        }
+        .dict-value .content .dict-option.error {
+            background-color: rgba(255, 16, 0, 0.41);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+<table id="table" class="layui-show" lay-filter="test" style="width: 80%"></table>
+
+<form class="layui-form" id="addDictDialog" lay-filter="dialog" style="display: none;">
+    <input type="hidden" name="id" id="fieldId"/>
+    <div class="layui-form-item" style="padding-top: 5%;">
+        <label class="layui-form-label required">字段名:</label>
+        <div class="layui-input-inline">
+            <select name="fieldName" id="fieldName" lay-filter="fieldNameSelect">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">字段描述:</label>
+        <div class="layui-input-inline">
+            <input class="layui-input" type="text" name="fieldDes" placeholder="请输入字典标题" lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">业务种类:</label>
+        <div class="layui-input-inline">
+            <select name="category" id="category" lay-filter="businessType">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">字段类型:</label>
+        <div class="layui-input-inline">
+            <select name="fieldType" id="fieldType" lay-filter="fieldType">
+                <option value="0">键值对</option>
+                <option value="1">文本</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text" id="fieldValue">
+        <label class="layui-form-label required">字段值:</label>
+        <div class="layui-input-block">
+            <input id="dictValue" name="value" type="hidden">
+            <div class="dict-value">
+                <div class="control">
+                    <button class="field-add layui-btn layui-btn-primary layui-btn-xs">
+                        <i class="layui-icon">&#xe624;</i>添加
+                    </button>
+                    <button class="field-del layui-btn layui-btn-primary layui-btn-xs">
+                        <i class="layui-icon">&#xe67e;</i>删除
+                    </button>
+                    <button class="field-up layui-btn layui-btn-primary layui-btn-xs">
+                        <i class="layui-icon">&#xe619;</i>向上
+                    </button>
+                    <button class="field-down layui-btn layui-btn-primary layui-btn-xs">
+                        <i class="layui-icon">&#xe61a;</i>向下
+                    </button>
+                </div>
+                <div class="content"></div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">支持查询:</label>
+        <div class="layui-input-block">
+            <input type="checkbox" id="isTerm" name="isTerm" lay-skin="switch"
+                   lay-filter="switchTest" lay-text="是|否">
+        </div>
+    </div>
+    <div class="layui-form-item" style="display: none;">
+        <button class="layui-btn" lay-submit id="LAY-hide-submit" lay-filter="LAY-hide-submit">提交</button>
+    </div>
+</form>
+
+<script type="text/javascript" th:src="@{/layuiadmin/layui/layui.js}"></script>
+
+<script type="text/html" id="operation">
+    {{#  if(d.fieldName.indexOf('column') == 0){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="stopUse">停止使用</a>
+    {{#  } else { }}
+    <span>初始字段，不可操作</span>
+    {{#  } }}
+</script>
+
+<script type="text/html" id="labTableToolbar">
+    <div class="layui-inline" style="width: 25%;">
+        <input name="search" id="LAY-search-labTable-address" placeholder="输入字段名或字段描述搜索" class="layui-input">
+    </div>
+    <button lay-event="search" type="button" class="layui-btn">
+        <i class="layui-icon">&#xe615;</i>搜索
+    </button>
+    <button lay-event="add" type="button" class="layui-btn">
+        <i class="layui-icon">&#xe608;</i>添加
+    </button>
+</script>
+
+<script type="text/html" id="isTermSwitch">
+    <input type="checkbox" name="isTerm" value={{d.isTerm}} lay-skin="switch" lay-text="支持|不支持"  mid={{d.id}}  lay-filter="status" {{ d.isTerm==true?'checked':'' }}>
+</script>
+
+ <script type="text/javascript">
+     layui.config({
+         base: '/layuiadmin/' //静态资源所在路径
+     }).extend({
+         index: 'lib/index' //主入口模块
+     }).use(['index','layer', 'table', 'element'], function () {
+         var $ = layui.$,
+             admin = layui.admin,
+             layer = layui.layer,
+             table = layui.table,
+             setter = layui.setter,
+             form = layui.form; //元素操作
+         table.set({
+             headers: { //通过 request 头传递
+                 "token": layui.data(setter.tableName)['token'] || ""
+             }
+         })
+         // 默认变量
+         var active = null;
+         var option = $("<input class='dict-option'>");
+         var openIndex;
+
+         // 初始化数据
+         var dictValue = $("#dictValue");
+         getCategory();
+
+         //初始化选择框
+         function initType() {
+             if ($("#fieldType").val() == 1){
+                 $('#fieldValue').hide();
+             }else {
+                 $('#fieldValue').show();
+             }
+         }
+
+         //把value转换成kv
+         function toMap(value){
+             var box = $(".dict-value>.content");
+             box.empty();
+             if(value !== null && value !== ""){
+                 value.forEach(function (val) {
+                     var t = val.value + ":" + val.name;
+                     box.append(option.clone().val(t));
+                 });
+             }
+         }
+
+         // 获取焦点是选项事件
+         $(document).on("focus", ".dict-option", function () {
+             if (active != null) {
+                 active.removeClass("active");
+             }
+             active = $(this).addClass("active");
+         });
+
+         // 失去焦点是选项事件
+         $(document).on("blur", ".dict-option", function () {
+             var kv = $(this).val().split(":");
+             if(kv.length > 1 && kv[1] !== ""){
+                 $(this).removeClass("error");
+                 updateDict();
+             }else{
+                 $(this).addClass("error");
+             }
+         });
+
+         // 向下添加
+         var addOption = function () {
+             var clone = option.clone().val("").addClass("active");
+             active.after(clone).removeClass("active");
+             clone.focus();
+         };
+
+         // 输入框回车事件
+         $(document).on("keypress", ".dict-option", function (e) {
+             if (e.keyCode === 13) {
+                 e.preventDefault();
+                 addOption();
+             }
+         });
+
+         // 添加字段
+         $(document).on("click", ".field-add", function (e) {
+             e.preventDefault();
+             if (active != null) {
+                 addOption();
+             } else {
+                 var clone = option.clone();
+                 $(".dict-value>.content").append(clone);
+                 clone.focus().addClass("active");
+             }
+         });
+
+         // 删除字段
+         $(document).on("click", ".field-del", function (e) {
+             e.preventDefault();
+             if (active != null) {
+                 active.remove();
+                 active = null;
+             }
+             updateDict();
+         });
+
+         // 上移字段
+         $(document).on("click", ".field-up", function (e) {
+             e.preventDefault();
+             if (active != null) {
+                 var prev = active.prev();
+                 active.insertBefore(prev);
+             }
+             updateDict();
+         });
+
+         // 下移字段
+         $(document).on("click", ".field-down", function (e) {
+             e.preventDefault();
+             if (active != null) {
+                 active.insertAfter(active.next());
+             }
+             updateDict();
+         });
+
+         // 更新字典值
+         var updateDict = function () {
+             var value = "[";
+             $(".dict-value>.content input").each(function (key, val) {
+                 var kv = $(val).val().split(":");
+                 if(kv.length > 1 && kv[1] !== ""){
+                     value += "{\"value\":\"" + kv[0] + "\",\"name\":\"" + kv[1] + "\"},";
+                     //value += kv[0] + ":" + kv[1] + ",";
+                 }
+             });
+             if (value === "["){
+                 value = "";
+             }
+             if (value !== "") {
+                 value = value.substr(0, value.length - 1);
+                 value += "]";
+             }
+             dictValue.val(value);
+         }
+
+         //监听下拉列表改变
+         form.on('select(fieldNameSelect)', function (data) {
+             $('#fieldId').val(data.value);
+         });
+         //监听下拉列表改变
+         form.on('select(fieldType)', function (data) {
+             if (data.value === "1"){
+                 $('#fieldValue').hide();
+                 dictValue.val("");
+             }else {
+                 $('#fieldValue').show();
+                 updateDict();
+             }
+         });
+
+
+
+         //执行一个 table 实例
+         table.render({
+             elem: '#table',
+             height: 'full-20',
+             url: '/extFieldRelation/getValidFieldsAndPage' //数据接口
+             ,
+             title: '字段列表',
+             skin: 'line ',
+             even: true,
+             id: 'labTable',
+             page: true //开启分页
+             ,
+             limits: [10, 20, 30, 40] //每页条数的选择项，默认：[10,20,30,40,50,60,70,80,90]。
+             ,
+             limit: 10 //每页默认显示的数量
+             ,
+             toolbar: '#labTableToolbar' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+             ,
+             method: 'get',
+             cellMinWidth: 20
+             //,size: 'lg'
+             ,
+             cols: [
+                 [
+                     {
+                         field: "fieldName",
+                         title: "字段名",
+                         align: "center",
+                         width: '17%'
+                     },
+                     {
+                         field: "fieldDes",
+                         title: "字段描述",
+                         align: "center",
+                         width: '10%'
+                     },
+                     {
+                         field: "category",
+                         title: "所属业务种类",
+                         align: "center"
+                     },
+                     {
+                         field: "isTerm",
+                         title: "是否支持查询",
+                         align: "center",
+                         width: '10%',
+                         templet: '#isTermSwitch'
+                     },
+                     {
+                         title: "操作",
+                         toolbar: '#operation',
+                         align: "center",
+                         fixed: 'right'
+                     }
+                 ]
+             ],
+             response: {
+                 statusCode: 200,
+             },
+             parseData: function (res) { //res 即为原始返回的数据
+                 //console.log(res);
+                 return {
+                     "code": res.code, //解析接口状态
+                     "msg": res.msg, //解析提示文本
+                     "count": res.data.total, //解析数据长度
+                     "data": res.data.rows //解析数据列表
+                 };
+             }
+         });
+
+         
+         //监听头工具栏事件
+         table.on('toolbar(test)', function (obj) {
+             switch (obj.event) {
+                 case 'add':
+                     getInvalidFields();
+                     $("#addDictDialog")[0].reset();
+                     $(".dict-value>.content").children().remove();
+                     form.render();
+                     openIndex = layer.open({
+                         type: 1,
+                         title: `<i class="layui-icon layui-icon-add-1">添加字段</i>`,
+                         area: ['500px', 'auto'],
+                         content: $('#addDictDialog'),
+                         skin: 'layui-layer-molv',
+                         offset: 'auto',
+                         btn: ['确定', '取消'],
+                         yes: function (index, layero) {
+                             var submited = document.getElementById('LAY-hide-submit');
+                             submited.click();
+                         }
+                     });
+                     break;
+                 case 'search':
+                     var text = document.getElementById('LAY-search-labTable-address').value;
+                     table.reload('labTable', {
+                         where: {
+                             fieldName: text,
+                             fieldDes: text
+                         }
+                     })
+                     $('#LAY-search-labTable-address').val(text);
+                     break;
+             }
+         });
+
+         //监听行工具事件
+         table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+             var data = obj.data, //获得当前行数据
+                 layEvent = obj.event; //获得 lay-event 对应的值
+             //console.log(data);
+             var showData = $.extend(true,{},data);
+             showData.fieldName = showData.id;
+             toMap(showData.value);
+             showData.value = JSON.stringify(showData.value);
+             showData.category = categoryToId(showData.category);
+             showData.fieldType = Number(showData.type);
+             if (layEvent === 'edit') {
+                 var obj = document.getElementById("fieldName"); //定位id
+                 obj.options.length = 0;
+                 obj.options.add(new Option(data.fieldName, data.id));
+                 form.val("dialog", showData);
+                 initType();
+                 openIndex = layer.open({
+                     type: 1,
+                     title: `<i class="layui-icon layui-icon-edit">修改字段</i>`,
+                     area: ['500px', 'auto'],
+                     content: $('#addDictDialog'),
+                     skin: 'layui-layer-molv',
+                     offset: 'auto',
+                     btn: ['确定', '取消'],
+                     yes: function (index, layero) {
+                         var submited = document.getElementById('LAY-hide-submit');
+                         submited.click();
+                     }
+                 });
+             }
+             else if (layEvent === 'stopUse') {
+                 layer.confirm('删除字段后，所有有关字段的<span style="color: #FF5722;">内容都将被清空</span>，请谨慎删除', function (index) {
+                     layer.close(index);
+                     layer.confirm('确定删除？', function (index1) {
+                         layer.close(index1);
+                         admin.req({
+                             type: 'POST',
+                             url: "/extFieldRelation/stopUse",
+                             data: {
+                                 id: data.id
+                             },
+                             done: function (res) {
+                                 layer.msg("操作成功");
+                                 table.reload('labTable');
+                             },
+                             fail: function (res) {
+                                 layer.msg(res.msg, {
+                                     offset: '15px',
+                                     icon: 2,
+                                     time: 2000
+                                 });
+                             }
+                         })
+                     })
+                 });
+             }
+         });
+
+         //开关事件(status是lay-filter中的status，注意区别)
+         form.on('switch(status)', function(obj){
+             // 通过属性获取绑定的id值
+             var id = $(this).attr('mid');
+             // 判断开关的状态
+             var status = obj.elem.checked;
+             console.log({
+                 id: id,
+                 isTerm: status
+             });
+             //ajax请求方法
+             admin.req({
+                 url: '/extFieldRelation/updateIsTerm',
+                 data: {
+                     id: id,
+                     isTerm: status
+                 },
+                 type: 'post',
+                 done: function (res) {
+                     layer.msg("修改成功");
+                 },
+                 fail: function (res) {
+                     layer.msg(res.msg, {
+                         offset: '15px',
+                         icon: 2,
+                         time: 2000
+                     });
+                 }
+             })
+         });
+
+
+
+         function getCategory() {
+             admin.req({
+                 url: '/category/list',
+                 done: function (res) {
+                     var obj = document.getElementById("category"); //定位id
+                     obj.options.length = 0;
+                     for (var i = 0; i < res.data.length; i++) {
+                         obj.options.add(new Option(res.data[i].categoryName, res.data[i].id));
+                     }
+                     form.render();
+                 },
+                 fail: function (res) {
+                     layer.msg(res.msg, {
+                         offset: '15px',
+                         icon: 2,
+                         time: 2000
+                     });
+                 }
+             })
+         }
+         
+         function getInvalidFields() {
+             admin.req({
+                 url: '/extFieldRelation/getInvalidFields',
+                 done: function (res) {
+                     var obj = document.getElementById("fieldName"); //定位id
+                     obj.options.length = 0;
+                     for (var i = 0; i < res.data.length; i++) {
+                         obj.options.add(new Option(res.data[i].fieldName, res.data[i].id));
+                     }
+                     $('#fieldId').val(res.data[0].id);
+                     form.render();
+                 },
+                 fail: function (res) {
+                     layer.msg(res.msg, {
+                         offset: '15px',
+                         icon: 2,
+                         time: 2000
+                     });
+                 }
+             })
+         }
+
+         function categoryToId(category){
+             var categoryId = 1;
+             $("#category option").each(function () {
+                if (category === $(this).text().trim()){
+                    categoryId = $(this).val();
+                }
+             })
+             return categoryId;
+         }
+
+         //提交表单
+         form.on('submit(LAY-hide-submit)', function (data) {
+             //console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+             data.field.fieldName = $('#fieldName').find("option:selected").text()
+             if ('on' === data.field.isTerm) {
+                 data.field.isTerm = 1;
+             }else {
+                 data.field.isTerm = 0;
+             }
+             admin.req({
+                 url: '/extFieldRelation/update',
+                 data: data.field,
+                 type: 'post',
+                 done: function (res) {
+                     layer.close(openIndex);
+                     layer.msg("操作成功");
+                     table.reload('labTable');
+                 },
+                 fail: function (res) {
+                     layer.msg(res.msg, {
+                         offset: '15px',
+                         icon: 2,
+                         time: 2000
+                     });
+                 }
+             })
+             return false;
+         });
+
+     })
+</script>
+</body>
+
+</html>

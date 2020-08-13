@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <style>
+        /* 弹窗中select被遮挡 */
+        .layui-form-select dl {
+            max-height: 220px;
+        }
+    </style>
+</head>
+
+<body>
+    <form class="layui-form layui-from-pane" id="form" lay-filter="form" style="margin: 5px 50px 0 0;">
+        <div class="layui-form-item" style="display:none">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" id="id" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">软件类型</label>
+            <div class="layui-input-block">
+                <select name="category" id="softType" lay-filter="softType" lay-verify="required">
+                </select>
+            </div>
+        </div>
+        <!-- 动态表项 -->
+        <div id="items"></div>
+        <!-- 文件上传 -->
+        <div class="layui-form-item">
+            <div class="layui-inline" style="margin-left: 110px; width: 80%;">
+                <button type="button" class="layui-btn" id="upload"><i class="layui-icon"></i>上传软件</button>
+                <span id="fileText"></span>
+            </div>
+        </div>
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn  layui-btn-submit " lay-submit="" lay-filter="demo1">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+    <script>
+        layui.config({
+            base: '../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'dtree'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.jquery,
+                table = layui.table,
+                upload = layui.upload,
+                element = layui.element,
+                setter = layui.setter,
+                admin = layui.admin;
+
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            var rowData = eval('(' + parent.rowData + ')'); //父页面行数据
+            console.log(rowData);
+            var softType = null; //软件类型
+            var fileData = null; //上传的文件
+            //伪上传
+            upload.render({
+                headers: { //通过 request 头传递
+                    "token": layui.data(setter.tableName)['token'] || ""
+                },
+                elem: '#upload',
+                url: '/soft/add', //改成您自己的上传接口
+                accept: "file", //images（图片）、file（所有文件）、video（视频）、audio（音频）
+                choose: function (obj) {
+                    obj.preview(function (index, file, result) {
+                        fileData = file;
+                        $("#fileText").text(file.name);
+                    })
+                },
+            });
+            //获取软件类型
+            admin.req({
+                url: '/category/list',
+                done: function (data) {
+                    // console.log(data);
+                    $.each(data.data, function (index, item) {
+                        $('#softType').append(new Option(item.categoryName, item.id));
+                        if (rowData.category == item.categoryName) {
+                            softType = item.id;
+                            rowData.category = item.id;
+                        }
+                    });
+                    //动态生成表项
+                    createItem(softType);
+                    form.render("select");
+                    $('#softType').val(softType);
+                },
+                fail: function (data) {
+                    layer.msg(data.msg);
+                }
+            });
+
+            //监听下拉列表改变
+            form.on('select(softType)', function (data) {
+                // console.log(data.value);
+                if (data.value == softType) {
+                    return;
+                }
+                softType = data.value;
+                createItem(softType);
+                $('#softType').val(data.value);
+            });
+            //根据选择的软件类型 生成表单选项
+            function createItem(softType) {
+                admin.req({
+                    url: '/extFieldRelation/getValidFieldsDataByCategory?category=' +
+                        softType,
+                    done: function (data) {
+                        console.log(data);
+                        //解析生成动态表单
+                        $("#items").empty(); //清空div
+                        $.each(data.data, function (index, item) {
+                            // console.log(item);
+                            if (item.fieldName != 'id' && item.fieldName != 'tools' && item
+                                .fieldName != 'address') {
+                                if (item.type == "text") {
+                                    var form_item = document.createElement("div");
+                                    var form_label = document.createElement("label");
+                                    var input_block = document.createElement("div");
+                                    var input = document.createElement("input");
+                                    form_item.setAttribute('class', 'layui-form-item');
+                                    form_label.setAttribute('class', 'layui-form-label');
+                                    form_label.innerText = item.fieldDes;
+                                    input_block.setAttribute('class', 'layui-input-block');
+                                    input.setAttribute('class', 'layui-input')
+                                    input.setAttribute('name', item.fieldName)
+                                    input.setAttribute('id', item.fieldName)
+                                    input.setAttribute('autocomplete', 'off')
+                                    input_block.appendChild(input);
+                                    form_item.appendChild(form_label);
+                                    form_item.appendChild(input_block);
+                                    document.getElementById("items").appendChild(form_item);
+                                } else if (item.type == "select") {
+                                    var form_item = document.createElement("div");
+                                    var form_label = document.createElement("label");
+                                    var input_block = document.createElement("div");
+                                    var input = document.createElement("select");
+                                    form_item.setAttribute('class', 'layui-form-item');
+                                    form_label.setAttribute('class', 'layui-form-label');
+                                    form_label.innerText = item.fieldDes;
+                                    input_block.setAttribute('class', 'layui-input-block');
+                                    input.setAttribute('class', 'layui-input');
+                                    input.setAttribute('name', item.fieldName);
+                                    input.setAttribute('id', item.fieldName);
+                                    var fieldName = item.fieldName;
+                                    $.each(item.value, function (index, item) {
+                                        input.append(new Option(item.name, item
+                                            .value));
+                                            //给行数据赋初值
+                                        if (rowData[fieldName] == item.name) {
+                                            rowData[fieldName] = item.value;
+                                        }
+                                    });
+                                    input_block.appendChild(input);
+                                    form_item.appendChild(form_label);
+                                    form_item.appendChild(input_block);
+                                    document.getElementById("items").appendChild(form_item);
+                                }
+                            }
+                        });
+                        form.render("select");
+                        rowData.category = softType;
+                        //将父页面数据填充进表单
+                        form.val('form', rowData);
+                    },
+                    fail: function (data) {
+                        layer.msg(data.msg);
+                    }
+                });
+
+            }
+
+
+            //监听提交
+            form.on('submit(demo1)', function (data) {
+                var data = data.field;
+                data.file = fileData;
+                console.log(data)
+                var formData = new FormData();
+                for (let key in data) {
+                    formData.append(key, data[key]);
+                }
+                admin.req({
+                    url: '/soft/update',
+                    method: "post",
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    done: function (data) {
+                        // console.log(data);
+                        layer.msg("修改成功");
+                        setTimeout(function () {
+                            // window.parent.location.reload(); //修改成功后刷新父界面
+                            parent.layui.table.reload("testTable");
+                            parent.layer.close(index); //执行关闭
+                        }, 1000);
+                        return false;
+                    },
+                    fail: function (data) {
+                        layer.msg(data.msg);
+                        return false;
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+</html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>数据操作 - 数据表格</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <!--layui.table图片显示不全，需重新定义CSS  -->
+    <style type="text/css">
+        .layui-table-cell {
+            text-align: center;
+            height: auto;
+            white-space: normal;
+        }
+
+        .layui-table img {
+            max-width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 表头工具栏模板 -->
+    <script type="text/html" id="labTableToolbar">
+        <div class="layui-inline" style="width: 30%;">
+            <input name="search" id="LAY-search-labTable" placeholder="输入操作名称" class="layui-input">
+        </div>
+        <button lay-event="select" type="button" class="layui-btn">
+            <i class="layui-icon">&#xe615;</i>搜索
+        </button>
+    </script>
+    <!-- 表格 -->
+    <table class="layui-hide" id="demo" lay-filter="test"></table>
+</body>
+
+<script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+<script>
+    //这里设置一个空的json串，用于接受表格的行信息
+    var json;
+    layui.config({
+        base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table', 'form'], function () {
+        var $ = layui.$,
+            table = layui.table,
+            admin = layui.admin,
+            setter = layui.setter,
+            form = layui.form;
+
+        table.set({
+            headers: { //通过 request 头传递
+                "token": layui.data(setter.tableName)['token'] || ""
+            }
+        })
+        table.render({
+            id: "table", //定义id 方便重载
+            elem: '#demo', //绑定的表元素
+            loading: true, //翻页加loading
+            url: '/log/queryByExampleAndPage',
+            height: 'full-20', //铺满离最下方差多少
+            // cellMinWidth: 80, //所有单元格最小宽度
+            limit: 10, //每页数据条目
+            toolbar: '#labTableToolbar', //开启头部工具栏，并为其绑定左侧模板
+            even: true,
+            cols: [
+                [{
+                        type: 'numbers',
+                        title: '序号',
+                        align: "center",
+                    },
+                    {
+                        field: 'realName',
+                        title: '用户名'
+                    }, {
+                        field: 'ip',
+                        title: 'IP地址',
+                    }, {
+                        field: 'method',
+                        title: '方法',
+                    }, {
+                        field: 'des',
+                        title: '操作描述',
+                    }, {
+                        field: 'time',
+                        title: '时间',
+                        sort: true
+                    }
+                ]
+            ],
+            page: true, //开启分页
+            response: { //如果你想重新规定返回的数据格式
+                statusCode: "200", //规定成功的状态码，默认：0
+            },
+            parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.total, //解析数据长度
+                    "data": res.data.rows //回调数据
+                };
+            },
+            done: function (res) { //返回数据执行回调函数
+                layer.closeAll("loading"); //返回数据关闭loading
+                console.log(res);
+            }
+        });
+        //监听头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            switch (obj.event) {
+                case 'select':
+                    var msg = document.getElementById('LAY-search-labTable').value;
+                    // console.log(msg);
+                    table.reload('table', {
+                        url: "/log/queryByExampleAndPage?conditions=" + msg,
+                    });
+                    $('#LAY-search-labTable').val(msg);
+                    break;
+            };
+        });
+    });
+</script>
+
+</html>

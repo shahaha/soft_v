@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+
+    <style type="text/css">
+        /* 输入框样式 */
+        .search-input{
+            height: 25px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="layui-fluid" id="LAY-component-grid-mobile">
+    <div class="layui-row">
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-xs4">
+                <!-- 填充内容 -->
+                <div class="layui-card">
+                    <table id="table" class="layui-show" lay-filter="test"></table>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="layui-card">
+                    <table id="table1" class="layui-show" lay-filter="test1"></table>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="layui-card">
+                    <table id="table2" class="layui-show" lay-filter="test2"></table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row" style="margin-bottom: 5px">
+            <hr style="padding: 0.8px">
+        </div>
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-xs6">
+                <div class="layui-card">
+                    <table id="table3" class="layui-show" lay-filter="test3"></table>
+                </div>
+            </div>
+            <div class="layui-col-xs6">
+                <div class="layui-card">
+                    <table id="table4" class="layui-show" lay-filter="test4"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="layui-form" id="addTagDialog" lay-filter="dialog" style="display: none;">
+    <div class="layui-form-item" style="padding-top: 5%;">
+        <div class="layui-inline">
+            <label class="layui-form-label" id="labText">内容描述：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="address" id="address" class="layui-input" lay-verify="required">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/layuiadmin/layui/layui.js}"></script>
+
+<script type="text/html" id="operation">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+<script type="text/html" id="labTableToolbar">
+    <div class="layui-inline" style="width: 40%;">
+        <input name="search" id="LAY-search-labTable-address" placeholder="输入搜索条件" class="layui-input search-input">
+    </div>
+    <button lay-event="search" type="button" class="layui-btn layui-btn-xs">
+        <i class="layui-icon">&#xe615;</i>搜索
+    </button>
+    <button lay-event="add" type="button" class="layui-btn layui-btn-xs">
+        <i class="layui-icon">&#xe608;</i>添加
+    </button>
+</script>
+
+<script type="text/html" id="labTableToolbar2">
+    <div class="layui-inline" style="width: 40%;">
+        <input name="search" id="LAY-search-labTable-address2" placeholder="输入搜索条件" class="layui-input search-input">
+    </div>
+    <button lay-event="search" type="button" class="layui-btn layui-btn-xs">
+        <i class="layui-icon">&#xe615;</i>搜索
+    </button>
+    <button lay-event="add" type="button" class="layui-btn layui-btn-xs">
+        <i class="layui-icon">&#xe608;</i>添加
+    </button>
+</script>
+
+<script type="text/html" id="labTableToolbar1">
+    <button lay-event="add" type="button" class="layui-btn layui-btn-xs">
+        <i class="layui-icon">&#xe608;</i>添加
+    </button>
+</script>
+
+ <script type="text/javascript">
+     layui.config({
+         base: '/layuiadmin/', //静态资源所在路径
+     }).extend({
+         index: 'lib/index' //主入口模块
+     }).use(['index','layer', 'table', 'element'], function () {
+         var $ = layui.$,
+             admin = layui.admin,
+             layer = layui.layer,
+             setter = layui.setter,
+             table = layui.table; //元素操作
+
+         table.set({
+             headers: { //通过 request 头传递
+                 "token": layui.data(setter.tableName)['token'] || ""
+             }
+         })
+         //执行一个 table 实例
+         table.render({
+             elem: '#table',
+             height: 'full-300',
+             url: '/byteSize/list',
+             title: '字段列表',
+             skin: 'line ',
+             even: true,
+             id: 'labTable',
+             //page: true,
+             //limits: [10, 20, 30, 40],
+             //limit: 10,
+             toolbar: '#labTableToolbar1',
+             method: 'get',
+             cellMinWidth: 20,
+             cols: [
+                 [
+                     {
+                         field: "id",
+                         title: "ID",
+                         align: "center",
+                         hide: true
+                     },
+                     {
+                         field: "size",
+                         title: "字节大小",
+                         align: "center"
+                     },
+                     {
+                         title: "操作",
+                         toolbar: '#operation',
+                         align: "center",
+                         fixed: 'right'
+                     }
+                 ]
+             ],
+             response: {
+                 statusCode: 200,
+             }
+         });
+         //执行一个 table 实例
+         table.render({
+             elem: '#table1',
+             height: 'full-300',
+             url: '/category/list',
+             title: '字段列表',
+             skin: 'line ',
+             even: true,
+             id: 'labTable1',
+             //page: true,
+             //limits: [10, 20, 30, 40],
+             //limit: 10,
+             toolbar: '#labTableToolbar1',
+             method: 'get',
+             cellMinWidth: 20,
+             cols: [
+                 [
+                     {
+                         field: "id",
+                         title: "ID",
+                         align: "center",
+                         hide: true
+                     },
+                     {
+                         field: "categoryName",
+                         title: "业务类型",
+                         align: "center"
+                     },
+                     {
+                         title: "操作",
+                         toolbar: '#operation',
+                         align: "center",
+                         fixed: 'right'
+                     }
+                 ]
+             ],
+             response: {
+                 statusCode: 200,
+             }
+         });
+         //执行一个 table 实例
+         table.render({
+             elem: '#table2',
+             height: 'full-300',
+             url: '/platform/list',
+             title: '字段列表',
+             skin: 'line ',
+             even: true,
+             id: 'labTable2',
+             //page: true,
+             //limits: [10, 20, 30, 40],
+             //limit: 10,
+             toolbar: '#labTableToolbar1',
+             method: 'get',
+             cellMinWidth: 20,
+             cols: [
+                 [
+                     {
+                         field: "id",
+                         title: "ID",
+                         align: "center",
+                         hide: true
+                     },
+                     {
+                         field: "platformName",
+                         title: "平台",
+                         align: "center"
+                     },
+                     {
+                         title: "操作",
+                         toolbar: '#operation',
+                         align: "center",
+                         fixed: 'right'
+                     }
+                 ]
+             ],
+             response: {
+                 statusCode: 200,
+             }
+         });
+         //执行一个 table 实例
+         table.render({
+             elem: '#table3',
+             height: 'full-140',
+             url: '/chip/pageListByExample',
+             title: '字段列表',
+             skin: 'line ',
+             even: true,
+             id: 'labTable3',
+             page: true,
+             limits: [10, 20, 30, 40],
+             limit: 10,
+             toolbar: '#labTableToolbar',
+             method: 'get',
+             cellMinWidth: 20,
+             cols: [
+                 [
+                     {
+                         field: "id",
+                         title: "ID",
+                         align: "center",
+                         hide: true
+                     },
+                     {
+                         field: "chipName",
+                         title: "芯片",
+                         align: "center"
+                     },
+                     {
+                         title: "操作",
+                         toolbar: '#operation',
+                         align: "center",
+                         fixed: 'right'
+                     }
+                 ]
+             ],
+             response: {
+                 statusCode: 200,
+             },
+             parseData: function (res) { //res 即为原始返回的数据
+                 return {
+                     "code": res.code, //解析接口状态
+                     "msg": res.msg, //解析提示文本
+                     "count": res.data.total, //解析数据长度
+                     "data": res.data.rows //解析数据列表
+                 };
+             }
+         });
+         //执行一个 table 实例
+         table.render({
+             elem: '#table4',
+             height: 'full-140',
+             url: '/model/pageListByExample',
+             title: '字段列表',
+             skin: 'line ',
+             even: true,
+             id: 'labTable4',
+             page: true,
+             limits: [10, 20, 30, 40],
+             limit: 10,
+             toolbar: '#labTableToolbar2',
+             method: 'get',
+             cellMinWidth: 20,
+             cols: [
+                 [
+                     {
+                         field: "id",
+                         title: "ID",
+                         align: "center",
+                         hide: true
+                     },
+                     {
+                         field: "modelName",
+                         title: "模块",
+                         align: "center"
+                     },
+                     {
+                         title: "操作",
+                         toolbar: '#operation',
+                         align: "center",
+                         fixed: 'right'
+                     }
+                 ]
+             ],
+             response: {
+                 statusCode: 200,
+             },
+             parseData: function (res) { //res 即为原始返回的数据
+                 return {
+                     "code": res.code, //解析接口状态
+                     "msg": res.msg, //解析提示文本
+                     "count": res.data.total, //解析数据长度
+                     "data": res.data.rows //解析数据列表
+                 };
+             }
+         });
+
+         //监听头工具栏事件
+         table.on('toolbar(test)', function (obj) {
+             switch (obj.event) {
+                 case 'add':
+                     openDialog("byteSize","labTable","size");
+                     break;
+             }
+         });
+         //监听头工具栏事件
+         table.on('toolbar(test1)', function (obj) {
+             switch (obj.event) {
+                 case 'add':
+                     openDialog("category","labTable1","categoryName");
+                     break;
+             }
+         });
+         //监听头工具栏事件
+         table.on('toolbar(test2)', function (obj) {
+             switch (obj.event) {
+                 case 'add':
+                     openDialog("platform","labTable2","platformName");
+                     break;
+             }
+         });
+         //监听头工具栏事件
+         table.on('toolbar(test3)', function (obj) {
+             switch (obj.event) {
+                 case 'add':
+                     openDialog("chip","labTable3","chipName");
+                     break;
+                 case 'search':
+                     var text = document.getElementById('LAY-search-labTable-address').value;
+                     table.reload('labTable3', {
+                         where: {
+                             chipName: text
+                         }
+                     })
+                     $('#LAY-search-labTable-address').val(text);
+                     break;
+             }
+         });
+         //监听头工具栏事件
+         table.on('toolbar(test4)', function (obj) {
+             switch (obj.event) {
+                 case 'add':
+                     openDialog("model","labTable4","modelName");
+                     break;
+                 case 'search':
+                     var text = document.getElementById('LAY-search-labTable-address2').value;
+                     table.reload('labTable4', {
+                         where: {
+                             modelName: text
+                         }
+                     })
+                     $('#LAY-search-labTable-address2').val(text);
+                     break;
+             }
+         });
+
+         //监听行工具事件
+         table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+             var data = obj.data, //获得当前行数据
+                 layEvent = obj.event; //获得 lay-event 对应的值
+             if (layEvent === 'edit') {
+                 openDialog("byteSize","labTable","size",data);
+             }
+             else if (layEvent === 'delete') {
+                deleteRow("byteSize","labTable",data.id);
+             }
+         });
+         //监听行工具事件
+         table.on('tool(test1)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+             var data = obj.data, //获得当前行数据
+                 layEvent = obj.event; //获得 lay-event 对应的值
+             if (layEvent === 'edit') {
+                 openDialog("category","labTable1","categoryName",data);
+             }
+             else if (layEvent === 'delete') {
+                 deleteRow("category","labTable1",data.id);
+             }
+         });
+         //监听行工具事件
+         table.on('tool(test2)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+             var data = obj.data, //获得当前行数据
+                 layEvent = obj.event; //获得 lay-event 对应的值
+             if (layEvent === 'edit') {
+                 openDialog("platform","labTable2","platformName",data);
+             }
+             else if (layEvent === 'delete') {
+                 deleteRow("platform","labTable2",data.id);
+             }
+         });
+         //监听行工具事件
+         table.on('tool(test3)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+             var data = obj.data, //获得当前行数据
+                 layEvent = obj.event; //获得 lay-event 对应的值
+             if (layEvent === 'edit') {
+                 openDialog("platform","labTable2","platformName");
+             }
+             else if (layEvent === 'delete') {
+                 deleteRow("chip","labTable3",data.id);
+             }
+         });
+         //监听行工具事件
+         table.on('tool(test4)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+             var data = obj.data, //获得当前行数据
+                 layEvent = obj.event; //获得 lay-event 对应的值
+             if (layEvent === 'edit') {
+                 openDialog("platform","labTable2","platformName");
+             }
+             else if (layEvent === 'delete') {
+                 deleteRow("model","labTable4",data.id);
+             }
+         });
+
+
+         function openDialog(path,tableId,fieldName,data) {
+             $("#address").val("");
+             let suffixUrl = '/add';
+             let title = "添加记录";
+             let reqData = {};
+             if (undefined !== data){
+                 suffixUrl = '/update';
+                 title = "修改记录";
+                 $("#address").val(data[fieldName]);
+                 reqData.id = data.id;
+             }
+             layer.open({
+                 type: 1,
+                 title: title,
+                 area: ['auto', 'auto'],
+                 content: $('#addTagDialog'),
+                 skin: 'layui-layer-molv',
+                 offset: 'auto',
+                 btn: ['确定', '取消'],
+                 yes: function (index, layero) {
+                     var text = $(layero).find('#address').val();
+                     reqData[fieldName] = text;
+                     admin.req({
+                         url: '/' + path + suffixUrl,
+                         data: reqData,
+                         type: 'post',
+                         done: function (res) {
+                             layer.close(index);
+                             layer.msg("操作成功");
+                             table.reload(tableId);
+                         },
+                         fail: function (res) {
+                             layer.msg(res.msg, {
+                                 offset: '15px',
+                                 icon: 2,
+                                 time: 2000
+                             });
+                         }
+                     })
+                 }
+             });
+         }
+
+        function deleteRow(path,tableId,id) {
+            layer.confirm('删除字段后，所有有关字段的<span style="color: #FF5722;">内容都将被清空</span>，请谨慎删除', function (index1) {
+                layer.close(index1);
+                layer.confirm('确定<span style="color: #FF5722;">删除</span>该记录？', function (index) {
+                    layer.close(index);
+                    admin.req({
+                        type: 'POST',
+                        url: '/' + path + '/delete',
+                        data: {
+                            id: id
+                        },
+                        done: function (res) {
+                            layer.msg(res.msg);
+                            table.reload(tableId);
+                        },
+                        fail: function (res) {
+                            layer.msg(res.msg, {
+                                offset: '15px',
+                                icon: 2,
+                                time: 2000
+                            });
+                        }
+                    })
+                });
+            })
+        }
+     })
+</script>
+</body>
+</html>
