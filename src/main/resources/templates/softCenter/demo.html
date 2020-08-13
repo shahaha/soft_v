@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    111
+<!-- 
+    <shiro:principal property="username" />
+    hello
+    <shiro:hasPermission name="log_select">
+        world
+    </shiro:hasPermission>
+    <div shiro:hasPermission="data_select">
+   2222
+    </div>
+
+    <span shiro:hasPermission="file_download">
+       3333
+    </span>
+
+    <span shiro:hasRole="test">
+        6666
+    </span> -->
+
+    <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+    <script>
+        layui.config({
+            base: '../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'dtree'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.jquery,
+                table = layui.table,
+                upload = layui.upload,
+                element = layui.element,
+                setter = layui.setter,
+                admin = layui.admin;
+            //获取软件类型
+            admin.req({
+                url: '/category/list',
+                done: function (data) {
+                    console.log(data);
+                },
+                fail: function (data) {
+                    layer.msg(data.msg);
+                }
+            });
+
+        });
+    </script>
+</body>
+
+</html>

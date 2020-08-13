@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>变更部门</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/dtree/dtree.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/dtree/font/dtreefont.css}" media="all">
+
+    <style type="text/css">
+        /* 输入框样式 */
+        .layui-input-inline {
+            width: 88%;
+            padding-left: 10px;
+        }
+
+        /* 弹窗中select被遮挡 */
+        /* .layui-form-select dl {
+            max-height: 220px;
+        } */
+    </style>
+</head>
+
+<body>
+
+    <form class="layui-form layui-from-pane" id="addPersonTypeForm" lay-filter="addPersonTypeForm"
+        style="margin: 10px 50px 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色:</label>
+            <div class="layui-input-block">
+                <input type="text" name="roleName" required lay-verify="required" autocomplete="off"
+                    placeholder="请输入角色名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">描述:</label>
+            <div class="layui-input-block">
+                <input type="text" name="remark" required lay-verify="required" autocomplete="off" placeholder="请输入角色描述"
+                    class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限:</label>
+            <div class="layui-input-block">
+                <ul id="dtree"></ul>
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="margin-top: 0px;">
+            <div class="layui-input-block">
+                <button class="layui-btn  layui-btn-submit " lay-submit="" lay-filter="demo1">立即提交</button>
+                <button id="reset" type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+    <script>
+        layui.config({
+            base: '../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'dtree'], function () {
+            var $ = layui.$,
+                form = layui.form,
+                layer = layui.layer,
+                table = layui.table,
+                setter = layui.setter,
+                upload = layui.upload,
+                admin = layui.admin,
+                dtree = layui.dtree;
+            var parent_json = eval('(' + parent.json +
+                ')'); //从父层获取值，json是父层的全局js变量。eval是将该string类型的json串变为标准的json串
+            console.log(parent_json);
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            //初始化
+            form.val('addPersonTypeForm', parent_json);
+
+            var DTree = dtree.render({
+                elem: "#dtree", //绑定元素
+                method: "get", //默认为post
+                url: '/permission/list', //请求数据接口
+                headers: { //通过 request 头传递
+                    "token": layui.data(setter.tableName)['token'] || ""
+                },
+                dataStyle: "layuiStyle", //使用layui风格的数据格式
+                response: {
+                    message: "msg"
+                }, //修改response中返回数据的定义
+                line: true, // 显示树线
+                initLevel: 3, //初始化展开层级
+                skin: "layui", // 主题风格
+                ficon: ["1", "-1"], //一级图标样式
+                icon: "-1", //二级图标样式
+                none: "无数据", //无数据时提示
+                checkbar: true, //复选框开关
+                checkbarType: "all", // 默认就是all，其他的值为： no-all  p-casc   self  only
+                done: function (result, $ul) {
+                    // console.log(result);
+                    //加载角色权限
+                    admin.req({
+                        url: '/permission/queryByRoleId',
+                        data: {
+                            roleId: parent_json.id,
+                        },
+                        done: function (data) {
+                            // console.log(data);
+                            var choos = "";
+                            $.each(data.data, function (index, item) {
+                                choos += item.id + ",";
+                            });
+                            dtree.chooseDataInit("dtree", choos
+                                .toString()); // 初始化选中
+                            dtree.initNoAllCheck("dtree"); // 反选半选状态
+                        },
+                        fail: function (data) {
+                            layer.msg(data.msg);
+                        }
+                    });
+    
+                }
+            });
+
+
+            //监听提交
+            form.on('submit(demo1)', function (data) {
+                data = data.field;
+                var params = dtree.getCheckbarNodesParam("dtree"); //选中数据
+                console.log(params)
+                var checkArr = "";
+                params.forEach(element => { //筛选出被选中的叶子节点
+                    if (element.leaf) {
+                        checkArr += element.nodeId + ",";
+                    }
+                });
+
+                admin.req({
+                    url: '/role/update',
+                    method: "post",
+                    data: {
+                        roleName: data.roleName,
+                        remark: data.remark,
+                        permissionIds: checkArr,
+                        id: parent_json.id,
+                    },
+                    done: function (data) {
+                        console.log(data);
+                        setTimeout(function () {
+                            parent.layui.table.reload("table");
+                            parent.layer.close(index); //执行关闭
+                        }, 1000);
+                        layer.msg(data.msg);
+                    },
+                    fail: function (data) {
+                        layer.msg(data.msg);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</body>
+
+</html>

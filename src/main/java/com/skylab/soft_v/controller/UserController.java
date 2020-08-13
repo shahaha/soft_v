@@ -108,8 +108,7 @@ public class UserController {
         return ResultBean.success("登录成功",loginUser);
     }
 
-    @GetMapping("/logout")
-    @ApiOperation(value = "用户推出登录")
+    @PostMapping("/logout")
     public ResultBean<User> logout(HttpServletRequest request){
         try {
             String accessToken=request.getHeader(Const.ACCESS_TOKEN);
@@ -134,6 +133,14 @@ public class UserController {
             log.error("logout:{}",e);
         }
         return ResultBean.success();
+    }
+
+    @GetMapping("/getLoginUser")
+    public ResultBean<User> getLoginUser(HttpServletRequest request){
+        String accessToken=request.getHeader(Const.ACCESS_TOKEN);
+        String username = JwtTokenUtil.getUserId(accessToken);
+        User user = userService.queryByUsername(username);
+        return ResultBean.success(user);
     }
 
     /**

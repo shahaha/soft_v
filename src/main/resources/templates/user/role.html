@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <title>数据操作 - 数据表格</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+  <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+  <!--layui.table图片显示不全，需重新定义CSS  -->
+  <style type="text/css">
+    .layui-table-cell {
+      text-align: center;
+      height: auto;
+      white-space: normal;
+    }
+
+    .layui-table img {
+      max-height: 50px;
+      /* min-height: 80px; */
+    }
+
+    /* 隐藏表格横向滚动条 */
+    .layui-table-body {
+      overflow-x: hidden !important;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 表头工具栏模板 -->
+  <script type="text/html" id="labTableToolbar">
+    <button lay-event="add" type="button" class="layui-btn">
+      <i class="layui-icon">&#xe608;</i>添加角色
+    </button>
+    <!-- <a class="layui-btn" lay-event="add" class="layui-inline"><i class="layui-icon">&#xe608;</i>添加</a> -->
+  </script>
+  <!-- 表格 -->
+  <table class="layui-show" id="demo" name="table" lay-filter="test"></table>
+  <!-- 操作栏模板 -->
+  <script type="text/html" id="barDemo">
+    {{#  if(d.roleName == "admin" && d.id == 1){ }}
+    <a class="layui-btn layui-btn-disabled layui-btn-xs">编辑</a>
+    <a class="layui-btn layui-btn-disabled layui-btn-xs">删除</a>
+    {{#  } else { }}
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{#  } }}
+  </script>
+</body>
+
+<script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+<script>
+  //这里设置一个空的json串，用于接受表格的行信息
+  var json;
+  layui.config({
+    base: '../../../layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table'], function () {
+    var table = layui.table,
+            $ = layui.$,
+            setter = layui.setter,
+            admin = layui.admin;
+    table.set({
+      headers: { //通过 request 头传递
+        "token": layui.data(setter.tableName)['token'] || ""
+      }
+    })
+    table.render({
+      id: "table", //定义id 方便重载
+      elem: '#demo',
+      loading: true, //翻页加loading
+      url: '/role/list',
+      height: 'full-20', //铺满离最下方差多少
+      even: true,
+      skin: 'row',
+      limit: 10, //每页数据条目
+      toolbar: '#labTableToolbar', //开启头部工具栏，并为其绑定左侧模板
+      cols: [
+        [{
+            type: 'numbers',
+            title: '序号',
+            align: "center",
+          },
+          {
+            field: 'roleName',
+            title: '角色名',
+            align: 'center',
+          }, {
+            align: 'center',
+            field: 'remark',
+            title: '描述'
+          }, {
+            align: 'center',
+            fixed: 'right',
+            toolbar: '#barDemo',
+            title: '操作'
+          }
+        ]
+      ],
+      response: { //如果你想重新规定返回的数据格式
+        statusCode: "200", //规定成功的状态码，默认：0
+      },
+      done: function (res) { //返回数据执行回调函数
+        layer.closeAll("loading"); //返回数据关闭loading
+        console.log(res);
+      }
+    });
+
+    //监听头工具栏事件
+    table.on('toolbar(test)', function (obj) {
+      console.log(obj);
+      var checkStatus = table.checkStatus(obj.config.id),
+        data = checkStatus.data; //获取选中的数据
+      switch (obj.event) {
+        case 'add':
+          layer.open({
+            type: 2,
+            title: `<i class="layui-icon layui-icon-add-1">添加角色</i>`,
+            area: ['420px', '520px'],
+            shadeClose: false, //点击遮罩关闭
+            skin: 'layui-layer-molv',
+            content: ['addRole'] //目标地址
+          });
+          break;
+      };
+    });
+
+    //监听行工具事件
+    table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+      console.log(obj);
+      var data = obj.data, //获得当前行数据          
+        layEvent = obj.event; //获得 lay-event 对应的值
+      if (layEvent === 'del') {
+        // console.log(data);
+        layer.confirm('真的要删除"<span style="color: #FF5722;">' + data.roleName + '</span>"角色么？', {
+          title: "删除确认"
+        }, function (index) {
+          //向服务端发送删除指令
+          admin.req({
+            url: '/role/delete',
+            method: "post",
+            data: {
+              id: data.id
+            },
+            done: function (data) {
+              console.log(data);
+              obj.del(); //删除对应行（tr）的DOM结构
+              layer.close(index);
+              layer.msg(data.msg);
+            },
+            fail: function (data) {
+              layer.msg(data.msg);
+            }
+          });
+          // $.post("/apis/shiro/deleteRole", {
+          //   RoleId: data.id
+          // }, function (data) {
+          //   console.log(data)
+          //   if (data.code == 1) {
+          //     //删除对应行（tr）的DOM结构
+          //     obj.del();
+          //     layer.close(index);
+          //   }
+          //   layer.msg(data.msg);
+          // });
+        });
+      } else if (layEvent === 'edit') {
+        //这行是监听到的表格行数据信息，复制给json全局变量。 
+        json = JSON.stringify(data);
+        layer.open({
+          type: 2,
+          title: `<i class="layui-icon layui-icon-edit">修改角色信息</i>`,
+          area: ['420px', '520px'],
+          shadeClose: false, //点击遮罩关闭
+          content: ['editRole'], //目标地址 不出现滚动条
+          skin: 'layui-layer-molv',
+          success: function (layero, index) {
+            console.log(data);
+          }
+        });
+      }
+    });
+
+  });
+</script>
+
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <style>
+        .layui-form-item {
+            margin: 5px 0 0 0;
+        }
+
+        /* 弹窗中select被遮挡 */
+        .layui-form-select dl {
+            max-height: 220px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width:70px;">软件类型：</label>
+            <div class="layui-input-inline">
+                <select id="softType" lay-filter="softType" lay-verify="required">
+                </select>
+            </div>
+        </div>
+    </form>
+    <!-- 动态添加筛选条件  -->
+    <div id="msg" style="margin-top:-35px;margin-left:300px;"></div>
+    <!-- 表格模板 -->
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+    <!-- 操作栏模板 -->
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="tools">工具</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="download">下载</a>
+    </script>
+
+    <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+    <script>
+        layui.config({
+            base: '../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index', //主入口模块
+            dynamicCondition: 'dynamicCondition/dynamicCondition'
+        }).use(['index', 'dynamicCondition'], function () {
+            var $ = layui.$,
+                table = layui.table,
+                admin = layui.admin,
+                form = layui.form,
+                setter = layui.setter,
+                dynamicCondition = layui.dynamicCondition;
+            table.set({
+                headers: { //通过 request 头传递
+                    "token": layui.data(setter.tableName)['token'] || ""
+                }
+            })
+            var softType_value = ""; //软件类型
+            var dataFields = []; //动态筛选条件
+            var cols = []; //动态表项
+            //获取软件类型
+            admin.req({
+                url: '/category/list',
+                done: function (data) {
+                    // console.log(data);
+                    $.each(data.data, function (index, item) {
+                        $('#softType').append(new Option(item.categoryName, item.id));
+                    });
+                    softType_value = data.data[0].id;
+                    //获取筛选项
+                    getQueryConditions(softType_value);
+                    //获取表头
+                    getValidFields(softType_value);
+                    form.render("select");
+                },
+                fail: function (data) {
+                    layer.msg(data.msg);
+                }
+            });
+            //监听下拉列表改变
+            form.on('select(softType)', function (data) {
+                // console.log(data.value);
+                if (data.value == softType_value) {
+                    return;
+                }
+                softType_value = data.value;
+                //更新筛选项
+                getQueryConditions(softType_value);
+                //更新表头
+                getValidFields(softType_value);
+                $('#softType').val(data.value);
+            });
+            //获取需要展示的表头字段
+            function getValidFields(categoryId) {
+                admin.req({
+                    url: '/extFieldRelation/getValidFieldsByCategory?category=' +
+                        categoryId,
+                    done: function (data) {
+                        // console.log(data);
+                        //填充表项
+                        cols = []; //清空
+                        $.each(data.data, function (index, item) {
+                            // console.log(item);
+                            if (item.fieldName != "id" && item.fieldName != "address" &&
+                                item.fieldName != "tools") {
+                                obj = new Object();
+                                obj.field = item.fieldName;
+                                obj.title = item.fieldDes;
+                                obj.align = "center";
+                                obj.width = "120";
+                                cols.push(obj);
+                            }
+                        });
+                        //添加操作栏
+                        var obj = {
+                            fixed: 'right',
+                            title: '操作',
+                            toolbar: '#barDemo',
+                            width: 150,
+                            align: "center"
+                        }
+                        cols.push(obj);
+                        // cols.forEach((item, index, array) => {
+                        //     console.log(item)
+                        // })
+                        //加载表格
+                        tableRender(softType_value);
+                    },
+                    fail: function (data) {
+                        layer.msg(data.msg);
+                    }
+                });
+            }
+            //获取对应软件类型筛选条件
+            function getQueryConditions(categoryId) {
+                admin.req({
+                    url: '/extFieldRelation/getQueryConditionsAndDataByCategory?categoryId=' +
+                        categoryId,
+                    done: function (data) {
+                        // console.log(data);
+                        //解析构建dataFields
+                        dataFields = []; //清空
+                        $.each(data.data, function (index, item) {
+                            obj = new Object();
+                            obj.field = item.fieldName;
+                            obj.title = item.fieldDes;
+                            obj.edit = item.type;
+                            if (item.type == "select") {
+                                var select = document.createElement("select");
+                                item.value.forEach(function (item, index, arr) {
+                                    select.append(new Option(item.name, item
+                                        .value));
+                                });
+                                obj.templet = select;
+                            }
+                            dataFields.push(obj);
+                        });
+                        //初始化动态条件查询实例
+                        dynamicCondition.create({
+                            fields: dataFields, //通过json对象传入
+                            type: "simple", //‘simple’/‘complex’.默认为复杂模式。
+                            conditionTextId: "#msg", //显示已选择条件
+                            tableId: "testTable", //对应table.render(config)的config.id参数
+                            displayModel: 'popup', //是否弹窗 取值：'popup '/'unpopup ’
+                            popupBtnsWidth: 200, //查询按钮离右侧宽度
+                            popupShowQueryBtn: true, //是否显示查询按钮
+                            popupMsgText: '' //提示文字
+                        });
+
+                    },
+                    fail: function (data) {
+                        layer.msg(data.msg);
+                    }
+                });
+            }
+
+            //表格
+            function tableRender(softType_value) {
+                // console.log(cols);
+                table.render({
+                    id: "testTable", //定义id 方便重载
+                    elem: '#test',
+                    url: '/soft/queryByExampleAndPage',
+                    method: "post",
+                    where: {
+                        category: softType_value
+                    },
+                    height: 'full-90', //铺满离最下方差多少
+                    cols: [cols],
+                    page: true, //开启分页
+                    limit: 10, //每页数据条目
+                    response: { //如果你想重新规定返回的数据格式
+                        statusCode: "200", //规定成功的状态码，默认：0
+                    },
+                    parseData: function (res) { //res 即为原始返回的数据
+                        return {
+                            "code": res.code, //解析接口状态
+                            "msg": res.msg, //解析提示文本
+                            "count": res.data.total, //解析数据长度
+                            "data": res.data.rows //回调数据
+                        };
+                    },
+                    done: function (res) { //返回数据执行回调函数
+                        console.log(res);
+                    }
+                });
+
+            }
+
+            //监听行工具事件
+            table.on('tool(test)', function (obj) {
+                var data = obj.data;
+                if (obj.event === 'download') {
+                    console.log(data.address);
+                    if(!data.address){
+                        layer.msg("文件为空！");
+                        return;
+                    }
+                    // window.location.href="/api/file/"+data.id;
+                    // 获取XMLHttpRequest
+                    var xmlResquest = new XMLHttpRequest();
+                    // 发起请求
+                    xmlResquest.open("GET", "/file/download?address=" + data.address, true);
+                    // console.log(layui.data(setter.tableName)['token'])
+                    xmlResquest.setRequestHeader("token", layui.data(setter.tableName)['token']);
+                    xmlResquest.responseType = "blob";
+                    // 返回
+                    xmlResquest.onload = function (oEvent) {
+                        // alert(this.status);
+                        if (this.status == 200) {
+                            var content = xmlResquest.response;
+                            // 组装a标签
+                            var elink = document.createElement("a");
+                            //设置文件下载路径
+                            elink.download = data.address.substring((data.address.lastIndexOf("-")) + 1);
+       
+                            elink.style.display = "none";
+                            //把后端response响应二进制文件放到blob
+                            var blob = new Blob([content]);
+                            //解决下载不存在文件的问题，根据blob大小判断
+                            if (blob.size == 0) {
+                                layer.msg('服务器没找到此文件，请联系管理员!');
+                            } else {
+                                //通过url去下载
+                                elink.href = URL.createObjectURL(blob);
+                                document.body.appendChild(elink);
+                                elink.click();
+                                document.body.removeChild(elink);
+                            }
+                        }
+                    };
+                    xmlResquest.send();
+                    //location.href = "/file/download?address=" + data.address ; //下载软件
+                } else if (obj.event === 'tools') {
+                    layer.prompt({
+                        formType: 2,
+                        value: data.code
+                    }, function (value, index) {
+                        obj.update({
+                            code: value
+                        });
+                        layer.close(index);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
