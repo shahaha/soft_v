@@ -23,7 +23,7 @@ public class SoftVApplication {
         String path = env.getProperty("server.servlet.context-path") == null ? "" : env.getProperty("server.servlet.context-path");
         log.info("\n----------------------------------------------------------\n\t" +
                 "Application Soft_V is running! Access URLs:\n\t" +
-                "Local: \t\thttp://localhost:" + port + path + "/\n\t" +
+                "Local: \t\thttp://localhost:" + port + path + "/toLogin\n\t" +
 //                "External: \thttp://" + ip + ":" + port + path + "/\n\t" +
                 "swagger-ui: \thttp://" + ip + ":" + port + path + "/swagger-ui.html\n\t" +
 //                "Doc: \t\thttp://" + ip + ":" + port + path + "/doc.html\n" +

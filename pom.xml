@@ -128,10 +128,6 @@
         </dependency>
         <!--thymeleaf默认使用html5规则标签必须闭合等 使用次此包正常解析-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.github.theborakompanioni</groupId>
             <artifactId>thymeleaf-extras-shiro</artifactId>
             <version>2.0.0</version>
@@ -143,6 +139,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                </configuration>
             </plugin>
         </plugins>
         <!-- 如果不添加此节点mybatis的mapper.xml文件都会被漏掉。 -->

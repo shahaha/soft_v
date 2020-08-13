@@ -1,13 +1,17 @@
 package com.skylab.soft_v.component;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.druid.support.json.JSONUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Const;
 import com.skylab.soft_v.common.JWTToken;
+import com.skylab.soft_v.common.ResultBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -15,6 +19,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 @Slf4j
 public class JWTFilter extends BasicHttpAuthenticationFilter {
@@ -39,9 +45,28 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         String token = req.getHeader(Const.ACCESS_TOKEN);
         log.info("request 接口地址：{}",req.getRequestURI());
         log.info("request 接口的请求方式{}",req.getMethod());
-        JWTToken jwtToken = new JWTToken(token);
-        // 提交给realm进行登入，如果错误他会抛出异常并被捕获
-        getSubject(request,response).login(jwtToken);
+        try {
+            if (StringUtils.isEmpty(token)) {
+                throw new BusinessException(500,"token为空!");
+            }
+            JWTToken jwtToken = new JWTToken(token);
+            // 提交给realm进行登入，如果错误他会抛出异常并被捕获
+            getSubject(request,response).login(jwtToken);
+        } catch (BusinessException e) {
+            customResponse(response, e.getDetailMessage());
+            return false;
+        } catch (AuthenticationException e) {
+            if (e.getCause() instanceof BusinessException) {
+                BusinessException exception = (BusinessException) e.getCause();
+                customResponse(response,  exception.getDetailMessage());
+            } else {
+                customResponse(response, "用户未登录，请重新登录");
+            }
+            return false;
+        } catch (Exception e) {
+            customResponse(response, "系统出错");
+            return false;
+        }
         // 如果没有抛出异常则代表登入成功，返回true
         return true;
     }
@@ -68,5 +93,32 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         String token = req.getHeader("token");
         //log.info("JwtFilter-->>>isLoginAttempt-Method:返回true" + token);
         return token != null;
+    }
+    /**
+     * 自定义响应前端
+     *
+     * @param response
+     * @param msg
+     * @return void
+     * @throws
+     * @Author: 小霍
+     * @UpdateUser:
+     * @Version: 0.0.1
+     */
+    private void customResponse(ServletResponse response, String msg) {
+        try {
+            ResultBean result = ResultBean.internalError(msg);
+            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+            response.setCharacterEncoding("UTF-8");
+            ObjectMapper objectMapper = new ObjectMapper();
+            String str = objectMapper.writeValueAsString(result);
+            log.error(str);
+            OutputStream outputStream = response.getOutputStream();
+            outputStream.write(str.getBytes("UTF-8"));
+            outputStream.flush();
+        } catch (IOException e) {
+            log.error("customResponse...error:{}", e);
+        }
+
     }
 }

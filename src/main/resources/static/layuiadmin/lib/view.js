@@ -47,7 +47,11 @@ layui.define(['laytpl', 'layer'], function(exports){
       key: setter.request.tokenName
       ,remove: true
     });
-    
+    //清空本地记录的 token
+    layui.data(setter.tableName, {
+      key: setter.request.refreshToken
+      ,remove: true
+    });
     //跳转到登入页
     //location.hash = '/user/login'; 
     callback && callback();
@@ -70,19 +74,27 @@ layui.define(['laytpl', 'layer'], function(exports){
     options.headers = options.headers || {};
     
     if(request.tokenName){
-      var sendData = typeof options.data === 'string' 
+      var sendData = typeof options.data === 'string'
         ? JSON.parse(options.data) 
       : options.data;
 
-      //自动给参数传入默认 token
+      /*//自动给参数传入默认 token
       options.data[request.tokenName] = request.tokenName in sendData
         ?  options.data[request.tokenName]
       : (layui.data(setter.tableName)[request.tokenName] || '');
+      //自动给参数传入默认 refresh token
+      options.data[request.refreshToken] = request.refreshToken in sendData
+          ?  options.data[request.refreshToken]
+          : (layui.data(setter.tableName)[request.refreshToken] || '');*/
       
       //自动给 Request Headers 传入 token
       options.headers[request.tokenName] = request.tokenName in options.headers 
         ?  options.headers[request.tokenName]
       : (layui.data(setter.tableName)[request.tokenName] || '');
+      //自动给 Request Headers 传入 refresh token
+      options.headers[request.refreshToken] = request.refreshToken in options.headers
+          ?  options.headers[request.refreshToken]
+          : (layui.data(setter.tableName)[request.refreshToken] || '');
     }
     
     delete options.success;

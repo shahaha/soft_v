@@ -14,18 +14,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ShiroExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
+    @ResponseBody
     public ResultBean<Pager<?>> unauthorizedException(Exception e){
-        return ResultBean.internalError("权限不足",new Pager<>(0,0,null,0));
+        return ResultBean.error("权限不足",new Pager<>(0,0,null,0));
     }
 
     @ExceptionHandler(AuthorizationException.class)
+    @ResponseBody
     public ResultBean<?> authorizationException(Exception e){
         return ResultBean.internalError("用户没有登录，请先登录");
     }
 
     @ExceptionHandler(BusinessException.class)
+    @ResponseBody
     public ResultBean<?> businessException(BusinessException e){
-        return ResultBean.internalError(e.getDetailMessage());
+        return ResultBean.error(e.getDetailMessage());
     }
 
 }

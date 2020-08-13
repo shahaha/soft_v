@@ -200,14 +200,8 @@
       var $ = layui.$,
         admin = layui.admin,
         setter = layui.setter;
-      if (undefined === layui.data(setter.tableName)['token']) {
-        admin.exit(function () {
-          top.location.href = '/toLogin';
-        });
-      }
       admin.req({
         url: '/user/getLoginUser', //实际使用请改成服务端真实接口
-        type: 'post',
         done: function (res) {
           //console.log(res);
           $("#userRealName").text(res.data.realName);

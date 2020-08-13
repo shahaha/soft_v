@@ -13,7 +13,6 @@ public class MyMvcConfig implements WebMvcConfigurer {
 //    private final String[] excludePath = {"/static","/","/index","/toLogin","/user/login","/webjars/**","/layuiadmin/**","/reg","/forget","/swagger-ui.html","/swagger-resources/**"};
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/index/success").setViewName("main");
         registry.addViewController("/toLogin").setViewName("user/login");
     }
     @Bean

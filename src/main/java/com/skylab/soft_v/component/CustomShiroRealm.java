@@ -60,9 +60,6 @@ public class CustomShiroRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         log.info("======登录验证========");
         String token = (String) authenticationToken.getCredentials();
-        if (StringUtils.isEmpty(token)) {
-            throw new AuthenticationException("token为空!");
-        }
         return new SimpleAuthenticationInfo(token, token, getName());
     }
 
