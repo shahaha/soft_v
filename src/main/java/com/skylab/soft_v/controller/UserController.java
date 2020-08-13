@@ -74,6 +74,7 @@ public class UserController {
     @PostMapping(value = "login")
     @ActionLog("用户登录")
     public ResultBean<UserVO> login(String username, String password){
+        log.info("login");
         User user = userService.queryByUsername(username);
         //验证账号是否存在
         if(user == null){
