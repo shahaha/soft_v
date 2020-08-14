@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service;
 
+import com.skylab.soft_v.bean.AccountVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.User;
 
@@ -67,17 +68,19 @@ public interface UserService {
      * 新增数据 可以有空字段
      *
      * @param user 实例对象
+     * @param roleIds
      * @return 实例对象
      */
-    User insertSelective(User user);
+    User insertSelective(User user, List<Integer> roleIds);
 
     /**
      * 修改数据
      *
      * @param user 实例对象
+     * @param roles
      * @return 实例对象
      */
-    User update(User user);
+    User update(User user, List<Integer> roles);
 
     /**
      * 通过主键删除数据
@@ -93,4 +96,27 @@ public interface UserService {
      * @return 实例对象
      */
     User queryByUsername(String username);
+
+    /**
+     * 根据条件查询用户及角色列表
+     * @param msg 条件
+     * @return 对象列表
+     */
+    List<AccountVO> queryAccountByMsg(String msg);
+
+    /**
+     * 判断用户是否在使用
+     * @param id 用户id
+     * @return 是否使用
+     */
+    boolean inUser(Integer id);
+
+    /**
+     * 修改密码
+     * @param passwordOld 老密码
+     * @param passwordNew 新密码
+     * @param accessToken accessToken
+     * @param refresgToken refresgToken
+     */
+    void userUpdatePwd(String passwordOld, String passwordNew, String accessToken, String refresgToken);
 }

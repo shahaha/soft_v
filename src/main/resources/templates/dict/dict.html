@@ -170,7 +170,8 @@
              form = layui.form; //元素操作
          table.set({
              headers: { //通过 request 头传递
-                 "token": layui.data(setter.tableName)['token'] || ""
+                 "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                 "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
              }
          })
          // 默认变量

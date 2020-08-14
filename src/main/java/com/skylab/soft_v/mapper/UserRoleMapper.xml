@@ -94,6 +94,9 @@
     <delete id="deleteById">
         delete from soft_v_sys.user_role where id = #{id}
     </delete>
+    <delete id="deleteByUserId">
+        delete from soft_v_sys.user_role where user_id = #{id}
+    </delete>
     <!--查询总行数-->
     <select id="count" resultType="int">
         select count(1)

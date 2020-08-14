@@ -8,7 +8,19 @@
         <result property="password" column="password" jdbcType="VARCHAR"/>
         <result property="realName" column="real_name" jdbcType="VARCHAR"/>
     </resultMap>
-
+    <!--账号对象-->
+    <resultMap type="com.skylab.soft_v.bean.AccountVO" id="AccountVOMap">
+        <result property="userId" column="userId" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="realName" column="real_name" jdbcType="VARCHAR"/>
+        <collection property="roles" resultMap="RoleMap"/>
+    </resultMap>
+    <!--包含的role对象-->
+    <resultMap type="com.skylab.soft_v.entity.Role" id="RoleMap">
+        <result property="id" column="roleId" jdbcType="INTEGER"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
     <!--查询单个-->
     <select id="queryById" resultMap="UserMap">
         select
@@ -118,5 +130,22 @@
         id, username, password, real_name
         from soft_v_sys.user
         where username = #{username}
+    </select>
+
+    <!--根据角色名、用户名模糊查找账号-->
+    <select id="queryAccountByMsg" resultMap="AccountVOMap" parameterType="map">
+        SELECT
+            b.id userId,b.real_name,b.username,c.id roleId,c.remark,c.role_name
+        FROM
+            user_role a
+        LEFT JOIN `user` b ON a.user_id = b.id
+        LEFT JOIN role c on a.role_id = c.id
+        WHERE CONCAT(b.real_name, c.role_name) LIKE CONCAT('%',#{msg},'%')
+        ORDER BY user_id
+    </select>
+    <select id="inUser" resultType="int">
+        select count(1)
+        from soft_v_sys.soft
+        where engineer = #{id} or sale = #{id}
     </select>
 </mapper>

@@ -5,6 +5,7 @@ import com.skylab.soft_v.entity.Log;
 import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.service.LogService;
 import com.skylab.soft_v.util.IpUtils;
+import com.skylab.soft_v.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.JoinPoint;
@@ -39,11 +40,9 @@ public class WebLogAspect {
         HttpServletRequest request = ((ServletRequestAttributes)attributes).getRequest();
         Log log1 = new Log();
         log1.setTime(new Date());
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
-        if (user == null) {
-            log1.setRealName(null);
-        }else {
-            log1.setRealName(user.getRealName());
+        if (SecurityUtils.getSubject().getPrincipal() != null){
+            String username = JwtTokenUtil.getUsername(SecurityUtils.getSubject().getPrincipal().toString());
+            log1.setRealName(username);
         }
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();

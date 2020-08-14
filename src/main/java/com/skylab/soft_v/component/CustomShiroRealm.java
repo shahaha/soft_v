@@ -5,9 +5,11 @@ import com.skylab.soft_v.common.Const;
 import com.skylab.soft_v.common.JWTToken;
 import com.skylab.soft_v.entity.Permission;
 import com.skylab.soft_v.entity.Role;
+import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.service.PermissionService;
 import com.skylab.soft_v.service.RedisService;
 import com.skylab.soft_v.service.RoleService;
+import com.skylab.soft_v.service.UserService;
 import com.skylab.soft_v.util.JwtTokenUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 //@Component
 public class CustomShiroRealm extends AuthorizingRealm {
+    @Resource
+    private UserService userService;
     @Resource
     private RoleService roleService;
     @Resource
@@ -77,10 +81,13 @@ public class CustomShiroRealm extends AuthorizingRealm {
         String accessToken= (String) principalCollection.getPrimaryPrincipal();
         Claims claimsFromToken = JwtTokenUtil.getClaimsFromToken(accessToken);
         String userId=JwtTokenUtil.getUserId(accessToken);
-        log.info("userId={}",userId);
+        User user = userService.queryByUsername(userId);
+        log.info("userId={}",user.getId());
         if(redisService.hasKey(Const.JWT_REFRESH_KEY+userId)&&redisService.getExpire(Const.JWT_REFRESH_KEY+userId, TimeUnit.MILLISECONDS)>JwtTokenUtil.getRemainingTime(accessToken)){
-            Set<Role> roles = roleService.queryByUserId(Integer.parseInt(userId));
+            log.info("dssss");
+            Set<Role> roles = roleService.queryByUserId(user.getId());
             for (Role role : roles){
+                log.info(role.getRoleName());
                 simpleAuthorizationInfo.addRole(role.getRoleName());
                 Set<Permission> permissions = permissionService.queryByRoleId(role.getId());
                 for (Permission permission : permissions){
@@ -89,6 +96,7 @@ public class CustomShiroRealm extends AuthorizingRealm {
             }
 
         }else {
+            log.info("eeeeeee");
             if(claimsFromToken.get(Const.PERMISSIONS_INFOS_KEY)!=null){
                 simpleAuthorizationInfo.addStringPermissions((Collection<String>) claimsFromToken.get(Const.PERMISSIONS_INFOS_KEY));
             }

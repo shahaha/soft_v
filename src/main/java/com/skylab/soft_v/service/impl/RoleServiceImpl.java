@@ -2,9 +2,12 @@ package com.skylab.soft_v.service.impl;
 
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.Role;
+import com.skylab.soft_v.entity.RolePermission;
 import com.skylab.soft_v.mapper.RoleMapper;
+import com.skylab.soft_v.mapper.RolePermissionMapper;
 import com.skylab.soft_v.service.RoleService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -20,6 +23,8 @@ import java.util.Set;
 public class RoleServiceImpl implements RoleService {
     @Resource
     private RoleMapper roleMapper;
+    @Resource
+    private RolePermissionMapper rolePermissionMapper;
 
     /**
      * 通过ID查询单条数据
@@ -103,11 +108,19 @@ public class RoleServiceImpl implements RoleService {
      * 新增数据 可以有空字段
      *
      * @param role 实例对象
+     * @param permissionIds
      * @return 实例对象
      */
     @Override
-    public Role insertSelective(Role role) {
+    @Transactional
+    public Role insertSelective(Role role, List<Integer> permissionIds) {
         this.roleMapper.insertSelective(role);
+        for (Integer permissionId : permissionIds) {
+            RolePermission rolePermission = new RolePermission();
+            rolePermission.setPId(permissionId);
+            rolePermission.setRoleId(role.getId());
+            rolePermissionMapper.insertSelective(rolePermission);
+        }
         return role;
     }
 
@@ -115,11 +128,19 @@ public class RoleServiceImpl implements RoleService {
      * 修改数据
      *
      * @param role 实例对象
+     * @param permissionIds
      * @return 实例对象
      */
     @Override
-    public Role update(Role role) {
+    public Role update(Role role, List<Integer> permissionIds) {
         this.roleMapper.update(role);
+        rolePermissionMapper.deleteByRoleId(role.getId());
+        for (Integer permissionId : permissionIds) {
+            RolePermission rolePermission = new RolePermission();
+            rolePermission.setPId(permissionId);
+            rolePermission.setRoleId(role.getId());
+            rolePermissionMapper.insertSelective(rolePermission);
+        }
         return this.queryById(role.getId());
     }
 
@@ -130,7 +151,9 @@ public class RoleServiceImpl implements RoleService {
      * @return 是否成功
      */
     @Override
+    @Transactional
     public boolean deleteById(Integer id) {
+        rolePermissionMapper.deleteByRoleId(id);
         return this.roleMapper.deleteById(id) > 0;
     }
 
@@ -143,5 +166,16 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Set<Role> queryByUserId(Integer userId) {
         return roleMapper.queryByUserId(userId);
+    }
+
+    /**
+     * 判断角色是否在使用
+     *
+     * @param id 角色id
+     * @return 是否使用
+     */
+    @Override
+    public boolean inUser(Integer id) {
+        return roleMapper.inUser(id) > 0;
     }
 }

@@ -83,4 +83,10 @@ public interface UserRoleMapper {
      * @return 总行数
      */
     int count();
+
+    /**
+     * 通过用户Id删除
+     * @param id 用户Id
+     */
+    void deleteByUserId(Integer id);
 }

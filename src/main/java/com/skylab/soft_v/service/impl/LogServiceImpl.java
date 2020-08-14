@@ -57,26 +57,15 @@ public class LogServiceImpl implements LogService {
     }
 
     /**
-     * 通过实体作为筛选条件查询
-     *
-     * @param log 实例对象
-     * @return 对象列表
-     */
-    @Override
-    public List<Log> queryByExample(Log log) {
-        return this.logMapper.queryByExample(log);
-    }
-
-    /**
      * 通过实体作为筛选条件查询并分页
      *
-     * @param log   实例对象
+     * @param conditions   实例对象
      * @param page  查询起始位置
      * @param limit 查询条数
      * @return 对象列表
      */
-    public Pager<Log> queryByExampleAndPage(Log log, int page, int limit) {
-        List<Log> list = logMapper.queryByExample(log);
+    public Pager<Log> queryByExampleAndPage(String conditions, int page, int limit) {
+        List<Log> list = logMapper.queryByExample(conditions);
         Pager<Log> pager = new Pager<Log>();
         int count = list.size();
         pager.setTotal(count);

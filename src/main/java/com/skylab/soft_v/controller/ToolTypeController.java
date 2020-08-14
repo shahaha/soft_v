@@ -1,5 +1,6 @@
 package com.skylab.soft_v.controller;
 
+import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.entity.ToolType;
@@ -63,8 +64,8 @@ public class ToolTypeController {
      */
     @GetMapping("list")
     public ResultBean<List<ToolType>> list() {
-        List<ToolType> categories = toolTypeService.queryList();
-        return ResultBean.success(categories);
+        List<ToolType> toolTypes = toolTypeService.queryList();
+        return ResultBean.success(toolTypes);
     }
 
     /**
@@ -79,7 +80,7 @@ public class ToolTypeController {
             ToolType insertSelective = toolTypeService.insertSelective(toolType);
             return ResultBean.success(insertSelective);
         } catch (Exception e) {
-            return ResultBean.error("保存失败");
+            throw new BusinessException(400,"保存失败");
         }
     }
 
@@ -111,7 +112,7 @@ public class ToolTypeController {
             ToolType update = toolTypeService.update(toolType);
             return ResultBean.success(update);
         } catch (Exception e) {
-            return ResultBean.error("修改失败");
+            throw new BusinessException(400,"修改失败");
         }
     }
 

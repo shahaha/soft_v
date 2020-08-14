@@ -1,7 +1,8 @@
 package com.skylab.soft_v.component;
 
 import cn.hutool.core.lang.Assert;
-import com.alibaba.druid.support.json.JSONUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 
@@ -27,7 +28,13 @@ public class MyStringRedisSerializer implements RedisSerializer<Object> {
         if(object instanceof String){
             return object.toString().getBytes(charset);
         }else {
-            String string = JSONUtils.toJSONString(object);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String string = null;
+            try {
+                string = objectMapper.writeValueAsString(object);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             return string.getBytes(charset);
         }
     }

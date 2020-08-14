@@ -1,5 +1,6 @@
 package com.skylab.soft_v.mapper;
 
+import com.skylab.soft_v.bean.AccountVO;
 import com.skylab.soft_v.entity.User;
 
 import java.util.List;
@@ -90,4 +91,19 @@ public interface UserMapper {
      * @return 实例对象
      */
     User queryByUsername(String username);
+    /**
+     * 根据条件查询用户及角色列表
+     *
+     * @param msg 条件
+     * @return 对象列表
+     */
+    List<AccountVO> queryAccountByMsg(String msg);
+
+    /**
+     * 判断用户是否在使用
+     *
+     * @param id 用户id
+     * @return 是否使用
+     */
+    Integer inUser(Integer id);
 }

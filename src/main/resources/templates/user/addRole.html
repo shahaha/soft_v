@@ -81,7 +81,8 @@
                 url: '/permission/list', //请求数据接口
                 //url: setter.base + 'json/data.json',
                 headers: { //通过 request 头传递
-                    "token": layui.data(setter.tableName)['token'] || ""
+                    "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                    "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
                 },
                 dataStyle: "layuiStyle", //使用layui风格的数据格式
                 response: {

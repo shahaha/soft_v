@@ -64,5 +64,7 @@ jwt:
   refreshTokenExpireTime: PT8H
   refreshTokenExpireAppTime: P30D
   issuer: skylab.com
+cross:
+  origin: '*'
 #mybatis:
 #  mapper-locations: classpath:com/tgck/soft_manager/mapper/*.xml

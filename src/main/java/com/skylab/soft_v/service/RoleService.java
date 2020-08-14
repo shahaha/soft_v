@@ -68,17 +68,19 @@ public interface RoleService {
      * 新增数据 可以有空字段
      *
      * @param role 实例对象
+     * @param permissionIds
      * @return 实例对象
      */
-    Role insertSelective(Role role);
+    Role insertSelective(Role role, List<Integer> permissionIds);
 
     /**
      * 修改数据
      *
      * @param role 实例对象
+     * @param permissionIds
      * @return 实例对象
      */
-    Role update(Role role);
+    Role update(Role role, List<Integer> permissionIds);
 
     /**
      * 通过主键删除数据
@@ -94,4 +96,11 @@ public interface RoleService {
      * @return 对象列表
      */
     Set<Role> queryByUserId(Integer userId);
+
+    /**
+     * 判断角色是否在使用
+     * @param id 角色id
+     * @return 是否使用
+     */
+    boolean inUser(Integer id);
 }

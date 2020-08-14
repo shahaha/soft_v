@@ -1,5 +1,6 @@
 package com.skylab.soft_v.controller;
 
+import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.entity.Category;
@@ -79,7 +80,7 @@ public class CategoryController {
             Category insertSelective = categoryService.insertSelective(category);
             return ResultBean.success(insertSelective);
         } catch (Exception e) {
-            return ResultBean.error("保存失败");
+            throw new BusinessException(400,"保存失败");
         }
     }
 
@@ -95,7 +96,7 @@ public class CategoryController {
         if (b) {
             return ResultBean.success("删除成功！");
         } else {
-            return ResultBean.error("删除失败！");
+            throw new BusinessException(400,"修改失败");
         }
     }
 

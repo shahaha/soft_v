@@ -1,7 +1,5 @@
 package com.skylab.soft_v.component;
 
-import cn.hutool.core.util.StrUtil;
-import com.alibaba.druid.support.json.JSONUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Const;
@@ -26,21 +24,11 @@ import java.io.OutputStream;
 public class JWTFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        //log.info("JwtFilter-->>>isAccessAllowed");
-//        if (isLoginAttempt(request,response)){
-            try {
-                executeLogin(request,response);
-                return true;
-            }catch (Exception e){
-                throw new AuthenticationException("Token失效，请重新登录", e);
-            }
-//        }
-//        return true;
+        return false;
     }
 
     @Override
-    protected boolean executeLogin(ServletRequest request, ServletResponse response) {
-        //log.info("JwtFilter-->>>executeLogin-Method");
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) {
         HttpServletRequest req = (HttpServletRequest) request;
         String token = req.getHeader(Const.ACCESS_TOKEN);
         log.info("request 接口地址：{}",req.getRequestURI());
@@ -71,29 +59,28 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         return true;
     }
 
-    @Override
-    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
-        //log.info("JwtFilter-->>>preHandle-Method");
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
-        httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
-        // 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
-        if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
-            httpServletResponse.setStatus(HttpStatus.OK.value());
-            return false;
-        }
-        return super.preHandle(request, response);
-    }
+//    @Override
+//    protected boolean executeLogin(ServletRequest request, ServletResponse response) {
+//        //log.info("JwtFilter-->>>executeLogin-Method");
+//
+//    }
 
-    @Override
-    protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        HttpServletRequest req = (HttpServletRequest) request;
-        String token = req.getHeader("token");
-        //log.info("JwtFilter-->>>isLoginAttempt-Method:返回true" + token);
-        return token != null;
-    }
+//    @Override
+//    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+//        log.info("JwtFilter-->>>preHandle-Method");
+//        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+//        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+//        httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
+//        httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+//        httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
+//        // 跨域时会首先发送一个option请求，这里我们给option请求直接返回正常状态
+//        if (httpServletRequest.getMethod().equals(RequestMethod.OPTIONS.name())) {
+//            httpServletResponse.setStatus(HttpStatus.OK.value());
+//            return false;
+//        }
+//        return super.preHandle(request, response);
+//    }
+
     /**
      * 自定义响应前端
      *
@@ -107,12 +94,12 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     private void customResponse(ServletResponse response, String msg) {
         try {
-            ResultBean result = ResultBean.internalError(msg);
+            log.info("into Filter Exception");
+            ResultBean<?> result = ResultBean.internalError(msg);
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setCharacterEncoding("UTF-8");
             ObjectMapper objectMapper = new ObjectMapper();
             String str = objectMapper.writeValueAsString(result);
-            log.error(str);
             OutputStream outputStream = response.getOutputStream();
             outputStream.write(str.getBytes("UTF-8"));
             outputStream.flush();

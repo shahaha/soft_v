@@ -33,10 +33,10 @@ public interface LogMapper {
     /**
      * 通过实体作为筛选条件查询
      *
-     * @param log 实例对象
+     * @param conditions 条件
      * @return 对象列表
      */
-    List<Log> queryByExample(Log log);
+    List<Log> queryByExample(String conditions);
 
     /**
      * 查询所有数据

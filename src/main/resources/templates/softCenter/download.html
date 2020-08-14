@@ -44,7 +44,7 @@
     <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
     <script>
         layui.config({
-            base: '../../../layuiadmin/' //静态资源所在路径
+            base: '/layuiadmin/' //静态资源所在路径
         }).extend({
             index: 'lib/index', //主入口模块
             dynamicCondition: 'dynamicCondition/dynamicCondition'
@@ -57,7 +57,8 @@
                 dynamicCondition = layui.dynamicCondition;
             table.set({
                 headers: { //通过 request 头传递
-                    "token": layui.data(setter.tableName)['token'] || ""
+                    "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                    "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
                 }
             })
             var softType_value = ""; //软件类型
@@ -101,7 +102,7 @@
                     url: '/extFieldRelation/getValidFieldsByCategory?category=' +
                         categoryId,
                     done: function (data) {
-                        // console.log(data);
+                        console.log(data);
                         //填充表项
                         cols = []; //清空
                         $.each(data.data, function (index, item) {

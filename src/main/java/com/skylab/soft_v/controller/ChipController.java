@@ -1,11 +1,13 @@
 package com.skylab.soft_v.controller;
 
+import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.entity.Chip;
 import com.skylab.soft_v.service.ChipService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,7 +81,7 @@ public class ChipController {
             Chip insertSelective = chipService.insertSelective(chip);
             return ResultBean.success(insertSelective);
         } catch (Exception e) {
-            return ResultBean.error("保存失败");
+            throw new BusinessException(400,"保存失败");
         }
     }
 
@@ -111,7 +113,7 @@ public class ChipController {
             Chip update = chipService.update(chip);
             return ResultBean.success(update);
         } catch (Exception e) {
-            return ResultBean.error("修改失败");
+            throw new BusinessException(400,"修改失败");
         }
     }
 
@@ -141,4 +143,17 @@ public class ChipController {
         return ResultBean.success(pager);
     }
 
+    /**
+     * 根据条件分页查询
+     * @param page 当前页
+     * @param limit 每页行数
+     * @param chip 芯片
+     * @return 响应数据
+     */
+    @GetMapping("pageListByExample")
+    //@RequiresPermissions("data_select")
+    public ResultBean<Pager<Chip>> pageListByExample(int page, int limit,Chip chip){
+        Pager<Chip> pager = chipService.queryByExampleAndPage(chip, page, limit);
+        return ResultBean.success(pager);
+    }
 }
