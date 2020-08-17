@@ -234,4 +234,15 @@ public class UserServiceImpl implements UserService {
          */
         redisService.delete(Const.IDENTIFY_CACHE_KEY+username);
     }
+
+    /**
+     * 根据角色名查询用户列表
+     *
+     * @param role 角色
+     * @return 用户列表
+     */
+    @Override
+    public List<User> queryByRole(String role) {
+        return userMapper.queryByRole(role);
+    }
 }

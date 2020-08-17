@@ -197,7 +197,7 @@
 
         //监听行工具事件
         table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-            console.log(obj);
+            //console.log(obj);
             var data = obj.data, //获得当前行数据          
                 layEvent = obj.event; //获得 lay-event 对应的值
             if (layEvent === 'del') {
@@ -207,13 +207,13 @@
                 }, function (index) {
                     //向服务端发送删除指令
                     admin.req({
-                        url: '/user/deleteAccount',
+                        url: '/user/delete',
                         method: "post",
                         data: {
-                            userId: data.userId
+                            id: data.userId
                         },
                         done: function (data) {
-                            console.log(data);
+                            //console.log(data);
                             obj.del(); //删除对应行（tr）的DOM结构
                             layer.close(index);
                             layer.msg(data.msg);

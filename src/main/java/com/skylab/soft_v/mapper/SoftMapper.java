@@ -83,4 +83,11 @@ public interface SoftMapper {
      * @return 总行数
      */
     int count();
+
+    /**
+     * 清空一列
+     * @param fieldName 列名
+     * @return 影响行数
+     */
+    int cleanByColumn(String fieldName);
 }

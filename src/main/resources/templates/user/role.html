@@ -79,7 +79,7 @@
       height: 'full-20', //铺满离最下方差多少
       even: true,
       skin: 'row',
-      limit: 10, //每页数据条目
+      //limit: 10, //每页数据条目
       toolbar: '#labTableToolbar', //开启头部工具栏，并为其绑定左侧模板
       cols: [
         [{
@@ -149,7 +149,7 @@
               id: data.id
             },
             done: function (data) {
-              console.log(data);
+              //console.log(data);
               obj.del(); //删除对应行（tr）的DOM结构
               layer.close(index);
               layer.msg(data.msg);

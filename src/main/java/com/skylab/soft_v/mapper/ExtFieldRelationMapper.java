@@ -83,4 +83,43 @@ public interface ExtFieldRelationMapper {
      * @return 总行数
      */
     int count();
+
+    /**
+     * 查询有效字段并分页
+     *
+     * @param condition 查询条件
+     * @return 对象列表
+     */
+    List<ExtFieldRelation> queryValidFields(String condition);
+
+    /**
+     * 修改字段查询状态
+     *
+     * @param id     id
+     * @param isTerm 状态
+     * @return 是否成功
+     */
+    int updateIsTerm(Integer id, boolean isTerm);
+
+    /**
+     * 查询无效字段
+     *
+     * @return 对象列表
+     */
+    List<ExtFieldRelation> queryInvalidFields();
+
+    /**
+     * value可为空
+     * @param id 实例对象
+     * @return 影响行数
+     */
+    int stopUse(Integer id);
+
+    /**
+     * 扩展一个字段
+     *
+     * @param exits 字段对象
+     * @return 实例对象
+     */
+    int extendField(ExtFieldRelation exits);
 }

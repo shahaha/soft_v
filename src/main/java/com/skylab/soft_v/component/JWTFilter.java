@@ -94,7 +94,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     private void customResponse(ServletResponse response, String msg) {
         try {
-            log.info("into Filter Exception");
             ResultBean<?> result = ResultBean.internalError(msg);
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setCharacterEncoding("UTF-8");

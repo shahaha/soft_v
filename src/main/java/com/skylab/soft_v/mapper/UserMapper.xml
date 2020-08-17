@@ -32,7 +32,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByPage" resultMap="UserMap">
         select
-          id, username, password, real_name
+          id, username, real_name
         from soft_v_sys.user
         limit #{page}, #{limit}
     </select>
@@ -40,14 +40,14 @@
     <!--查询所有行数据-->
     <select id="queryList" resultMap="UserMap">
         select
-          id, username, password, real_name
+          id, username, real_name
         from soft_v_sys.user
     </select>
 
     <!--通过实体作为筛选条件查询-->
     <select id="queryByExample" resultMap="UserMap">
         select
-        id, username, password, real_name
+        id, username, real_name
         from soft_v_sys.user
         <where>
             <if test="id != null">
@@ -127,7 +127,7 @@
     <!--通过用户名查询-->
     <select id="queryByUsername" resultMap="UserMap">
         select
-        id, username, password, real_name
+        id, username,password, real_name
         from soft_v_sys.user
         where username = #{username}
     </select>
@@ -147,5 +147,12 @@
         select count(1)
         from soft_v_sys.soft
         where engineer = #{id} or sale = #{id}
+    </select>
+
+    <select id="queryByRole" resultMap="UserMap">
+        select u.id, username, real_name
+        from soft_v_sys.user u left join soft_v_sys.user_role ur on u.id = ur.user_id
+        left join soft_v_sys.role r on ur.role_id = r.id
+        where r.role_name = #{role}
     </select>
 </mapper>

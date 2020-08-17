@@ -90,6 +90,9 @@ public class RoleController {
         if (role.getRoleName() == null || "".equals(role.getRoleName())){
             return ResultBean.error("角色名不能为空！");
         }
+        if (role.getRemark() == null || "".equals(role.getRemark())){
+            return ResultBean.error("角备注不能为空！");
+        }
         Role example = new Role();
         example.setRoleName(role.getRoleName());
         List<Role> exist = roleService.queryByExample(example);
@@ -141,20 +144,27 @@ public class RoleController {
      */
     @PostMapping("update")
     public ResultBean<Role> update(Role role,String permissionIds) {
+        if (role.getId() == null){
+            return ResultBean.error("角色Id不存在！");
+        }
         if (role.getRoleName() == null || "".equals(role.getRoleName())){
             return ResultBean.error("角色名不能为空！");
         }
         if (permissionIds == null || "".equals(permissionIds)){
             return ResultBean.error("权限列表不能为空！");
         }
-        if (role.getId() == null){
-            return ResultBean.error("角色Id不存在！");
-        }
         Role example = new Role();
         example.setRoleName(role.getRoleName());
         List<Role> exist = roleService.queryByExample(example);
         if (!exist.isEmpty() && !role.getId().equals(exist.get(0).getId())){
             return ResultBean.error("该角色名已存在！");
+        }
+        Role isEOrS = roleService.queryById(role.getId());
+        if (isEOrS != null && "engineer".equals(isEOrS.getRoleName()) && !"engineer".equals(role.getRoleName())){
+            return ResultBean.error("engineer角色名不可修改！");
+        }
+        if (isEOrS != null && "sale".equals(isEOrS.getRoleName()) && !"sale".equals(role.getRoleName())){
+            return ResultBean.error("sale角色名不可修改！");
         }
         try {
             String[] split = permissionIds.split(",");

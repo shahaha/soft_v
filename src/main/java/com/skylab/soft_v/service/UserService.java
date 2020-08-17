@@ -119,4 +119,11 @@ public interface UserService {
      * @param refresgToken refresgToken
      */
     void userUpdatePwd(String passwordOld, String passwordNew, String accessToken, String refresgToken);
+
+    /**
+     * 根据角色名查询用户列表
+     * @param role 角色
+     * @return 用户列表
+     */
+    List<User> queryByRole(String role);
 }

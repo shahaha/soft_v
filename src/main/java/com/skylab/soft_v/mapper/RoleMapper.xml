@@ -104,7 +104,7 @@
         select r.id, role_name, remark
         from soft_v_sys.role r left join soft_v_sys.user_role ur on r.id = ur.role_id
             left join soft_v_sys.user u on ur.user_id = u.id
-        where u.username = #{username}
+        where u.id = #{userId}
     </select>
 
     <select id="inUser" resultType="int">

@@ -74,7 +74,6 @@ public class UserController {
      * @return 响应数据
      */
     @PostMapping(value = "login")
-    @ActionLog("用户登录")
     public ResultBean<UserVO> login(String username, String password){
         User user = userService.queryByUsername(username);
         //验证账号是否存在
@@ -231,14 +230,14 @@ public class UserController {
      */
     @PostMapping("update")
     public ResultBean<User> update(User user,@RequestParam(defaultValue = "") String roleIds) {
-        if (StrUtil.isBlank(user.getUsername()) ||StrUtil.isBlank(user.getRealName())  || StrUtil.isBlank(user.getPassword())){
+        if (user.getId() == null){
+            return ResultBean.error("用户Id不存在");
+        }
+        if (StrUtil.isBlank(user.getRealName())){
             return ResultBean.error("用户信息不完整");
         }
         if (StrUtil.isBlank(roleIds)){
             return ResultBean.error("角色不能为空");
-        }
-        if (user.getId() == null){
-            return ResultBean.error("用户Id不存在");
         }
         User exit = userService.queryByUsername(user.getUsername());
         if (exit != null && !exit.getId().equals(user.getId())){
@@ -309,7 +308,7 @@ public class UserController {
         return ResultBean.success(pager);
     }
 
-    @PutMapping("resetPassword")
+    @PostMapping("resetPassword")
     public ResultBean<User> updatePwd(String passwordOld, String passwordNew, HttpServletRequest request){
         if (StrUtil.isBlank(passwordOld)){
             return ResultBean.error("旧密码不能为空");

@@ -51,23 +51,6 @@ public class CustomShiroRealm extends AuthorizingRealm {
     }
 
     /**
-     * 登录
-     * 主要业务：
-     * 当业务代码调用 subject.login(customPasswordToken); 方法后
-     * 就会自动调用这个方法 验证用户名/密码
-     * 这里我们改造成 验证 token 是否有效 已经自定义了 shiro 验证
-     * @param authenticationToken authenticationToken
-     * @return 身份验证信息
-     * @throws AuthenticationException AuthenticationException
-     */
-    @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        log.info("======登录验证========");
-        String token = (String) authenticationToken.getCredentials();
-        return new SimpleAuthenticationInfo(token, token, getName());
-    }
-
-    /**
      * 主要业务：
      * 系统业务出现要验证用户的角色权限的时候，就会调用这个方法
      * 来获取该用户所拥有的角色/权限
@@ -84,10 +67,8 @@ public class CustomShiroRealm extends AuthorizingRealm {
         User user = userService.queryByUsername(userId);
         log.info("userId={}",user.getId());
         if(redisService.hasKey(Const.JWT_REFRESH_KEY+userId)&&redisService.getExpire(Const.JWT_REFRESH_KEY+userId, TimeUnit.MILLISECONDS)>JwtTokenUtil.getRemainingTime(accessToken)){
-            log.info("dssss");
             Set<Role> roles = roleService.queryByUserId(user.getId());
             for (Role role : roles){
-                log.info(role.getRoleName());
                 simpleAuthorizationInfo.addRole(role.getRoleName());
                 Set<Permission> permissions = permissionService.queryByRoleId(role.getId());
                 for (Permission permission : permissions){
@@ -96,7 +77,6 @@ public class CustomShiroRealm extends AuthorizingRealm {
             }
 
         }else {
-            log.info("eeeeeee");
             if(claimsFromToken.get(Const.PERMISSIONS_INFOS_KEY)!=null){
                 simpleAuthorizationInfo.addStringPermissions((Collection<String>) claimsFromToken.get(Const.PERMISSIONS_INFOS_KEY));
             }
@@ -105,6 +85,23 @@ public class CustomShiroRealm extends AuthorizingRealm {
             }
         }
         return simpleAuthorizationInfo;
+    }
+
+    /**
+     * 登录
+     * 主要业务：
+     * 当业务代码调用 subject.login(customPasswordToken); 方法后
+     * 就会自动调用这个方法 验证用户名/密码
+     * 这里我们改造成 验证 token 是否有效 已经自定义了 shiro 验证
+     * @param authenticationToken authenticationToken
+     * @return 身份验证信息
+     * @throws AuthenticationException AuthenticationException
+     */
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        log.info("======登录验证========");
+        JWTToken token = (JWTToken) authenticationToken;
+        return new SimpleAuthenticationInfo(token.getPrincipal(), token.getCredentials(), getName());
     }
 
 }

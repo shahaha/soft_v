@@ -128,6 +128,38 @@
         </set>
         where id = #{id}
     </update>
+    <!--修改可查状态    -->
+    <update id="updateIsTerm">
+        update soft_v_sys.ext_field_relation
+        <set>
+            <if test="isTerm != null">
+                is_term = #{isTerm},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <!--通过主键修改数据-->
+    <update id="stopUse">
+        update soft_v_sys.ext_field_relation
+        set value = null ,field_des = '预留列',category = -1,is_term = 0
+        where id = #{id}
+    </update>
+    <update id="extendField">
+        update soft_v_sys.ext_field_relation
+        <set>
+            value = #{value},
+            <if test="fieldDes != null and fieldDes != ''">
+                field_des = #{fieldDes},
+            </if>
+            <if test="category != null">
+                category = #{category},
+            </if>
+            <if test="isTerm != null">
+                is_term = #{isTerm},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
 
     <!--通过主键删除-->
     <delete id="deleteById">
@@ -137,5 +169,24 @@
     <select id="count" resultType="int">
         select count(1)
         from soft_v_sys.ext_field_relation
+    </select>
+    <!--查询所有有效行数据-->
+    <select id="queryValidFields" resultMap="ExtFieldRelationMap">
+        select
+            id,field_name, field_des, category,value,is_term
+        from soft_v_sys.ext_field_relation
+        <where>
+            category != -1
+            <if test="condition != null and condition != ''">
+                and CONCAT(`field_name`, `field_des`) LIKE CONCAT('%',#{conditions},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="queryInvalidFields" resultMap="ExtFieldRelationMap">
+        select
+          id,field_name, field_des,value,is_term
+        from soft_v_sys.ext_field_relation
+        where category = -1
     </select>
 </mapper>
