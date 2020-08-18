@@ -1,12 +1,21 @@
 package com.skylab.soft_v.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skylab.soft_v.bean.JsonToObj;
+import com.skylab.soft_v.bean.SoftVO;
 import com.skylab.soft_v.common.Pager;
-import com.skylab.soft_v.entity.Soft;
-import com.skylab.soft_v.mapper.SoftMapper;
+import com.skylab.soft_v.entity.*;
+import com.skylab.soft_v.mapper.*;
 import com.skylab.soft_v.service.SoftService;
+import com.skylab.soft_v.util.ReflectByProperty;
+import com.skylab.soft_v.util.SoulPage;
+import javafx.application.Platform;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +28,20 @@ import java.util.List;
 public class SoftServiceImpl implements SoftService {
     @Resource
     private SoftMapper softMapper;
+    @Resource
+    private CategoryMapper categoryMapper;
+    @Resource
+    private ChipMapper chipMapper;
+    @Resource
+    private UserMapper userMapper;
+    @Resource
+    private ModelMapper modelMapper;
+    @Resource
+    private ByteSizeMapper byteSizeMapper;
+    @Resource
+    private  ExtFieldRelationMapper extFieldRelationMapper;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * 通过ID查询单条数据
@@ -132,4 +155,11 @@ public class SoftServiceImpl implements SoftService {
     public boolean deleteById(Integer id) {
         return this.softMapper.deleteById(id) > 0;
     }
+
+    @Override
+    public Object queryForSoulpage(SoulPage<SoftVO> soulPage) {
+        return soulPage.setData(softMapper.queryForSoulpage(soulPage,(SoftVO)soulPage.getObj()));
+    }
+
+
 }

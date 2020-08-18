@@ -1,9 +1,12 @@
 package com.skylab.soft_v.controller;
 
+import com.skylab.soft_v.bean.SoftVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.entity.Soft;
+import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.service.SoftService;
+import com.skylab.soft_v.util.SoulPage;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -141,4 +144,15 @@ public class SoftController {
         return ResultBean.success(pager);
     }
 
+    /**
+     * 查询软件列表
+     * @param soulPage soultable 包装类
+     * @param softVO 查询条件
+     * @return SoulPage
+     */
+    @PostMapping("queryForSoulpage")
+    public Object queryForSoulpage(SoulPage<SoftVO> soulPage, SoftVO softVO)  {
+        soulPage.setObj(softVO);
+        return softService.queryForSoulpage(soulPage);
+    }
 }

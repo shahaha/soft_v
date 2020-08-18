@@ -1,7 +1,9 @@
 package com.skylab.soft_v.service;
 
+import com.skylab.soft_v.bean.SoftVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.Soft;
+import com.skylab.soft_v.util.SoulPage;
 
 import java.util.List;
 
@@ -87,4 +89,5 @@ public interface SoftService {
      */
     boolean deleteById(Integer id);
 
+    Object queryForSoulpage(SoulPage<SoftVO> soulPage);
 }

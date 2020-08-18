@@ -362,7 +362,7 @@ public class ExtFieldRelationController {
     public ResultBean<List<ExtFieldRelation>> getValidFieldsByCategory(int category) {
         List<ExtFieldRelation> extFieldRelations = extFieldRelationService.queryValidFieldsByCategory(category);
         for (int i = 0; i < extFieldRelations.size(); i++) {
-            System.out.println(extFieldRelations.get(i).getFieldName());
+//            System.out.println(extFieldRelations.get(i).getFieldName());
             //剔除一些字段不展示
             if (extFieldRelations.get(i).getFieldName().endsWith("tool") || "id".equals(extFieldRelations.get(i).getFieldName()) || "address".equals(extFieldRelations.get(i).getFieldName()) || "category".equals(extFieldRelations.get(i).getFieldName())) {
                 extFieldRelations.remove(i--);

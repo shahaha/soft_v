@@ -891,4 +891,29 @@
         select count(1)
         from soft_v_sys.soft
     </select>
+    <!--soulpage查询 -->
+    <select id="queryForSoulpage" resultType="com.skylab.soft_v.bean.SoftVO">
+        SELECT  a.id,code,e.model_name modelId,d.chip_name chipId,version,b.real_name engineer, f.real_name sale,a.initial_customer initialCustomer,remark,if(a.in_use = 1 ,'是','否') inUse,
+        a.upload_date uploadDate,a.burning_process burningProcess,a.config_info configInfo,if(a.custom_hardware = 1 ,'是','否') customHardware,a.serial_port_config serialPortConfig,i.size flash,WAN,h.size DDR,g.size IRAM,if(a.open_short_detection = 1 ,'是','否') openShortDetection,
+        a.baud_rate baudRate,if(ephemeris = 1 ,'是','否') ephemeris,accuracy,TCXO,frequency,a.need_burn_firmware needBurnFirmware,a.label_print_tool labelPrintTool,a.GPIO_detection gpioDetection,a.burn_tool burnTool,a.detection_tool detectionTool,
+        a.product_test_tool productTestTool,a.product_test_code productTestCode,c.category_name category,a.address address, column1, column2, column3, column4,
+        column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15,
+        column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26,
+        column27, column28, column29, column30
+        from soft_v_sys.soft a LEFT JOIN `user` b on a.engineer = b.id
+        LEFT JOIN category c on a.category = c.id
+        LEFT JOIN chip d on a.chip_id = d.id
+        LEFT JOIN model e on a.model_id = e.id
+        LEFT JOIN `user` f on a.sale = f.id
+        LEFT JOIN byte_size g on a.IRAM = g.id
+        LEFT JOIN byte_size h on a.DDR = h.id
+        LEFT JOIN byte_size i on a.flash = i.id
+        <where>
+        1=1
+        <if test="softVO.category != null and softVO.category != ''">
+        and c.id = #{softVO.category}
+        </if>
+        </where>
+    </select>
+
 </mapper>

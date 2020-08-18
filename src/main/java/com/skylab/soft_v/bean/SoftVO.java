@@ -89,7 +89,7 @@ public class SoftVO {
     /**
      * 天线开短路检测
      */
-    private Boolean openShortDetection;
+    private String openShortDetection;
     /**
      * 波特率
      */

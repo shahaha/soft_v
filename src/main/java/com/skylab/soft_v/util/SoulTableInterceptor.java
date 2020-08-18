@@ -128,6 +128,7 @@ public class SoulTableInterceptor implements Interceptor {
                             //改造后带分页查询的SQL语句 MYSQL版
                             pageSql = "select * from (" + filterSql.toString() + " ) A limit " + soulPage.getOffset() + ", " + soulPage.getLimit();
                         }
+//                        log.info(pageSql);
                         metaObject.setValue("delegate.boundSql.sql",pageSql);
                     }
 

@@ -68,11 +68,8 @@
                 url: '/category/list',
                 done: function (data) {
                     console.log(data);
-                    // $.each(data.data, function (index, item) {
-                    //     $('#softType').append(new Option(item.categoryName, item.id));
-                    // });
                     $.each(data.data, function (index, item) {
-                        //物品类型信息持久化
+                        //类型信息持久化
                         layui.data('softTypes', {
                             key: item.id,
                             value: item.categoryName
@@ -80,7 +77,6 @@
                     });
                     softType = data.data[0].id;
                     getValidFields(softType);
-                    form.render("select");
                 },
                 fail: function (data) {
                     layer.msg(data.msg);
@@ -94,7 +90,6 @@
                 }
                 softType = data.value;
                 getValidFields(softType);
-                // $('#softType').val(data.value);
             });
 
             //获取需要展示的表头字段
@@ -144,12 +139,10 @@
             }
             //表格
             function tableRender(softType) {
-                // console.log(softType);
-                // console.log(cols)
                 table.render({
                     id: "testTable", //定义id 方便重载
                     elem: '#test',
-                    url: '/soft/queryByExampleAndPage',
+                    url: '/soft/queryForSoulpage',
                     method: "post",
                     where: {
                         category: softType

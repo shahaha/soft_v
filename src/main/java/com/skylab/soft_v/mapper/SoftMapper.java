@@ -1,6 +1,9 @@
 package com.skylab.soft_v.mapper;
 
+import com.skylab.soft_v.bean.SoftVO;
 import com.skylab.soft_v.entity.Soft;
+import com.skylab.soft_v.util.SoulPage;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -90,4 +93,6 @@ public interface SoftMapper {
      * @return 影响行数
      */
     int cleanByColumn(String fieldName);
+
+    List<SoftVO> queryForSoulpage(SoulPage<SoftVO> soulPage,@Param("softVO") SoftVO softVO);
 }

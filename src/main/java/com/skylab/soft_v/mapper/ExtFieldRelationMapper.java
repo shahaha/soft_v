@@ -123,4 +123,6 @@ public interface ExtFieldRelationMapper {
      * @return 实例对象
      */
     int extendField(ExtFieldRelation exits);
+
+    List<ExtFieldRelation> queryHasKeyExtCol();
 }

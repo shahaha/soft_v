@@ -197,4 +197,11 @@
         from soft_v_sys.ext_field_relation
         where category = -1
     </select>
+    <!--查询是键值对的扩展字段-->
+    <select id="queryHasKeyExtCol" resultMap="ExtFieldRelationMap">
+        select
+        id, field_name, field_des, category, value,is_term
+        from soft_manager_sys.ext_field_relation
+        where field_name like 'column%' and category != -1 and value is not null and value != ''
+    </select>
 </mapper>
