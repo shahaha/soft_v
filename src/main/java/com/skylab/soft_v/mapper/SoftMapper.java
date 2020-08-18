@@ -95,4 +95,11 @@ public interface SoftMapper {
     int cleanByColumn(String fieldName);
 
     List<SoftVO> queryForSoulpage(SoulPage<SoftVO> soulPage,@Param("softVO") SoftVO softVO);
+    /**
+     * 根据编码查询
+     *
+     * @param code 软件编码
+     * @return 实例对象
+     */
+    Soft queryByCode(String code);
 }

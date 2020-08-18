@@ -125,4 +125,18 @@ public interface ExtFieldRelationMapper {
     int extendField(ExtFieldRelation exits);
 
     List<ExtFieldRelation> queryHasKeyExtCol();
+    /**
+     * 查询展示字段
+     *
+     * @return 对象列表
+     */
+    List<ExtFieldRelation> getShowFields();
+
+    /**
+     * 根据业务类型查询
+     *
+     * @param categoryId 业务id
+     * @return 对象列表
+     */
+    List<ExtFieldRelation> getShowFieldsAndDataByCategory(int categoryId);
 }

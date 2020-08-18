@@ -90,4 +90,10 @@ public interface SoftService {
     boolean deleteById(Integer id);
 
     Object queryForSoulpage(SoulPage<SoftVO> soulPage);
+    /**
+     * 根据编码查询
+     * @param code 软件编码
+     * @return 实例对象
+     */
+    Soft queryByCode(String code);
 }

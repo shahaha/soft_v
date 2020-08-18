@@ -3,10 +3,12 @@ package com.skylab.soft_v.controller;
 import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
+import com.skylab.soft_v.component.ActionLog;
 import com.skylab.soft_v.entity.ByteSize;
 import com.skylab.soft_v.service.ByteSizeService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,18 +35,6 @@ public class ByteSizeController {
     private ByteSizeService byteSizeService;
 
     /**
-     * 通过Id查询对象
-     *
-     * @param id id
-     * @return 响应数据
-     */
-    @GetMapping("queryById")
-    public ResultBean<ByteSize> queryById(int id) {
-        ByteSize byteSize = byteSizeService.queryById(id);
-        return ResultBean.success(byteSize);
-    }
-
-    /**
      * 分页查询
      *
      * @param page  当前页
@@ -52,6 +42,7 @@ public class ByteSizeController {
      * @return 响应数据
      */
     @GetMapping("pageList")
+    @RequiresPermissions("data_select")
     public ResultBean<Pager<ByteSize>> pageList(int page, int limit) {
         Pager<ByteSize> pager = byteSizeService.queryAllByPage(page, limit);
         return ResultBean.success(pager);
@@ -63,6 +54,7 @@ public class ByteSizeController {
      * @return 响应数据
      */
     @GetMapping("list")
+    @RequiresPermissions("data_select")
     public ResultBean<List<ByteSize>> list() {
         List<ByteSize> byteSizes = byteSizeService.queryList();
         return ResultBean.success(byteSizes);
@@ -75,6 +67,8 @@ public class ByteSizeController {
      * @return 响应数据
      */
     @PostMapping("add")
+    @RequiresPermissions("data_add")
+    @ActionLog("添加一个字节选项")
     public ResultBean<ByteSize> add(ByteSize byteSize) {
         try {
             ByteSize insertSelective = byteSizeService.insertSelective(byteSize);
@@ -91,6 +85,8 @@ public class ByteSizeController {
      * @return 响应数据
      */
     @PostMapping("delete")
+    @RequiresPermissions("data_delete")
+    @ActionLog("删除一个字节选项")
     public ResultBean<ByteSize> delete(Integer id) {
         final boolean b = byteSizeService.deleteById(id);
         if (b) {
@@ -107,6 +103,8 @@ public class ByteSizeController {
      * @return 响应数据
      */
     @PostMapping("update")
+    @RequiresPermissions("data_update")
+    @ActionLog("修改一个字节选项")
     public ResultBean<ByteSize> update(ByteSize byteSize) {
         try {
             ByteSize update = byteSizeService.update(byteSize);
@@ -114,32 +112,6 @@ public class ByteSizeController {
         } catch (Exception e) {
             throw new BusinessException(400,"修改失败");
         }
-    }
-
-    /**
-     * 根据条件查询
-     *
-     * @param byteSize 查询条件
-     * @return 响应数据
-     */
-    @GetMapping("queryByExample")
-    public ResultBean<List<ByteSize>> queryByExample(ByteSize byteSize) {
-        List<ByteSize> list = byteSizeService.queryByExample(byteSize);
-        return ResultBean.success(list);
-    }
-
-    /**
-     * 根据条件查询并分页
-     *
-     * @param byteSize 查询条件
-     * @param page     当前页
-     * @param limit    每页行数
-     * @return 响应数据
-     */
-    @GetMapping("queryByExampleAndPage")
-    public ResultBean<Pager<ByteSize>> queryByExampleAndPage(ByteSize byteSize, int page, int limit) {
-        Pager<ByteSize> pager = byteSizeService.queryByExampleAndPage(byteSize, page, limit);
-        return ResultBean.success(pager);
     }
 
 }

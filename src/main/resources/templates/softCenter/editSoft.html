@@ -25,7 +25,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">软件类型</label>
             <div class="layui-input-block">
-                <select name="category" id="softType" lay-filter="softType" lay-verify="required">
+                <select name="category" id="softType" lay-filter="softType" lay-verify="required" disabled>
                 </select>
             </div>
         </div>
@@ -50,28 +50,28 @@
     <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
     <script>
         layui.config({
-            base: '../../../layuiadmin/' //静态资源所在路径
+            base: '/layuiadmin/' //静态资源所在路径
         }).extend({
             index: 'lib/index' //主入口模块
         }).use(['index', 'dtree'], function () {
             var form = layui.form,
                 layer = layui.layer,
                 $ = layui.jquery,
-                table = layui.table,
                 upload = layui.upload,
-                element = layui.element,
                 setter = layui.setter,
                 admin = layui.admin;
 
             var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
             var rowData = eval('(' + parent.rowData + ')'); //父页面行数据
             console.log(rowData);
-            var softType = null; //软件类型
+            //////////////////////////////////////////////////////
+            var softType = 1; //软件类型
             var fileData = null; //上传的文件
             //伪上传
             upload.render({
                 headers: { //通过 request 头传递
-                    "token": layui.data(setter.tableName)['token'] || ""
+                    "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                    "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
                 },
                 elem: '#upload',
                 url: '/soft/add', //改成您自己的上传接口
@@ -104,30 +104,17 @@
                     layer.msg(data.msg);
                 }
             });
-
-            //监听下拉列表改变
-            form.on('select(softType)', function (data) {
-                // console.log(data.value);
-                if (data.value == softType) {
-                    return;
-                }
-                softType = data.value;
-                createItem(softType);
-                $('#softType').val(data.value);
-            });
             //根据选择的软件类型 生成表单选项
             function createItem(softType) {
                 admin.req({
-                    url: '/extFieldRelation/getValidFieldsDataByCategory?category=' +
-                        softType,
+                    url: '/extFieldRelation/getShowFieldsAndDataByCategory?categoryId=' + softType,
                     done: function (data) {
                         console.log(data);
                         //解析生成动态表单
                         $("#items").empty(); //清空div
                         $.each(data.data, function (index, item) {
                             // console.log(item);
-                            if (item.fieldName != 'id' && item.fieldName != 'tools' && item
-                                .fieldName != 'address') {
+                            if (item.fieldName != 'id' && item.fieldName != 'address') {
                                 if (item.type == "text") {
                                     var form_item = document.createElement("div");
                                     var form_label = document.createElement("label");
@@ -159,9 +146,8 @@
                                     input.setAttribute('id', item.fieldName);
                                     var fieldName = item.fieldName;
                                     $.each(item.value, function (index, item) {
-                                        input.append(new Option(item.name, item
-                                            .value));
-                                            //给行数据赋初值
+                                        input.append(new Option(item.name, item.value));
+                                        //给行数据赋初值
                                         if (rowData[fieldName] == item.name) {
                                             rowData[fieldName] = item.value;
                                         }

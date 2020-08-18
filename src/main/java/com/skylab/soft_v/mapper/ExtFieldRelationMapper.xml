@@ -203,5 +203,19 @@
         id, field_name, field_des, category, value,is_term
         from soft_manager_sys.ext_field_relation
         where field_name like 'column%' and category != -1 and value is not null and value != ''
+
+    <!--查询所有有效行数据，去重-->
+    <select id="getShowFields" resultMap="ExtFieldRelationMap">
+        select
+          distinct field_name, field_des
+        from soft_v_sys.ext_field_relation
+        where category != -1
+    </select>
+    <!--通过类型查询所有有效行数据-->
+    <select id="getShowFieldsAndDataByCategory" resultMap="ExtFieldRelationMap">
+        select
+          id, field_name, field_des, category, value,is_term
+        from soft_v_sys.ext_field_relation
+        where category in (0,#{category})
     </select>
 </mapper>

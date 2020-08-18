@@ -132,4 +132,15 @@ public class SoftToolServiceImpl implements SoftToolService {
     public boolean deleteById(Integer id) {
         return this.softToolMapper.deleteById(id) > 0;
     }
+
+    /**
+     * 根据类型查工具
+     *
+     * @param i 类型id
+     * @return 工具列表
+     */
+    @Override
+    public List<SoftTool> queryByType(int i) {
+        return softToolMapper.queryByType(i);
+    }
 }

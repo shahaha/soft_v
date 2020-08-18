@@ -87,4 +87,10 @@ public interface SoftToolService {
      */
     boolean deleteById(Integer id);
 
+    /**
+     * 根据类型查工具
+     * @param i 类型id
+     * @return 工具列表
+     */
+    List<SoftTool> queryByType(int i);
 }

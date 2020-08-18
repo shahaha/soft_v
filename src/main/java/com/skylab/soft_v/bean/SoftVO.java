@@ -122,7 +122,8 @@ public class SoftVO {
     /**
      * GPIO检测软件
      */
-    private String gpioDetection;
+    @JsonProperty("GPIODetection")
+    private String GPIODetection;
     /**
      * 标准固件批量烧录工具
      */

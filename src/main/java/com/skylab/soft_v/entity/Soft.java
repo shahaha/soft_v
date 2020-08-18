@@ -125,7 +125,7 @@ public class Soft implements Serializable {
     /**
      * GPIO检测软件
      */
-    private Integer gpioDetection;
+    private Integer GPIODetection;
     /**
      * 标准固件批量烧录工具
      */

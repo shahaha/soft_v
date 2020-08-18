@@ -3,6 +3,7 @@ package com.skylab.soft_v.controller;
 import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
+import com.skylab.soft_v.component.ActionLog;
 import com.skylab.soft_v.entity.Model;
 import com.skylab.soft_v.service.ModelService;
 import io.swagger.annotations.Api;
@@ -34,48 +35,14 @@ public class ModelController {
     private ModelService modelService;
 
     /**
-     * 通过Id查询对象
-     *
-     * @param id id
-     * @return 响应数据
-     */
-    @GetMapping("queryById")
-    public ResultBean<Model> queryById(int id) {
-        Model model = modelService.queryById(id);
-        return ResultBean.success(model);
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("pageList")
-    public ResultBean<Pager<Model>> pageList(int page, int limit) {
-        Pager<Model> pager = modelService.queryAllByPage(page, limit);
-        return ResultBean.success(pager);
-    }
-
-    /**
-     * 查询所有记录
-     *
-     * @return 响应数据
-     */
-    @GetMapping("list")
-    public ResultBean<List<Model>> list() {
-        List<Model> categories = modelService.queryList();
-        return ResultBean.success(categories);
-    }
-
-    /**
      * 添加记录
      *
      * @param model 添加对象
      * @return 响应数据
      */
     @PostMapping("add")
+    @RequiresPermissions("data_add")
+    @ActionLog("添加一个模块型号选项")
     public ResultBean<Model> add(Model model) {
         try {
             Model insertSelective = modelService.insertSelective(model);
@@ -92,6 +59,8 @@ public class ModelController {
      * @return 响应数据
      */
     @PostMapping("delete")
+    @RequiresPermissions("data_delete")
+    @ActionLog("删除一个模块型号选项")
     public ResultBean<Model> delete(Integer id) {
         final boolean b = modelService.deleteById(id);
         if (b) {
@@ -108,6 +77,8 @@ public class ModelController {
      * @return 响应数据
      */
     @PostMapping("update")
+    @RequiresPermissions("data_update")
+    @ActionLog("修改一个模块型号选项")
     public ResultBean<Model> update(Model model) {
         try {
             Model update = modelService.update(model);
@@ -118,32 +89,6 @@ public class ModelController {
     }
 
     /**
-     * 根据条件查询
-     *
-     * @param model 查询条件
-     * @return 响应数据
-     */
-    @GetMapping("queryByExample")
-    public ResultBean<List<Model>> queryByExample(Model model) {
-        List<Model> list = modelService.queryByExample(model);
-        return ResultBean.success(list);
-    }
-
-    /**
-     * 根据条件查询并分页
-     *
-     * @param model 查询条件
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("queryByExampleAndPage")
-    public ResultBean<Pager<Model>> queryByExampleAndPage(Model model, int page, int limit) {
-        Pager<Model> pager = modelService.queryByExampleAndPage(model, page, limit);
-        return ResultBean.success(pager);
-    }
-
-    /**
      * 根据条件分页查询
      * @param page 当前页
      * @param limit 每页行数
@@ -151,7 +96,7 @@ public class ModelController {
      * @return 响应数据
      */
     @GetMapping("pageListByExample")
-    //@RequiresPermissions("data_select")
+    @RequiresPermissions("data_select")
     public ResultBean<Pager<Model>> pageListByExample(int page, int limit,Model model){
         Pager<Model> pager = modelService.queryByExampleAndPage(model, page, limit);
         return ResultBean.success(pager);

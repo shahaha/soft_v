@@ -192,17 +192,15 @@
   <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
   <script>
     layui.config({
-      base: '../layuiadmin/' //静态资源所在路径
+      base: '/layuiadmin/' //静态资源所在路径
     }).extend({
       index: 'lib/index' //主入口模块
     }).use('index', function () {
       var $ = layui.$,
-        admin = layui.admin,
-        setter = layui.setter;
+        admin = layui.admin;
       admin.req({
         url: '/user/getLoginUser', //实际使用请改成服务端真实接口
         method: 'post',
-        async: false,
         done: function (res) {
           //console.log(res);
           $("#userRealName").text(res.data.realName);

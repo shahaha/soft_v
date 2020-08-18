@@ -49,28 +49,48 @@ public class ExtFieldRelationController {
     private UserService userService;
     @Resource
     private CategoryService categoryService;
+    @Resource
+    private SoftToolService softToolService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+
     /**
-     * 通过Id查询对象
-     *
-     * @param id id
+     * 查询展示字段
      * @return 响应数据
      */
-    @GetMapping("queryById")
-    public ResultBean<ExtFieldRelation> queryById(int id) {
-        ExtFieldRelation extFieldRelation = extFieldRelationService.queryById(id);
-        return ResultBean.success(extFieldRelation);
+    @GetMapping("getShowFields")
+    @RequiresPermissions("field_select")
+    public ResultBean<List<ExtFieldRelation>> getShowFields(){
+        List<ExtFieldRelation> extFieldRelations = extFieldRelationService.getShowFields();
+        for (ExtFieldRelation extFieldRelation : extFieldRelations){
+            extFieldRelation.setFieldName(StrUtil.toCamelCase(extFieldRelation.getFieldName()));
+        }
+        return ResultBean.success(extFieldRelations);
+    }
+
+
+    /**
+     * 查询展示字段
+     * @return 响应数据
+     */
+    @GetMapping("getShowFieldsAndDataByCategory")
+    @RequiresPermissions("field_select")
+    public ResultBean<List<ExtFieldRelationVO>> getShowFieldsAndDataByCategory(int categoryId) throws JsonProcessingException {
+        List<ExtFieldRelation> extFieldRelations = extFieldRelationService.getShowFieldsAndDataByCategory(categoryId);
+        List<ExtFieldRelationVO> extFieldRelationVOS = fieldsToFieldsVO(extFieldRelations);
+        return ResultBean.success(extFieldRelationVOS);
     }
 
     /**
-     * 分页查询
+     * 分页查询有效字段
      *
      * @param page  当前页
      * @param limit 每页行数
      * @return 响应数据
      */
     @GetMapping("getValidFieldsAndPage")
+    @RequiresPermissions("field_select")
     public ResultBean<Pager<ExtFieldRelationVO>> getValidFieldsAndPage(int page, int limit,String condition) {
         Pager<ExtFieldRelationVO> pager = extFieldRelationService.queryValidFieldsAndPage(page,limit,condition);
         return ResultBean.success(pager);
@@ -81,21 +101,10 @@ public class ExtFieldRelationController {
      * @return 响应数据
      */
     @GetMapping("getInvalidFields")
-    //@RequiresPermissions("field_select")
+    @RequiresPermissions("field_select")
     public ResultBean<List<ExtFieldRelation>> getInvalidFields(){
         List<ExtFieldRelation> extFieldRelations = extFieldRelationService.queryInvalidFields();
         return ResultBean.success(extFieldRelations);
-    }
-
-    /**
-     * 查询所有记录
-     *
-     * @return 响应数据
-     */
-    @GetMapping("list")
-    public ResultBean<List<ExtFieldRelation>> list() {
-        List<ExtFieldRelation> categories = extFieldRelationService.queryList();
-        return ResultBean.success(categories);
     }
 
     /**
@@ -105,7 +114,7 @@ public class ExtFieldRelationController {
      */
     @PostMapping("update")
     @ActionLog("扩展或修改一个字段")
-    @RequiresPermissions("field_add")
+    @RequiresPermissions("field_update")
     public ResultBean<ExtFieldRelation> update(ExtFieldRelation extFieldRelation){
         if (extFieldRelation.getId() == null){
             return ResultBean.error("id不能为空！");
@@ -143,7 +152,7 @@ public class ExtFieldRelationController {
      */
     @PostMapping("updateIsTerm")
     @ActionLog("修改字段可查询状态")
-    //@RequiresPermissions("field_update")
+    @RequiresPermissions("field_update")
     public ResultBean<ExtFieldRelation> updateIsTerm(Integer id,boolean isTerm){
         boolean b = extFieldRelationService.updateIsTerm(id,isTerm);
         if (b){
@@ -160,7 +169,7 @@ public class ExtFieldRelationController {
      */
     @PostMapping("stopUse")
     @ActionLog("停止使用字段并清空有关该字段的内容")
-    //@RequiresPermissions("field_delete")
+    @RequiresPermissions("field_update")
     public ResultBean<ExtFieldRelation> stopUse(Integer id){
         ExtFieldRelation extFieldRelation = extFieldRelationService.queryById(id);
         if (id == null){
@@ -227,6 +236,9 @@ public class ExtFieldRelationController {
                 }else if ("DDR".equals(extFieldRelation.getFieldName())){
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(byteSizes);
+                }else if ("IRAM".equals(extFieldRelation.getFieldName())){
+                    extFieldRelationVO.setType("select");
+                    extFieldRelationVO.setValue(byteSizes);
                 }else if ("customHardware".equals(extFieldRelation.getFieldName())){
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(yesOrNot());
@@ -234,6 +246,15 @@ public class ExtFieldRelationController {
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(yesOrNot());
                 }else if ("openShortDetection".equals(extFieldRelation.getFieldName())){
+                    extFieldRelationVO.setType("select");
+                    extFieldRelationVO.setValue(yesOrNot());
+                }else if ("frequency".equals(extFieldRelation.getFieldName())){
+                    extFieldRelationVO.setType("select");
+                    extFieldRelationVO.setValue(frequencyList());
+                }else if ("accuracy".equals(extFieldRelation.getFieldName())){
+                    extFieldRelationVO.setType("select");
+                    extFieldRelationVO.setValue(accuracyList());
+                }else if ("ephemeris".equals(extFieldRelation.getFieldName())){
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(yesOrNot());
                 }else if ("engineer".equals(extFieldRelation.getFieldName())){
@@ -271,6 +292,47 @@ public class ExtFieldRelationController {
                     }
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(categories);
+                }else if ("productTestTool".equals(extFieldRelation.getFieldName())){
+                    List<SoftTool> softToolList = softToolService.queryByType(1);
+                    List<JsonToObj> softTools = new ArrayList<>();
+                    for (SoftTool softTool : softToolList){
+                        softTools.add(new JsonToObj(softTool.getId().toString(),softTool.getName()));
+                    }
+                    extFieldRelationVO.setType("select");
+                    extFieldRelationVO.setValue(softTools);
+                }else if ("gpioDetection".equals(extFieldRelation.getFieldName())){
+                    extFieldRelation.setFieldName("GPIODetection");
+                    List<SoftTool> softToolList = softToolService.queryByType(2);
+                    List<JsonToObj> softTools = new ArrayList<>();
+                    for (SoftTool softTool : softToolList){
+                        softTools.add(new JsonToObj(softTool.getId().toString(),softTool.getName()));
+                    }
+                    extFieldRelationVO.setType("select");
+                    extFieldRelationVO.setValue(softTools);
+                }else if ("burnTool".equals(extFieldRelation.getFieldName())){
+                    List<SoftTool> softToolList = softToolService.queryByType(3);
+                    List<JsonToObj> softTools = new ArrayList<>();
+                    for (SoftTool softTool : softToolList){
+                        softTools.add(new JsonToObj(softTool.getId().toString(),softTool.getName()));
+                    }
+                    extFieldRelationVO.setType("select");
+                    extFieldRelationVO.setValue(softTools);
+                }else if ("detectionTool".equals(extFieldRelation.getFieldName())){
+                    List<SoftTool> softToolList = softToolService.queryByType(4);
+                    List<JsonToObj> softTools = new ArrayList<>();
+                    for (SoftTool softTool : softToolList){
+                        softTools.add(new JsonToObj(softTool.getId().toString(),softTool.getName()));
+                    }
+                    extFieldRelationVO.setType("select");
+                    extFieldRelationVO.setValue(softTools);
+                }else if ("labelPrintTool".equals(extFieldRelation.getFieldName())){
+                    List<SoftTool> softToolList = softToolService.queryByType(5);
+                    List<JsonToObj> softTools = new ArrayList<>();
+                    for (SoftTool softTool : softToolList){
+                        softTools.add(new JsonToObj(softTool.getId().toString(),softTool.getName()));
+                    }
+                    extFieldRelationVO.setType("select");
+                    extFieldRelationVO.setValue(softTools);
                 }else if ("uploadDate".equals(extFieldRelation.getFieldName())){
                     extFieldRelationVO.setType("date");
                 }else {
@@ -371,6 +433,33 @@ public class ExtFieldRelationController {
             }
         }
         return ResultBean.success(extFieldRelations);
+    }
+    /**
+     * frequencyList
+     * @return frequency of baud rate
+     */
+    public List<JsonToObj> frequencyList(){
+        List<JsonToObj> frequencyList = new ArrayList<>();
+        frequencyList.add(new JsonToObj("1HZ","1HZ"));
+        frequencyList.add(new JsonToObj("2HZ","2HZ"));
+        frequencyList.add(new JsonToObj("3HZ","3HZ"));
+        frequencyList.add(new JsonToObj("4HZ","4HZ"));
+        frequencyList.add(new JsonToObj("5HZ","5HZ"));
+        return frequencyList;
+    }
+
+    /**
+     * accuracyList
+     * @return accuracy of baud rate
+     */
+    public List<JsonToObj> accuracyList(){
+        List<JsonToObj> accuracyList = new ArrayList<>();
+        accuracyList.add(new JsonToObj("0","0"));
+        accuracyList.add(new JsonToObj("2","2"));
+        accuracyList.add(new JsonToObj("4","4"));
+        accuracyList.add(new JsonToObj("6","6"));
+        accuracyList.add(new JsonToObj("8","8"));
+        return accuracyList;
     }
 
 }

@@ -3,10 +3,12 @@ package com.skylab.soft_v.controller;
 import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
+import com.skylab.soft_v.component.ActionLog;
 import com.skylab.soft_v.entity.Category;
 import com.skylab.soft_v.service.CategoryService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,22 +41,10 @@ public class CategoryController {
      * @return 响应数据
      */
     @GetMapping("queryById")
+    @RequiresPermissions("data_select")
     public ResultBean<Category> queryById(int id) {
         Category category = categoryService.queryById(id);
         return ResultBean.success(category);
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("pageList")
-    public ResultBean<Pager<Category>> pageList(int page, int limit) {
-        Pager<Category> pager = categoryService.queryAllByPage(page, limit);
-        return ResultBean.success(pager);
     }
 
     /**
@@ -63,6 +53,7 @@ public class CategoryController {
      * @return 响应数据
      */
     @GetMapping("list")
+    @RequiresPermissions("data_select")
     public ResultBean<List<Category>> list() {
         List<Category> categories = categoryService.queryList();
         return ResultBean.success(categories);
@@ -75,6 +66,8 @@ public class CategoryController {
      * @return 响应数据
      */
     @PostMapping("add")
+    @RequiresPermissions("data_add")
+    @ActionLog("添加一个业务类型选项")
     public ResultBean<Category> add(Category category) {
         try {
             Category insertSelective = categoryService.insertSelective(category);
@@ -91,6 +84,8 @@ public class CategoryController {
      * @return 响应数据
      */
     @PostMapping("delete")
+    @RequiresPermissions("data_delete")
+    @ActionLog("删除一个业务类型选项")
     public ResultBean<Category> delete(Integer id) {
         final boolean b = categoryService.deleteById(id);
         if (b) {
@@ -107,6 +102,8 @@ public class CategoryController {
      * @return 响应数据
      */
     @PostMapping("update")
+    @RequiresPermissions("data_update")
+    @ActionLog("修改一个业务类型选项")
     public ResultBean<Category> update(Category category) {
         try {
             Category update = categoryService.update(category);
@@ -114,32 +111,6 @@ public class CategoryController {
         } catch (Exception e) {
             return ResultBean.error("修改失败");
         }
-    }
-
-    /**
-     * 根据条件查询
-     *
-     * @param category 查询条件
-     * @return 响应数据
-     */
-    @GetMapping("queryByExample")
-    public ResultBean<List<Category>> queryByExample(Category category) {
-        List<Category> list = categoryService.queryByExample(category);
-        return ResultBean.success(list);
-    }
-
-    /**
-     * 根据条件查询并分页
-     *
-     * @param category 查询条件
-     * @param page     当前页
-     * @param limit    每页行数
-     * @return 响应数据
-     */
-    @GetMapping("queryByExampleAndPage")
-    public ResultBean<Pager<Category>> queryByExampleAndPage(Category category, int page, int limit) {
-        Pager<Category> pager = categoryService.queryByExampleAndPage(category, page, limit);
-        return ResultBean.success(pager);
     }
 
 }

@@ -22,11 +22,6 @@ public class indexController {
         return "main";
     }
 
-//    @GetMapping("/toLogin")
-//    public String toLogin() {
-//        return "user/login";
-//    }
-
     @GetMapping("/toRegister")
     public String toRegister() {
         return "user/reg";

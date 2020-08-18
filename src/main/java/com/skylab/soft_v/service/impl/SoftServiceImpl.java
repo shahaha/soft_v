@@ -162,4 +162,14 @@ public class SoftServiceImpl implements SoftService {
     }
 
 
+    /**
+     * 根据编码查询
+     *
+     * @param code 软件编码
+     * @return 实例对象
+     */
+    @Override
+    public Soft queryByCode(String code) {
+        return softMapper.queryByCode(code);
+    }
 }

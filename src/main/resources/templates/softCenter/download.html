@@ -232,26 +232,35 @@
                     xmlResquest.responseType = "blob";
                     // 返回
                     xmlResquest.onload = function (oEvent) {
-                        // alert(this.status);
                         if (this.status == 200) {
                             var content = xmlResquest.response;
-                            // 组装a标签
-                            var elink = document.createElement("a");
-                            //设置文件下载路径
-                            elink.download = data.address.substring((data.address.lastIndexOf("-")) + 1);
-       
-                            elink.style.display = "none";
-                            //把后端response响应二进制文件放到blob
-                            var blob = new Blob([content]);
-                            //解决下载不存在文件的问题，根据blob大小判断
-                            if (blob.size == 0) {
-                                layer.msg('服务器没找到此文件，请联系管理员!');
-                            } else {
-                                //通过url去下载
-                                elink.href = URL.createObjectURL(blob);
-                                document.body.appendChild(elink);
-                                elink.click();
-                                document.body.removeChild(elink);
+                            console.log(xmlResquest);
+                            if (content.type == 'application/json'){
+                                var fr = new FileReader(); //FileReader可以读取Blob内容
+                                fr.readAsText(content); //二进制转换成text
+                                fr.onload = function (e) {  //转换完成后，调用onload方法
+                                    var result = fr.result;
+                                    layer.msg(JSON.parse(result).msg);
+                                }
+                            }else {
+                                // 组装a标签
+                                var elink = document.createElement("a");
+                                //设置文件下载路径
+                                elink.download = data.address.substring((data.address.lastIndexOf("-")) + 1);
+
+                                elink.style.display = "none";
+                                //把后端response响应二进制文件放到blob
+                                var blob = new Blob([content]);
+                                //解决下载不存在文件的问题，根据blob大小判断
+                                if (blob.size == 0) {
+                                    layer.msg('服务器没找到此文件，请联系管理员!');
+                                } else {
+                                    //通过url去下载
+                                    elink.href = URL.createObjectURL(blob);
+                                    document.body.appendChild(elink);
+                                    elink.click();
+                                    document.body.removeChild(elink);
+                                }
                             }
                         }
                     };
