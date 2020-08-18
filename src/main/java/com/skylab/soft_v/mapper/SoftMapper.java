@@ -90,4 +90,12 @@ public interface SoftMapper {
      * @return 影响行数
      */
     int cleanByColumn(String fieldName);
+
+    /**
+     * 根据编码查询
+     *
+     * @param code 软件编码
+     * @return 实例对象
+     */
+    Soft queryByCode(String code);
 }

@@ -6,6 +6,7 @@ import com.skylab.soft_v.entity.Log;
 import com.skylab.soft_v.service.LogService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,7 @@ public class LogController {
      * @return 响应数据
      */
     @GetMapping("queryByExampleAndPage")
+    @RequiresPermissions("log_select")
     public ResultBean<Pager<Log>> queryByExampleAndPage(String conditions, int page, int limit) {
         Pager<Log> pager = logService.queryByExampleAndPage(conditions, page, limit);
         return ResultBean.success(pager);

@@ -132,4 +132,15 @@ public class SoftServiceImpl implements SoftService {
     public boolean deleteById(Integer id) {
         return this.softMapper.deleteById(id) > 0;
     }
+
+    /**
+     * 根据编码查询
+     *
+     * @param code 软件编码
+     * @return 实例对象
+     */
+    @Override
+    public Soft queryByCode(String code) {
+        return softMapper.queryByCode(code);
+    }
 }

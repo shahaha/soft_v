@@ -40,18 +40,6 @@ public class RoleController {
     private PermissionService permissionService;
 
     /**
-     * 通过Id查询对象
-     *
-     * @param id id
-     * @return 响应数据
-     */
-    @GetMapping("queryById")
-    public ResultBean<Role> queryById(int id) {
-        Role role = roleService.queryById(id);
-        return ResultBean.success(role);
-    }
-
-    /**
      * 分页查询
      *
      * @param page  当前页
@@ -59,6 +47,7 @@ public class RoleController {
      * @return 响应数据
      */
     @GetMapping("pageList")
+    @RequiresPermissions("role_select")
     public ResultBean<Pager<Role>> pageList(int page, int limit) {
         Pager<Role> pager = roleService.queryAllByPage(page, limit);
         return ResultBean.success(pager);
@@ -70,6 +59,7 @@ public class RoleController {
      * @return 响应数据
      */
     @GetMapping("list")
+    @RequiresPermissions("role_select")
     public ResultBean<List<Role>> list() {
         List<Role> categories = roleService.queryList();
         return ResultBean.success(categories);
@@ -124,6 +114,8 @@ public class RoleController {
      * @return 响应数据
      */
     @PostMapping("delete")
+    @RequiresPermissions("role_delete")
+    @ActionLog("删除一个角色")
     public ResultBean<Role> delete(Integer id) {
         if (roleService.inUser(id)){
             return ResultBean.error("角色正在使用，不能删除！");
@@ -143,6 +135,8 @@ public class RoleController {
      * @return 响应数据
      */
     @PostMapping("update")
+    @RequiresPermissions("role_update")
+    @ActionLog("修改一个角色")
     public ResultBean<Role> update(Role role,String permissionIds) {
         if (role.getId() == null){
             return ResultBean.error("角色Id不存在！");
@@ -182,32 +176,6 @@ public class RoleController {
         }catch (Exception e){
             throw new BusinessException(400,"修改失败");
         }
-    }
-
-    /**
-     * 根据条件查询
-     *
-     * @param role 查询条件
-     * @return 响应数据
-     */
-    @GetMapping("queryByExample")
-    public ResultBean<List<Role>> queryByExample(Role role) {
-        List<Role> list = roleService.queryByExample(role);
-        return ResultBean.success(list);
-    }
-
-    /**
-     * 根据条件查询并分页
-     *
-     * @param role  查询条件
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("queryByExampleAndPage")
-    public ResultBean<Pager<Role>> queryByExampleAndPage(Role role, int page, int limit) {
-        Pager<Role> pager = roleService.queryByExampleAndPage(role, page, limit);
-        return ResultBean.success(pager);
     }
 
 }

@@ -3,10 +3,12 @@ package com.skylab.soft_v.controller;
 import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
+import com.skylab.soft_v.component.ActionLog;
 import com.skylab.soft_v.entity.ToolType;
 import com.skylab.soft_v.service.ToolTypeService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,18 +35,6 @@ public class ToolTypeController {
     private ToolTypeService toolTypeService;
 
     /**
-     * 通过Id查询对象
-     *
-     * @param id id
-     * @return 响应数据
-     */
-    @GetMapping("queryById")
-    public ResultBean<ToolType> queryById(int id) {
-        ToolType toolType = toolTypeService.queryById(id);
-        return ResultBean.success(toolType);
-    }
-
-    /**
      * 分页查询
      *
      * @param page  当前页
@@ -52,6 +42,7 @@ public class ToolTypeController {
      * @return 响应数据
      */
     @GetMapping("pageList")
+    @RequiresPermissions("data_select")
     public ResultBean<Pager<ToolType>> pageList(int page, int limit) {
         Pager<ToolType> pager = toolTypeService.queryAllByPage(page, limit);
         return ResultBean.success(pager);
@@ -63,6 +54,7 @@ public class ToolTypeController {
      * @return 响应数据
      */
     @GetMapping("list")
+    @RequiresPermissions("data_select")
     public ResultBean<List<ToolType>> list() {
         List<ToolType> toolTypes = toolTypeService.queryList();
         return ResultBean.success(toolTypes);
@@ -75,6 +67,8 @@ public class ToolTypeController {
      * @return 响应数据
      */
     @PostMapping("add")
+    @RequiresPermissions("data_add")
+    @ActionLog("添加一个工具类型选项")
     public ResultBean<ToolType> add(ToolType toolType) {
         try {
             ToolType insertSelective = toolTypeService.insertSelective(toolType);
@@ -91,6 +85,8 @@ public class ToolTypeController {
      * @return 响应数据
      */
     @PostMapping("delete")
+    @RequiresPermissions("data_delete")
+    @ActionLog("删除一个工具类型选项")
     public ResultBean<ToolType> delete(Integer id) {
         final boolean b = toolTypeService.deleteById(id);
         if (b) {
@@ -107,6 +103,8 @@ public class ToolTypeController {
      * @return 响应数据
      */
     @PostMapping("update")
+    @RequiresPermissions("data_update")
+    @ActionLog("修改一个工具类型选项")
     public ResultBean<ToolType> update(ToolType toolType) {
         try {
             ToolType update = toolTypeService.update(toolType);
@@ -114,32 +112,6 @@ public class ToolTypeController {
         } catch (Exception e) {
             throw new BusinessException(400,"修改失败");
         }
-    }
-
-    /**
-     * 根据条件查询
-     *
-     * @param toolType 查询条件
-     * @return 响应数据
-     */
-    @GetMapping("queryByExample")
-    public ResultBean<List<ToolType>> queryByExample(ToolType toolType) {
-        List<ToolType> list = toolTypeService.queryByExample(toolType);
-        return ResultBean.success(list);
-    }
-
-    /**
-     * 根据条件查询并分页
-     *
-     * @param toolType 查询条件
-     * @param page     当前页
-     * @param limit    每页行数
-     * @return 响应数据
-     */
-    @GetMapping("queryByExampleAndPage")
-    public ResultBean<Pager<ToolType>> queryByExampleAndPage(ToolType toolType, int page, int limit) {
-        Pager<ToolType> pager = toolTypeService.queryByExampleAndPage(toolType, page, limit);
-        return ResultBean.success(pager);
     }
 
 }

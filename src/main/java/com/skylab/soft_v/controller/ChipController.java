@@ -3,6 +3,7 @@ package com.skylab.soft_v.controller;
 import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
+import com.skylab.soft_v.component.ActionLog;
 import com.skylab.soft_v.entity.Chip;
 import com.skylab.soft_v.service.ChipService;
 import io.swagger.annotations.Api;
@@ -34,48 +35,14 @@ public class ChipController {
     private ChipService chipService;
 
     /**
-     * 通过Id查询对象
-     *
-     * @param id id
-     * @return 响应数据
-     */
-    @GetMapping("queryById")
-    public ResultBean<Chip> queryById(int id) {
-        Chip chip = chipService.queryById(id);
-        return ResultBean.success(chip);
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("pageList")
-    public ResultBean<Pager<Chip>> pageList(int page, int limit) {
-        Pager<Chip> pager = chipService.queryAllByPage(page, limit);
-        return ResultBean.success(pager);
-    }
-
-    /**
-     * 查询所有记录
-     *
-     * @return 响应数据
-     */
-    @GetMapping("list")
-    public ResultBean<List<Chip>> list() {
-        List<Chip> categories = chipService.queryList();
-        return ResultBean.success(categories);
-    }
-
-    /**
      * 添加记录
      *
      * @param chip 添加对象
      * @return 响应数据
      */
     @PostMapping("add")
+    @RequiresPermissions("data_add")
+    @ActionLog("添加一个芯片类型选项")
     public ResultBean<Chip> add(Chip chip) {
         try {
             Chip insertSelective = chipService.insertSelective(chip);
@@ -92,6 +59,8 @@ public class ChipController {
      * @return 响应数据
      */
     @PostMapping("delete")
+    @RequiresPermissions("data_delete")
+    @ActionLog("删除一个芯片类型选项")
     public ResultBean<Chip> delete(Integer id) {
         final boolean b = chipService.deleteById(id);
         if (b) {
@@ -108,6 +77,8 @@ public class ChipController {
      * @return 响应数据
      */
     @PostMapping("update")
+    @RequiresPermissions("data_update")
+    @ActionLog("修改一个芯片类型选项")
     public ResultBean<Chip> update(Chip chip) {
         try {
             Chip update = chipService.update(chip);
@@ -124,23 +95,10 @@ public class ChipController {
      * @return 响应数据
      */
     @GetMapping("queryByExample")
+    @RequiresPermissions("data_select")
     public ResultBean<List<Chip>> queryByExample(Chip chip) {
         List<Chip> list = chipService.queryByExample(chip);
         return ResultBean.success(list);
-    }
-
-    /**
-     * 根据条件查询并分页
-     *
-     * @param chip  查询条件
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("queryByExampleAndPage")
-    public ResultBean<Pager<Chip>> queryByExampleAndPage(Chip chip, int page, int limit) {
-        Pager<Chip> pager = chipService.queryByExampleAndPage(chip, page, limit);
-        return ResultBean.success(pager);
     }
 
     /**
@@ -151,7 +109,7 @@ public class ChipController {
      * @return 响应数据
      */
     @GetMapping("pageListByExample")
-    //@RequiresPermissions("data_select")
+    @RequiresPermissions("data_select")
     public ResultBean<Pager<Chip>> pageListByExample(int page, int limit,Chip chip){
         Pager<Chip> pager = chipService.queryByExampleAndPage(chip, page, limit);
         return ResultBean.success(pager);

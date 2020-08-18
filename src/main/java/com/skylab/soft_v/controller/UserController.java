@@ -56,18 +56,6 @@ public class UserController {
     private RedisService redisService;
 
     /**
-     * 通过Id查询对象
-     *
-     * @param id id
-     * @return 响应数据
-     */
-    @GetMapping("queryById")
-    public ResultBean<User> queryById(int id) {
-        User user = userService.queryById(id);
-        return ResultBean.success(user);
-    }
-
-    /**
      * 用户登录
      * @param username 用户名
      * @param password 密码
@@ -144,36 +132,14 @@ public class UserController {
     }
 
     /**
-     * 分页查询
-     *
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("pageList")
-    public ResultBean<Pager<User>> pageList(int page, int limit) {
-        Pager<User> pager = userService.queryAllByPage(page, limit);
-        return ResultBean.success(pager);
-    }
-
-    /**
-     * 查询所有记录
-     *
-     * @return 响应数据
-     */
-    @GetMapping("list")
-    public ResultBean<List<User>> list() {
-        List<User> categories = userService.queryList();
-        return ResultBean.success(categories);
-    }
-
-    /**
      * 添加记录
      *
      * @param user 添加对象
      * @return 响应数据
      */
     @PostMapping("add")
+    @RequiresPermissions("user_add")
+    @ActionLog("添加一个用户")
     public ResultBean<User> add(User user,@RequestParam(defaultValue = "") String roleIds) {
         if (StrUtil.isBlank(user.getRealName()) || StrUtil.isBlank(user.getUsername()) || StrUtil.isBlank(user.getPassword())){
             return ResultBean.error("用户信息不完整");
@@ -210,6 +176,8 @@ public class UserController {
      * @return 响应数据
      */
     @PostMapping("delete")
+    @RequiresPermissions("user_delete")
+    @ActionLog("删除一个用户")
     public ResultBean<User> delete(Integer id) {
         if (userService.inUser(id)){
             return ResultBean.error("用户正在使用，不能删除！");
@@ -229,6 +197,8 @@ public class UserController {
      * @return 响应数据
      */
     @PostMapping("update")
+    @RequiresPermissions("user_update")
+    @ActionLog("修改一个用户")
     public ResultBean<User> update(User user,@RequestParam(defaultValue = "") String roleIds) {
         if (user.getId() == null){
             return ResultBean.error("用户Id不存在");
@@ -262,32 +232,6 @@ public class UserController {
     }
 
     /**
-     * 根据条件查询
-     *
-     * @param user 查询条件
-     * @return 响应数据
-     */
-    @GetMapping("queryByExample")
-    public ResultBean<List<User>> queryByExample(User user) {
-        List<User> list = userService.queryByExample(user);
-        return ResultBean.success(list);
-    }
-
-    /**
-     * 根据条件查询并分页
-     *
-     * @param user  查询条件
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("queryByExampleAndPage")
-    public ResultBean<Pager<User>> queryByExampleAndPage(User user, int page, int limit) {
-        Pager<User> pager = userService.queryByExampleAndPage(user, page, limit);
-        return ResultBean.success(pager);
-    }
-
-    /**
      * 根据条件查询账号并分页
      *
      * @param msg   筛选条件 可为空、角色名、用户名
@@ -309,6 +253,7 @@ public class UserController {
     }
 
     @PostMapping("resetPassword")
+    @ActionLog("修改密码")
     public ResultBean<User> updatePwd(String passwordOld, String passwordNew, HttpServletRequest request){
         if (StrUtil.isBlank(passwordOld)){
             return ResultBean.error("旧密码不能为空");

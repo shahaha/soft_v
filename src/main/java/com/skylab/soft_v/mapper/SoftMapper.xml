@@ -29,7 +29,7 @@
         <result property="frequency" column="frequency" jdbcType="VARCHAR"/>
         <result property="needBurnFirmware" column="need_burn_firmware" jdbcType="BOOLEAN"/>
         <result property="labelPrintTool" column="label_print_tool" jdbcType="INTEGER"/>
-        <result property="gpioDetection" column="GPIO_detection" jdbcType="INTEGER"/>
+        <result property="GPIODetection" column="GPIO_detection" jdbcType="INTEGER"/>
         <result property="burnTool" column="burn_tool" jdbcType="INTEGER"/>
         <result property="serialPortConfig" column="serial_port_config" jdbcType="INTEGER"/>
         <result property="detectionTool" column="detection_tool" jdbcType="INTEGER"/>
@@ -149,14 +149,14 @@
             <if test="flash != null">
                 and flash = #{flash}
             </if>
-            <if test="wan != null and wan != ''">
-                and WAN = #{wan}
+            <if test="WAN != null and WAN != ''">
+                and WAN = #{WAN}
             </if>
-            <if test="ddr != null">
-                and DDR = #{ddr}
+            <if test="DDR != null">
+                and DDR = #{DDR}
             </if>
-            <if test="iram != null">
-                and IRAM = #{iram}
+            <if test="IRAM != null">
+                and IRAM = #{IRAM}
             </if>
             <if test="openShortDetection != null">
                 and open_short_detection = #{openShortDetection}
@@ -170,8 +170,8 @@
             <if test="accuracy != null">
                 and accuracy = #{accuracy}
             </if>
-            <if test="tcxo != null and tcxo != ''">
-                and TCXO = #{tcxo}
+            <if test="TCXO != null and TCXO != ''">
+                and TCXO = #{TCXO}
             </if>
             <if test="frequency != null and frequency != ''">
                 and frequency = #{frequency}
@@ -182,8 +182,8 @@
             <if test="labelPrintTool != null">
                 and label_print_tool = #{labelPrintTool}
             </if>
-            <if test="gpioDetection != null">
-                and GPIO_detection = #{gpioDetection}
+            <if test="GPIODetection != null">
+                and GPIO_detection = #{GPIODetection}
             </if>
             <if test="burnTool != null">
                 and burn_tool = #{burnTool}
@@ -299,7 +299,7 @@
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert into soft_v_sys.soft(code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30)
-        values (#{code}, #{modelId}, #{chipId}, #{version}, #{engineer}, #{sale}, #{initialCustomer}, #{remark}, #{inUse}, #{uploadDate}, #{burningProcess}, #{configInfo}, #{customHardware}, #{flash}, #{wan}, #{ddr}, #{iram}, #{openShortDetection}, #{baudRate}, #{ephemeris}, #{accuracy}, #{tcxo}, #{frequency}, #{needBurnFirmware}, #{labelPrintTool}, #{gpioDetection}, #{burnTool}, #{detectionTool}, #{productTestTool}, #{productTestCode}, #{category}, #{address}, #{column1}, #{column2}, #{column3}, #{column4}, #{column5}, #{column6}, #{column7}, #{column8}, #{column9}, #{column10}, #{column11}, #{column12}, #{column13}, #{column14}, #{column15}, #{column16}, #{column17}, #{column18}, #{column19}, #{column20}, #{column21}, #{column22}, #{column23}, #{column24}, #{column25}, #{column26}, #{column27}, #{column28}, #{column29}, #{column30})
+        values (#{code}, #{modelId}, #{chipId}, #{version}, #{engineer}, #{sale}, #{initialCustomer}, #{remark}, #{inUse}, #{uploadDate}, #{burningProcess}, #{configInfo}, #{customHardware}, #{flash}, #{WAN}, #{DDR}, #{IRAM}, #{openShortDetection}, #{baudRate}, #{ephemeris}, #{accuracy}, #{TCXO}, #{frequency}, #{needBurnFirmware}, #{labelPrintTool}, #{GPIODetection}, #{burnTool}, #{detectionTool}, #{productTestTool}, #{productTestCode}, #{category}, #{address}, #{column1}, #{column2}, #{column3}, #{column4}, #{column5}, #{column6}, #{column7}, #{column8}, #{column9}, #{column10}, #{column11}, #{column12}, #{column13}, #{column14}, #{column15}, #{column16}, #{column17}, #{column18}, #{column19}, #{column20}, #{column21}, #{column22}, #{column23}, #{column24}, #{column25}, #{column26}, #{column27}, #{column28}, #{column29}, #{column30})
     </insert>
 
     <!--新增非空列-->
@@ -348,13 +348,13 @@
             <if test="flash != null">
                 flash,
             </if>
-            <if test="wan != null and wan != ''">
+            <if test="WAN != null and WAN != ''">
                 WAN,
             </if>
-            <if test="ddr != null">
+            <if test="DDR != null">
                 DDR,
             </if>
-            <if test="iram != null">
+            <if test="IRAM != null">
                 IRAM,
             </if>
             <if test="openShortDetection != null">
@@ -369,7 +369,7 @@
             <if test="accuracy != null">
                 accuracy,
             </if>
-            <if test="tcxo != null and tcxo != ''">
+            <if test="TCXO != null and TCXO != ''">
                 TCXO,
             </if>
             <if test="frequency != null and frequency != ''">
@@ -381,7 +381,7 @@
             <if test="labelPrintTool != null">
                 label_print_tool,
             </if>
-            <if test="gpioDetection != null">
+            <if test="GPIODetection != null">
                 GPIO_detection,
             </if>
             <if test="burnTool != null">
@@ -536,14 +536,14 @@
             <if test="flash != null">
                 #{flash},
             </if>
-            <if test="wan != null and wan != ''">
-                #{wan},
+            <if test="WAN != null and WAN != ''">
+                #{WAN},
             </if>
-            <if test="ddr != null">
-                #{ddr},
+            <if test="DDR != null">
+                #{DDR},
             </if>
-            <if test="iram != null">
-                #{iram},
+            <if test="IRAM != null">
+                #{IRAM},
             </if>
             <if test="openShortDetection != null">
                 #{openShortDetection},
@@ -557,8 +557,8 @@
             <if test="accuracy != null">
                 #{accuracy},
             </if>
-            <if test="tcxo != null and tcxo != ''">
-                #{tcxo},
+            <if test="TCXO != null and TCXO != ''">
+                #{TCXO},
             </if>
             <if test="frequency != null and frequency != ''">
                 #{frequency},
@@ -569,8 +569,8 @@
             <if test="labelPrintTool != null">
                 #{labelPrintTool},
             </if>
-            <if test="gpioDetection != null">
-                #{gpioDetection},
+            <if test="GPIODetection != null">
+                #{GPIODetection},
             </if>
             <if test="burnTool != null">
                 #{burnTool},
@@ -687,9 +687,6 @@
     <update id="update">
         update soft_v_sys.soft
         <set>
-            <if test="code != null and code != ''">
-                code = #{code},
-            </if>
             <if test="modelId != null">
                 model_id = #{modelId},
             </if>
@@ -705,38 +702,28 @@
             <if test="sale != null">
                 sale = #{sale},
             </if>
-            <if test="initialCustomer != null and initialCustomer != ''">
-                initial_customer = #{initialCustomer},
-            </if>
-            <if test="remark != null and remark != ''">
-                remark = #{remark},
-            </if>
+            initial_customer = #{initialCustomer},
+            remark = #{remark},
             <if test="inUse != null">
                 in_use = #{inUse},
             </if>
             <if test="uploadDate != null">
                 upload_date = #{uploadDate},
             </if>
-            <if test="burningProcess != null and burningProcess != ''">
-                burning_process = #{burningProcess},
-            </if>
-            <if test="configInfo != null and configInfo != ''">
-                config_info = #{configInfo},
-            </if>
+            burning_process = #{burningProcess},
+            config_info = #{configInfo},
             <if test="customHardware != null">
                 custom_hardware = #{customHardware},
             </if>
             <if test="flash != null">
                 flash = #{flash},
             </if>
-            <if test="wan != null and wan != ''">
-                WAN = #{wan},
+            WAN = #{WAN},
+            <if test="DDR != null">
+                DDR = #{DDR},
             </if>
-            <if test="ddr != null">
-                DDR = #{ddr},
-            </if>
-            <if test="iram != null">
-                IRAM = #{iram},
+            <if test="IRAM != null">
+                IRAM = #{IRAM},
             </if>
             <if test="openShortDetection != null">
                 open_short_detection = #{openShortDetection},
@@ -750,20 +737,16 @@
             <if test="accuracy != null">
                 accuracy = #{accuracy},
             </if>
-            <if test="tcxo != null and tcxo != ''">
-                TCXO = #{tcxo},
-            </if>
-            <if test="frequency != null and frequency != ''">
-                frequency = #{frequency},
-            </if>
+            TCXO = #{TCXO},
+            frequency = #{frequency},
             <if test="needBurnFirmware != null">
                 need_burn_firmware = #{needBurnFirmware},
             </if>
             <if test="labelPrintTool != null">
                 label_print_tool = #{labelPrintTool},
             </if>
-            <if test="gpioDetection != null">
-                GPIO_detection = #{gpioDetection},
+            <if test="GPIODetection != null">
+                GPIO_detection = #{GPIODetection},
             </if>
             <if test="burnTool != null">
                 burn_tool = #{burnTool},
@@ -890,5 +873,19 @@
     <select id="count" resultType="int">
         select count(1)
         from soft_v_sys.soft
+    </select>
+
+    <!--通过code查询单个-->
+    <select id="queryByCode" resultMap="SoftMap">
+        select
+        id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date,
+        burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate,
+        ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool,
+        detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4,
+        column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15,
+        column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26,
+        column27, column28, column29, column30
+        from soft_v_sys.soft
+        where code = #{code}
     </select>
 </mapper>

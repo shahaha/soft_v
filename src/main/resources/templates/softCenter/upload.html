@@ -20,12 +20,6 @@
     <table class="layui-hide" id="test" lay-filter="test"></table>
     <!-- 表头工具栏模板 -->
     <script type="text/html" id="toolbarDemo" style="height:100px;">
-        <div class="layui-inline" style="width: 20%;">
-            <input name="search" id="LAY-search-labTable" placeholder="输入软件编码" class="layui-input">
-        </div>
-        <button lay-event="select" type="button" class="layui-btn">
-            <i class="layui-icon">&#xe615;</i>搜索
-        </button>
         <button lay-event="add" type="button" class="layui-btn">
             <i class="layui-icon">&#xe608;</i>添加软件
         </button>
@@ -41,7 +35,7 @@
     <script>
         var rowData;//用于接受表格的行信息
         layui.config({
-            base: '../../../layuiadmin/' //静态资源所在路径
+            base: '/layuiadmin/' //静态资源所在路径
         }).extend({
             index: 'lib/index', //主入口模块
         }).use(['index'], function () {
@@ -53,14 +47,14 @@
             var cols = []; //表头
             //请求cols
             admin.req({
-                url: '/extFieldRelation/getValidFields',
+                url: '/extFieldRelation/getShowFields',
                 done: function (data) {
-                    console.log(data);
+                    //console.log(data);
                     //填充表头
                     cols = []; //清空
                     $.each(data.data, function (index, item) {
                         // console.log(item);
-                        obj = new Object();
+                        obj = {};
                         obj.field = item.fieldName;
                         obj.title = item.fieldDes;
                         obj.align = "center";
@@ -93,9 +87,10 @@
                     id: "testTable", //定义id 方便重载
                     elem: '#test',
                     headers: { //通过 request 头传递
-                        "token": layui.data(setter.tableName)['token'] || ""
+                        "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                        "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
                     },
-                    url: '/soft/queryPageByEngineerAndOther',
+                    url: '/soft/pageList',
                     toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
                     height: 'full-20', //铺满离最下方差多少
                     cols: [cols],
@@ -121,18 +116,11 @@
             //监听头工具栏事件
             table.on('toolbar(test)', function (obj) {
                 switch (obj.event) {
-                    case 'select':
-                        var msg = document.getElementById('LAY-search-labTable').value;
-                        table.reload('testTable', {
-                            url: "/soft/queryPageByEngineerAndOther?code=" + msg,
-                        });
-                        $('#LAY-search-labTable').val(msg);
-                        break;
                     case 'add':
                         layer.open({
                             type: 2,
                             title: '<i class="layui-icon layui-icon-add-1">添加软件</i>',
-                            area: ['420px', '580px'],
+                            area: ['520px', '580px'],
                             content: ['/index/addSoft'],
                             skin: 'layui-layer-molv',
                             shade: 0,
@@ -169,14 +157,14 @@
                 } else if (obj.event === 'edit') {
                     rowData = JSON.stringify(data);
                     layer.open({
-                            type: 2,
-                            title: '<i class="layui-icon layui-icon-edit">编辑</i>',
-                            area: ['420px', '580px'],
-                            content: ['/index/editSoft'],
-                            skin: 'layui-layer-molv',
-                            shade: 0,
-                            offset: 'auto',
-                        });
+                        type: 2,
+                        title: '<i class="layui-icon layui-icon-edit">编辑</i>',
+                        area: ['520px', '580px'],
+                        content: ['/index/editSoft'],
+                        skin: 'layui-layer-molv',
+                        shade: 0,
+                        offset: 'auto',
+                    });
                 }
             });
         });

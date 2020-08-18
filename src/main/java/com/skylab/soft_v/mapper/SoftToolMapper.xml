@@ -112,4 +112,15 @@
         select count(1)
         from soft_v_sys.soft_tool
     </select>
+     <!--根据类型查工具-->
+    <select id="queryByType" resultMap="SoftToolMap">
+        select
+        id, type, name, address
+        from soft_v_sys.soft_tool
+        <where>
+            <if test="type != null">
+                and type = #{i}
+            </if>
+        </where>
+    </select>
 </mapper>
