@@ -177,7 +177,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Object dataGrid(SoulPage<User> soulPage) {
-        return soulPage.setData(userMapper.dataGrid(soulPage,(User) soulPage.getObj()));
+        return soulPage.setData(userMapper.dataGrid(soulPage, (User) soulPage.getObj()));
+    }
     /**
      * 根据条件查询用户及角色列表
      *

@@ -94,7 +94,7 @@ public interface ExtFieldRelationService {
      * @return 对象列表
      */
     List<ExtFieldRelation> queryValidFieldsByCategory(int category);
-     * 查询有效字段并分页
+     /** 查询有效字段并分页
      *
      * @param page
      * @param limit

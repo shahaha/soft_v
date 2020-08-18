@@ -152,6 +152,7 @@ public class ExtFieldRelationServiceImpl implements ExtFieldRelationService {
     @Override
     public List<ExtFieldRelation> queryValidFieldsByCategory(int category) {
         return extFieldRelationMapper.queryValidFieldsByCategory(category);
+    }
     /**
      * 查询有效字段并分页
      *
