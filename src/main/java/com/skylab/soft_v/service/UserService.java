@@ -2,6 +2,8 @@ package com.skylab.soft_v.service;
 
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.User;
+import com.skylab.soft_v.util.SoulPage;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -93,4 +95,6 @@ public interface UserService {
      * @return 实例对象
      */
     User queryByUsername(String username);
+
+    Object dataGrid(SoulPage<User> soulPage);
 }

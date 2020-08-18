@@ -132,4 +132,9 @@ public class ExtFieldRelationServiceImpl implements ExtFieldRelationService {
     public boolean deleteById(Integer id) {
         return this.extFieldRelationMapper.deleteById(id) > 0;
     }
+
+    @Override
+    public List<ExtFieldRelation> queryValidFieldsByCategory(int category) {
+        return extFieldRelationMapper.queryValidFieldsByCategory(category);
+    }
 }

@@ -1,6 +1,8 @@
 package com.skylab.soft_v.mapper;
 
 import com.skylab.soft_v.entity.User;
+import com.skylab.soft_v.util.SoulPage;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -90,4 +92,6 @@ public interface UserMapper {
      * @return 实例对象
      */
     User queryByUsername(String username);
+
+    List<User> dataGrid(SoulPage<User> soulPage,@Param("user") User user);
 }

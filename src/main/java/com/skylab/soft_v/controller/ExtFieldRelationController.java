@@ -1,11 +1,13 @@
 package com.skylab.soft_v.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.entity.ExtFieldRelation;
 import com.skylab.soft_v.service.ExtFieldRelationService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -139,6 +141,27 @@ public class ExtFieldRelationController {
     public ResultBean<Pager<ExtFieldRelation>> queryByExampleAndPage(ExtFieldRelation extFieldRelation, int page, int limit) {
         Pager<ExtFieldRelation> pager = extFieldRelationService.queryByExampleAndPage(extFieldRelation, page, limit);
         return ResultBean.success(pager);
+    }
+
+    /**
+     * 通过类型查询有效字段记录
+     *
+     * @return 响应数据
+     */
+    @GetMapping("getValidFieldsByCategory")
+    @RequiresPermissions("field_select")
+    public ResultBean<List<ExtFieldRelation>> getValidFieldsByCategory(int category) {
+        List<ExtFieldRelation> extFieldRelations = extFieldRelationService.queryValidFieldsByCategory(category);
+        for (int i = 0; i < extFieldRelations.size(); i++) {
+            System.out.println(extFieldRelations.get(i).getFieldName());
+            //剔除一些字段不展示
+            if (extFieldRelations.get(i).getFieldName().endsWith("tool") || "id".equals(extFieldRelations.get(i).getFieldName()) || "address".equals(extFieldRelations.get(i).getFieldName()) || "category".equals(extFieldRelations.get(i).getFieldName())) {
+                extFieldRelations.remove(i--);
+            } else {
+                extFieldRelations.get(i).setFieldName(StrUtil.toCamelCase(extFieldRelations.get(i).getFieldName()));
+            }
+        }
+        return ResultBean.success(extFieldRelations);
     }
 
 }

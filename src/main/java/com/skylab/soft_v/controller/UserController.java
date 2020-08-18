@@ -14,6 +14,7 @@ import com.skylab.soft_v.service.RedisService;
 import com.skylab.soft_v.service.RoleService;
 import com.skylab.soft_v.service.UserService;
 import com.skylab.soft_v.util.JwtTokenUtil;
+import com.skylab.soft_v.util.SoulPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -150,10 +151,17 @@ public class UserController {
      * @param limit 每页行数
      * @return 响应数据
      */
-    @GetMapping("pageList")
+    @PostMapping("pageList")
     public ResultBean<Pager<User>> pageList(int page, int limit) {
         Pager<User> pager = userService.queryAllByPage(page, limit);
         return ResultBean.success(pager);
+    }
+
+
+    @PostMapping("soulpage")
+    public Object soulpage(SoulPage<User> soulPage,User user) {
+        soulPage.setObj(user);
+        return userService.dataGrid(soulPage);
     }
 
     /**

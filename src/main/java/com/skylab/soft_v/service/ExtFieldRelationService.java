@@ -87,4 +87,10 @@ public interface ExtFieldRelationService {
      */
     boolean deleteById(Integer id);
 
+    /**
+     * 通过类型查询有效字段
+     * @param category 类型id
+     * @return 对象列表
+     */
+    List<ExtFieldRelation> queryValidFieldsByCategory(int category);
 }

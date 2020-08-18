@@ -83,4 +83,6 @@ public interface ExtFieldRelationMapper {
      * @return 总行数
      */
     int count();
+
+    List<ExtFieldRelation> queryValidFieldsByCategory(int category);
 }

@@ -119,4 +119,9 @@
         from soft_v_sys.user
         where username = #{username}
     </select>
+    <select id="dataGrid" resultMap="UserMap">
+          select
+        id, username, password, real_name
+        from soft_v_sys.user
+    </select>
 </mapper>

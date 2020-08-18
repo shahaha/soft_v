@@ -4,6 +4,7 @@ import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.mapper.UserMapper;
 import com.skylab.soft_v.service.UserService;
+import com.skylab.soft_v.util.SoulPage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -142,5 +143,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User queryByUsername(String username) {
         return userMapper.queryByUsername(username);
+    }
+
+    @Override
+    public Object dataGrid(SoulPage<User> soulPage) {
+        return soulPage.setData(userMapper.dataGrid(soulPage,(User) soulPage.getObj()));
     }
 }

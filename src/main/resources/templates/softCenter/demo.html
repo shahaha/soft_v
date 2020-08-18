@@ -5,35 +5,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/soulTable.css}" media="all">
 </head>
 
 <body>
-    111
-<!-- 
-    <shiro:principal property="username" />
-    hello
-    <shiro:hasPermission name="log_select">
-        world
-    </shiro:hasPermission>
-    <div shiro:hasPermission="data_select">
-   2222
-    </div>
+    <!-- 表头工具栏模板 -->
+    <script type="text/html" id="labTableToolbar" style="height:100px;">
+        <form class="layui-form">
+            <label class="layui-form-label" style="width:100px;">软件类型：</label>
+            <div class="layui-input-inline">
+                <select id="softType" lay-filter="softType" lay-verify="required">
+                </select>
+            </div>
+            <button lay-event="clearFilter" type="button" class="layui-btn">
+                <i class="layui-icon layui-icon-refresh"></i>清空筛选条件
+            </button>
+        </form>
+    </script>
+    <!-- 表格模板 -->
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+    <!-- 操作栏模板 -->
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="tools">工具</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="download">下载</a>
+    </script>
 
-    <span shiro:hasPermission="file_download">
-       3333
-    </span>
-
-    <span shiro:hasRole="test">
-        6666
-    </span> -->
 
     <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
     <script>
         layui.config({
             base: '../../../layuiadmin/' //静态资源所在路径
         }).extend({
-            index: 'lib/index' //主入口模块
-        }).use(['index', 'dtree'], function () {
+            index: 'lib/index', //主入口模块
+            soulTable: 'soulTable/soulTable',
+            tableChild: 'soulTable/tableChild',
+            tableMerge: 'soulTable/tableMerge',
+            tableFilter: 'soulTable/tableFilter',
+            excel: 'soulTable/excel',
+        }).use(['index', 'dtree', 'soulTable'], function () {
             var form = layui.form,
                 layer = layui.layer,
                 $ = layui.jquery,
@@ -42,17 +53,130 @@
                 element = layui.element,
                 setter = layui.setter,
                 admin = layui.admin;
+            var soulTable = layui.soulTable;
+            var softType = ""; //软件类型
+            var cols = []; //动态表项
+            table.set({
+                headers: { //通过 request 头传递
+                    "authorization": layui.data(setter.tableName)['authorization'] || "",
+                    "refreshToken": layui.data(setter.tableName)['refreshToken'] || "",
+                }
+            });
+
             //获取软件类型
             admin.req({
                 url: '/category/list',
                 done: function (data) {
                     console.log(data);
+                    // $.each(data.data, function (index, item) {
+                    //     $('#softType').append(new Option(item.categoryName, item.id));
+                    // });
+                    $.each(data.data, function (index, item) {
+                        //物品类型信息持久化
+                        layui.data('softTypes', {
+                            key: item.id,
+                            value: item.categoryName
+                        });
+                    });
+                    softType = data.data[0].id;
+                    getValidFields(softType);
+                    form.render("select");
                 },
                 fail: function (data) {
                     layer.msg(data.msg);
                 }
             });
+            //监听下拉列表改变
+            form.on('select(softType)', function (data) {
+                // console.log(data.value);
+                if (data.value == softType) {
+                    return;
+                }
+                softType = data.value;
+                getValidFields(softType);
+                // $('#softType').val(data.value);
+            });
 
+            //获取需要展示的表头字段
+            function getValidFields(categoryId) {
+                admin.req({
+                    url: '/extFieldRelation/getValidFieldsByCategory?category=' +
+                        categoryId,
+                    done: function (data) {
+                        console.log(data);
+                        //填充表项
+                        cols = []; //清空
+                        $.each(data.data, function (index, item) {
+                            // console.log(item);
+                            obj = new Object();
+                            obj.field = item.fieldName;
+                            obj.title = item.fieldDes;
+                            obj.align = "center";
+                            obj.width = "120";
+                            if (item.isTerm) {
+                                obj.filter = true;
+                                if (item.fieldName == "uploadDate")
+                                    obj.filter = {
+                                        type: 'date[yyyy-MM-dd HH:mm:ss]'
+                                    };
+                            }
+                            cols.push(obj);
+                        });
+                        //添加操作栏
+                        var obj = {
+                            fixed: 'right',
+                            title: '操作',
+                            toolbar: '#barDemo',
+                            width: 150,
+                            align: "center"
+                        }
+                        cols.push(obj);
+                        // cols.forEach((item, index, array) => {
+                        //     console.log(item)
+                        // })
+                        //加载表格
+                        tableRender(softType);
+                    },
+                    fail: function (data) {
+                        layer.msg(data.msg);
+                    }
+                });
+            }
+            //表格
+            function tableRender(softType) {
+                // console.log(softType);
+                // console.log(cols)
+                table.render({
+                    id: "testTable", //定义id 方便重载
+                    elem: '#test',
+                    url: '/soft/queryByExampleAndPage',
+                    method: "post",
+                    where: {
+                        category: softType
+                    },
+                    height: 'full-90', //铺满离最下方差多少
+                    toolbar: '#labTableToolbar', //开启头部工具栏，并为其绑定左侧模板
+                    cols: [cols],
+                    filter: {
+                        items: ['column', 'data', 'condition', 'editCondition', 'excel', 'clearCache'],
+                        cache: true
+                    },
+                    page: true, //开启分页
+                    limit: 10, //每页数据条目
+                    response: { //如果你想重新规定返回的数据格式
+                        statusCode: "200", //规定成功的状态码，默认：0
+                    },
+                    done: function (res) { //返回数据执行回调函数
+                        console.log(res);
+                        soulTable.render(this);
+                        $.each(layui.data('softTypes'), function (index, item) {
+                            $('#softType').append(new Option(item, index));
+                        });
+                        $('#softType').val(softType);
+                        form.render("select");
+                    }
+                });
+            }
         });
     </script>
 </body>
