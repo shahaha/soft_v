@@ -36,11 +36,8 @@
         id, model_name
         from soft_v_sys.model
         <where>
-            <if test="id != null">
-                and id = #{id}
-            </if>
             <if test="modelName != null and modelName != ''">
-                and model_name = #{modelName}
+                and model_name like concat('%',#{modelName},'%')
             </if>
         </where>
     </select>

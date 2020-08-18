@@ -102,15 +102,14 @@
 
     <select id="queryByUserId" resultMap="RoleMap">
         select r.id, role_name, remark
-        from soft_manager_sys.role r left join soft_manager_sys.user_role ur on r.id = ur.role_id
-            left join soft_manager_sys.user u on ur.user_id = u.id
+        from soft_v_sys.role r left join soft_v_sys.user_role ur on r.id = ur.role_id
+            left join soft_v_sys.user u on ur.user_id = u.id
         where u.id = #{userId}
     </select>
 
-    <select id="inUser" resultType="java.lang.Integer">
-        select
-          id, user_id, role_id
-        from soft_manager_sys.user_role
+    <select id="inUser" resultType="int">
+        select count(1)
+        from soft_v_sys.user_role
         where role_id = #{id}
     </select>
 </mapper>

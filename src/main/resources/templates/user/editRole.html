@@ -74,7 +74,7 @@
                 dtree = layui.dtree;
             var parent_json = eval('(' + parent.json +
                 ')'); //从父层获取值，json是父层的全局js变量。eval是将该string类型的json串变为标准的json串
-            console.log(parent_json);
+            //console.log(parent_json);
             var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
             //初始化
             form.val('addPersonTypeForm', parent_json);
@@ -84,7 +84,8 @@
                 method: "get", //默认为post
                 url: '/permission/list', //请求数据接口
                 headers: { //通过 request 头传递
-                    "token": layui.data(setter.tableName)['token'] || ""
+                    "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                    "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
                 },
                 dataStyle: "layuiStyle", //使用layui风格的数据格式
                 response: {
@@ -129,7 +130,7 @@
             form.on('submit(demo1)', function (data) {
                 data = data.field;
                 var params = dtree.getCheckbarNodesParam("dtree"); //选中数据
-                console.log(params)
+                //console.log(params)
                 var checkArr = "";
                 params.forEach(element => { //筛选出被选中的叶子节点
                     if (element.leaf) {
@@ -147,7 +148,7 @@
                         id: parent_json.id,
                     },
                     done: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         setTimeout(function () {
                             parent.layui.table.reload("table");
                             parent.layer.close(index); //执行关闭

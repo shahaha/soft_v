@@ -38,22 +38,14 @@ public interface LogService {
     List<Log> queryList();
 
     /**
-     * 通过实体作为筛选条件查询
-     *
-     * @param log 实例对象
-     * @return 对象列表
-     */
-    List<Log> queryByExample(Log log);
-
-    /**
      * 通过实体作为筛选条件查询并分页
      *
-     * @param log   实例对象
+     * @param conditions   实例对象
      * @param page  查询起始位置
      * @param limit 查询条数
      * @return 对象列表
      */
-    Pager<Log> queryByExampleAndPage(Log log, int page, int limit);
+    Pager<Log> queryByExampleAndPage(String conditions, int page, int limit);
 
     /**
      * 新增数据

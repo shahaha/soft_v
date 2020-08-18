@@ -1,5 +1,7 @@
 package com.skylab.soft_v.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.skylab.soft_v.bean.AccountVO;
 import com.skylab.soft_v.bean.UserVO;
 import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Const;
@@ -9,6 +11,7 @@ import com.skylab.soft_v.component.ActionLog;
 import com.skylab.soft_v.entity.Permission;
 import com.skylab.soft_v.entity.Role;
 import com.skylab.soft_v.entity.User;
+import com.skylab.soft_v.entity.UserRole;
 import com.skylab.soft_v.service.PermissionService;
 import com.skylab.soft_v.service.RedisService;
 import com.skylab.soft_v.service.RoleService;
@@ -19,15 +22,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -73,7 +75,6 @@ public class UserController {
      * @return 响应数据
      */
     @PostMapping(value = "login")
-    @ActionLog("用户登录")
     public ResultBean<UserVO> login(String username, String password){
         log.info("login");
         User user = userService.queryByUsername(username);
@@ -136,7 +137,7 @@ public class UserController {
         return ResultBean.success();
     }
 
-    @GetMapping("/getLoginUser")
+    @PostMapping("/getLoginUser")
     public ResultBean<User> getLoginUser(HttpServletRequest request){
         String accessToken=request.getHeader(Const.ACCESS_TOKEN);
         String username = JwtTokenUtil.getUserId(accessToken);
@@ -182,12 +183,32 @@ public class UserController {
      * @return 响应数据
      */
     @PostMapping("add")
-    public ResultBean<User> add(User user) {
+    public ResultBean<User> add(User user,@RequestParam(defaultValue = "") String roleIds) {
+        if (StrUtil.isBlank(user.getRealName()) || StrUtil.isBlank(user.getUsername()) || StrUtil.isBlank(user.getPassword())){
+            return ResultBean.error("用户信息不完整");
+        }
+        if (StrUtil.isBlank(roleIds)){
+            return ResultBean.error("角色不能为空");
+        }
+        User exit = userService.queryByUsername(user.getUsername());
+        if (exit != null){
+           return ResultBean.error("该用户名已存在，无法添加");
+        }
         try {
-            User insertSelective = userService.insertSelective(user);
+            String[] split = roleIds.split(",");
+            List<Integer> roles = new ArrayList<>();
+            for (String roleId : split) {
+                Role role = roleService.queryById(Integer.parseInt(roleId));
+                if (role == null) {
+                    return ResultBean.error("不能添加不存在的角色");
+                } else {
+                    roles.add(Integer.parseInt(roleId));
+                }
+            }
+            User insertSelective = userService.insertSelective(user,roles);
             return ResultBean.success(insertSelective);
         } catch (Exception e) {
-            return ResultBean.error("保存失败");
+            throw new BusinessException(400,"保存失败");
         }
     }
 
@@ -199,6 +220,9 @@ public class UserController {
      */
     @PostMapping("delete")
     public ResultBean<User> delete(Integer id) {
+        if (userService.inUser(id)){
+            return ResultBean.error("用户正在使用，不能删除！");
+        }
         final boolean b = userService.deleteById(id);
         if (b) {
             return ResultBean.success("删除成功！");
@@ -214,9 +238,32 @@ public class UserController {
      * @return 响应数据
      */
     @PostMapping("update")
-    public ResultBean<User> update(User user) {
+    public ResultBean<User> update(User user,@RequestParam(defaultValue = "") String roleIds) {
+        if (user.getId() == null){
+            return ResultBean.error("用户Id不存在");
+        }
+        if (StrUtil.isBlank(user.getRealName())){
+            return ResultBean.error("用户信息不完整");
+        }
+        if (StrUtil.isBlank(roleIds)){
+            return ResultBean.error("角色不能为空");
+        }
+        User exit = userService.queryByUsername(user.getUsername());
+        if (exit != null && !exit.getId().equals(user.getId())){
+            return ResultBean.error("该用户名已存在，无法添加");
+        }
         try {
-            User update = userService.update(user);
+            String[] split = roleIds.split(",");
+            List<Integer> roles = new ArrayList<>();
+            for (String roleId : split) {
+                Role role = roleService.queryById(Integer.parseInt(roleId));
+                if (role == null) {
+                    return ResultBean.error("不能添加不存在的角色");
+                } else {
+                    roles.add(Integer.parseInt(roleId));
+                }
+            }
+            User update = userService.update(user,roles);
             return ResultBean.success(update);
         } catch (Exception e) {
             return ResultBean.error("修改失败");
@@ -247,6 +294,41 @@ public class UserController {
     public ResultBean<Pager<User>> queryByExampleAndPage(User user, int page, int limit) {
         Pager<User> pager = userService.queryByExampleAndPage(user, page, limit);
         return ResultBean.success(pager);
+    }
+
+    /**
+     * 根据条件查询账号并分页
+     *
+     * @param msg   筛选条件 可为空、角色名、用户名
+     * @param page  页码
+     * @param limit 每页条数
+     * @return 返回结果
+     */
+    @GetMapping("queryAccountByMsg")
+    @RequiresPermissions("user_select")
+    public ResultBean<?> queryAccountByMsg(@RequestParam(defaultValue = "") String msg, int page, int limit) {
+        List<AccountVO> accountVOS = userService.queryAccountByMsg(msg);
+        Pager<AccountVO> pager = new Pager<>();
+        int count = accountVOS.size();
+        pager.setTotal(count);
+        int fromIndex = (page - 1) * limit;
+        int toIndex = fromIndex + limit;
+        pager.setRows(accountVOS.subList(fromIndex, Math.min(toIndex, count)));
+        return ResultBean.success(pager);
+    }
+
+    @PostMapping("resetPassword")
+    public ResultBean<User> updatePwd(String passwordOld, String passwordNew, HttpServletRequest request){
+        if (StrUtil.isBlank(passwordOld)){
+            return ResultBean.error("旧密码不能为空");
+        }
+        if (StrUtil.isBlank(passwordNew)){
+            return ResultBean.error("新密码不能为空");
+        }
+        String accessToken=request.getHeader(Const.ACCESS_TOKEN);
+        String refresgToken=request.getHeader(Const.REFRESH_TOKEN);
+        userService.userUpdatePwd(passwordOld,passwordNew,accessToken,refresgToken);
+        return ResultBean.success("修改成功");
     }
 
 }

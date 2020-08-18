@@ -57,7 +57,7 @@
   //这里设置一个空的json串，用于接受表格的行信息
   var json;
   layui.config({
-    base: '../../../layuiadmin/' //静态资源所在路径
+    base: '/layuiadmin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
   }).use(['index', 'table'], function () {
@@ -67,7 +67,8 @@
             admin = layui.admin;
     table.set({
       headers: { //通过 request 头传递
-        "token": layui.data(setter.tableName)['token'] || ""
+        "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+        "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
       }
     })
     table.render({
@@ -78,7 +79,7 @@
       height: 'full-20', //铺满离最下方差多少
       even: true,
       skin: 'row',
-      limit: 10, //每页数据条目
+      //limit: 10, //每页数据条目
       toolbar: '#labTableToolbar', //开启头部工具栏，并为其绑定左侧模板
       cols: [
         [{
@@ -107,7 +108,7 @@
       },
       done: function (res) { //返回数据执行回调函数
         layer.closeAll("loading"); //返回数据关闭loading
-        console.log(res);
+        //console.log(res);
       }
     });
 
@@ -148,7 +149,7 @@
               id: data.id
             },
             done: function (data) {
-              console.log(data);
+              //console.log(data);
               obj.del(); //删除对应行（tr）的DOM结构
               layer.close(index);
               layer.msg(data.msg);

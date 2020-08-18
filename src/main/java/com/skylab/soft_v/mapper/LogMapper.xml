@@ -40,25 +40,12 @@
         id, real_name, time, ip, method, des
         from soft_v_sys.log
         <where>
-            <if test="id != null">
-                and id = #{id}
-            </if>
-            <if test="realName != null and realName != ''">
-                and real_name = #{realName}
-            </if>
-            <if test="time != null">
-                and time = #{time}
-            </if>
-            <if test="ip != null and ip != ''">
-                and ip = #{ip}
-            </if>
-            <if test="method != null and method != ''">
-                and method = #{method}
-            </if>
-            <if test="des != null and des != ''">
-                and des = #{des}
+            1 = 1
+            <if test="conditions != null and conditions != ''">
+                and CONCAT(`real_name`, `des`) LIKE CONCAT('%',#{conditions},'%')
             </if>
         </where>
+        order by time DESC
     </select>
 
     <!--新增所有列-->

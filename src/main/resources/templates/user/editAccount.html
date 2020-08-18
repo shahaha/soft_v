@@ -50,7 +50,7 @@
     <script th:src="@{/js/xm-select.js}"></script>
     <script>
         layui.config({
-            base: '../../../layuiadmin/' //静态资源所在路径
+            base: '/layuiadmin/' //静态资源所在路径
         }).extend({
             index: 'lib/index' //主入口模块
         }).use(['index', 'dtree'], function () {
@@ -63,7 +63,7 @@
             dtree = layui.dtree;
             var parent_json = eval('(' + parent.json +
                 ')'); //从父层获取值，json是父层的全局js变量。eval是将该string类型的json串变为标准的json串
-            console.log(parent_json);
+            //console.log(parent_json);
             var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
             var select_role; //选中的角色
             //初始化
@@ -95,7 +95,7 @@
                         // });
                         var arr = [];
                         parent_json.roles.forEach(element => {
-                            console.log(element)
+                            //console.log(element)
                             arr.push(element.id);
                         });
                         select_role.setValue(arr);
@@ -121,7 +121,7 @@
                    return false;
                 }
                 admin.req({
-                    url: '/user/updateAccount',
+                    url: '/user/update',
                     method: "post",
                     dataType: 'json',
                     data: {
@@ -130,12 +130,12 @@
                         roleIds: data.select,
                     },
                     done: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         setTimeout(function () {
                             parent.layui.table.reload("table");
                             parent.layer.close(index); //执行关闭
                         }, 1000);
-                        layer.msg(data.msg);
+                        layer.msg("修改成功");
                     },
                     fail: function (data) {
                         layer.msg(data.msg);

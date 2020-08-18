@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service;
 
+import com.skylab.soft_v.bean.ExtFieldRelationVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.ExtFieldRelation;
 
@@ -93,4 +94,40 @@ public interface ExtFieldRelationService {
      * @return 对象列表
      */
     List<ExtFieldRelation> queryValidFieldsByCategory(int category);
+     * 查询有效字段并分页
+     *
+     * @param page
+     * @param limit
+     * @param condition 查询条件
+     * @return 对象列表
+     */
+    Pager<ExtFieldRelationVO> queryValidFieldsAndPage(int page, int limit, String condition);
+
+    /**
+     * 修改字段查询状态
+     * @param id id
+     * @param isTerm 状态
+     * @return 是否成功
+     */
+    boolean updateIsTerm(Integer id, boolean isTerm);
+
+    /**
+     * 查询无效字段
+     * @return 对象列表
+     */
+    List<ExtFieldRelation> queryInvalidFields();
+
+    /**
+     * 停止使用一个字段
+     * @param extFieldRelation 字段
+     * @return 是否成功
+     */
+    boolean stopUse(ExtFieldRelation extFieldRelation);
+
+    /**
+     * 扩展一个字段
+     * @param exits 字段对象
+     * @return 实例对象
+     */
+    ExtFieldRelation extendField(ExtFieldRelation exits);
 }

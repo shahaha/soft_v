@@ -3,6 +3,7 @@ package com.skylab.soft_v.config;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.skylab.soft_v.common.ShiroCacheManager;
+import com.skylab.soft_v.component.CustomHashedCredentialsMatcher;
 import com.skylab.soft_v.component.CustomShiroRealm;
 import com.skylab.soft_v.component.JWTFilter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +29,14 @@ public class ShiroConfig {
     }
 
     @Bean
+    public CustomHashedCredentialsMatcher customHashedCredentialsMatcher(){
+        return new CustomHashedCredentialsMatcher();
+    }
+
+    @Bean
     public CustomShiroRealm customShiroRealm(){
         CustomShiroRealm customRealm=new CustomShiroRealm();
+        customRealm.setCredentialsMatcher(customHashedCredentialsMatcher());
         customRealm.setCacheManager(cacheManager());
         return customRealm;
     }

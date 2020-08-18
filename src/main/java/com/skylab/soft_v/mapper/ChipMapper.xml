@@ -36,11 +36,8 @@
         id, chip_name
         from soft_v_sys.chip
         <where>
-            <if test="id != null">
-                and id = #{id}
-            </if>
             <if test="chipName != null and chipName != ''">
-                and chip_name = #{chipName}
+                and chip_name like concat('%',#{chipName},'%')
             </if>
         </where>
     </select>

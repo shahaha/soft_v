@@ -55,7 +55,7 @@
     <script th:src="@{/js/xm-select.js}"></script>
     <script>
         layui.config({
-            base: '../../../layuiadmin/' //静态资源所在路径
+            base: '/layuiadmin/' //静态资源所在路径
         }).extend({
             index: 'lib/index' //主入口模块
         }).use(['index', 'dtree'], function () {
@@ -102,14 +102,14 @@
             form.on('submit(demo1)', function (data) {
                 var data = data.field;
                 var roles = select_role.getValue('value');
-                console.log(data);
-                console.log(roles);
+                //console.log(data);
+                //console.log(roles);
                 if(!data.select){
                    layer.msg("角色不能为空！");
                    return false;
                 }
                 admin.req({
-                    url: '/user/addAccount',
+                    url: '/user/add',
                     method: "post",
                     data: {
                         username: data.userName,
@@ -118,12 +118,12 @@
                         roleIds:data.select,
                     },
                     done: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         setTimeout(function () {
                             parent.layui.table.reload("table");
                             parent.layer.close(index); //执行关闭
                         }, 1000);
-                        layer.msg(data.msg);
+                        layer.msg("添加成功！");
                     },
                     fail: function (data) {
                         layer.msg(data.msg);

@@ -78,7 +78,7 @@
 <script>
     var json;
     layui.config({
-        base: '../../../layuiadmin/' //静态资源所在路径
+        base: '/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'table'], function () {
@@ -88,7 +88,8 @@
             admin = layui.admin;
         table.set({
             headers: { //通过 request 头传递
-                "token": layui.data(setter.tableName)['token'] || ""
+                "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
             }
         })
         table.render({
@@ -162,13 +163,13 @@
             },
             done: function (res) { //返回数据执行回调函数
                 layer.closeAll("loading"); //返回数据关闭loading
-                console.log(res);
+                //console.log(res);
             }
         });
 
         //监听头工具栏事件
         table.on('toolbar(test)', function (obj) {
-            console.log(obj);
+            //console.log(obj);
             var checkStatus = table.checkStatus(obj.config.id),
                 data = checkStatus.data; //获取选中的数据
             switch (obj.event) {
@@ -188,7 +189,7 @@
                     table.reload('table', {
                         url: "/user/queryAccountByMsg?msg=" + msg,
                     });
-                    console.log(msg)
+                    //console.log(msg)
                     $('#LAY-search-labTable').val(msg);
                     break;
             };
@@ -196,7 +197,7 @@
 
         //监听行工具事件
         table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
-            console.log(obj);
+            //console.log(obj);
             var data = obj.data, //获得当前行数据          
                 layEvent = obj.event; //获得 lay-event 对应的值
             if (layEvent === 'del') {
@@ -206,13 +207,13 @@
                 }, function (index) {
                     //向服务端发送删除指令
                     admin.req({
-                        url: '/user/deleteAccount',
+                        url: '/user/delete',
                         method: "post",
                         data: {
-                            userId: data.userId
+                            id: data.userId
                         },
                         done: function (data) {
-                            console.log(data);
+                            //console.log(data);
                             obj.del(); //删除对应行（tr）的DOM结构
                             layer.close(index);
                             layer.msg(data.msg);

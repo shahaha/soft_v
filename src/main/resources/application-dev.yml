@@ -65,6 +65,8 @@ jwt:
   refreshTokenExpireTime: PT8H
   refreshTokenExpireAppTime: P30D
   issuer: skylab.com
+cross:
+  origin: '*'
 mybatis:
   config-location: classpath:mybatis.xml
 

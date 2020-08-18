@@ -876,6 +876,11 @@
         </set>
         where id = #{id}
     </update>
+    <!--通过列名，清空一列-->
+    <update id="cleanByColumn">
+        update soft_v_sys.soft
+        set ${fieldName} = null
+    </update>
 
     <!--通过主键删除-->
     <delete id="deleteById">

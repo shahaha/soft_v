@@ -83,4 +83,10 @@ public interface RolePermissionMapper {
      * @return 总行数
      */
     int count();
+
+    /**
+     * 删除角色
+     * @param id 角色id
+     */
+    int deleteByRoleId(Integer id);
 }

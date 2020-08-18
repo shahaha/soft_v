@@ -5,9 +5,11 @@ import com.skylab.soft_v.common.Const;
 import com.skylab.soft_v.common.JWTToken;
 import com.skylab.soft_v.entity.Permission;
 import com.skylab.soft_v.entity.Role;
+import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.service.PermissionService;
 import com.skylab.soft_v.service.RedisService;
 import com.skylab.soft_v.service.RoleService;
+import com.skylab.soft_v.service.UserService;
 import com.skylab.soft_v.util.JwtTokenUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,8 @@ import java.util.concurrent.TimeUnit;
 //@Component
 public class CustomShiroRealm extends AuthorizingRealm {
     @Resource
+    private UserService userService;
+    @Resource
     private RoleService roleService;
     @Resource
     private PermissionService permissionService;
@@ -47,23 +51,6 @@ public class CustomShiroRealm extends AuthorizingRealm {
     }
 
     /**
-     * 登录
-     * 主要业务：
-     * 当业务代码调用 subject.login(customPasswordToken); 方法后
-     * 就会自动调用这个方法 验证用户名/密码
-     * 这里我们改造成 验证 token 是否有效 已经自定义了 shiro 验证
-     * @param authenticationToken authenticationToken
-     * @return 身份验证信息
-     * @throws AuthenticationException AuthenticationException
-     */
-    @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        log.info("======登录验证========");
-        String token = (String) authenticationToken.getCredentials();
-        return new SimpleAuthenticationInfo(token, token, getName());
-    }
-
-    /**
      * 主要业务：
      * 系统业务出现要验证用户的角色权限的时候，就会调用这个方法
      * 来获取该用户所拥有的角色/权限
@@ -77,9 +64,10 @@ public class CustomShiroRealm extends AuthorizingRealm {
         String accessToken= (String) principalCollection.getPrimaryPrincipal();
         Claims claimsFromToken = JwtTokenUtil.getClaimsFromToken(accessToken);
         String userId=JwtTokenUtil.getUserId(accessToken);
-        log.info("userId={}",userId);
+        User user = userService.queryByUsername(userId);
+        log.info("userId={}",user.getId());
         if(redisService.hasKey(Const.JWT_REFRESH_KEY+userId)&&redisService.getExpire(Const.JWT_REFRESH_KEY+userId, TimeUnit.MILLISECONDS)>JwtTokenUtil.getRemainingTime(accessToken)){
-            Set<Role> roles = roleService.queryByUserId(Integer.parseInt(userId));
+            Set<Role> roles = roleService.queryByUserId(user.getId());
             for (Role role : roles){
                 simpleAuthorizationInfo.addRole(role.getRoleName());
                 Set<Permission> permissions = permissionService.queryByRoleId(role.getId());
@@ -97,6 +85,23 @@ public class CustomShiroRealm extends AuthorizingRealm {
             }
         }
         return simpleAuthorizationInfo;
+    }
+
+    /**
+     * 登录
+     * 主要业务：
+     * 当业务代码调用 subject.login(customPasswordToken); 方法后
+     * 就会自动调用这个方法 验证用户名/密码
+     * 这里我们改造成 验证 token 是否有效 已经自定义了 shiro 验证
+     * @param authenticationToken authenticationToken
+     * @return 身份验证信息
+     * @throws AuthenticationException AuthenticationException
+     */
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        log.info("======登录验证========");
+        JWTToken token = (JWTToken) authenticationToken;
+        return new SimpleAuthenticationInfo(token.getPrincipal(), token.getCredentials(), getName());
     }
 
 }

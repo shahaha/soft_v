@@ -118,7 +118,8 @@
 
          table.set({
              headers: { //通过 request 头传递
-                 "token": layui.data(setter.tableName)['token'] || ""
+                 "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                 "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
              }
          })
          //执行一个 table 实例
@@ -205,7 +206,7 @@
          table.render({
              elem: '#table2',
              height: 'full-300',
-             url: '/platform/list',
+             url: '/toolType/list',
              title: '字段列表',
              skin: 'line ',
              even: true,
@@ -225,8 +226,8 @@
                          hide: true
                      },
                      {
-                         field: "platformName",
-                         title: "平台",
+                         field: "type",
+                         title: "软件工具类型",
                          align: "center"
                      },
                      {

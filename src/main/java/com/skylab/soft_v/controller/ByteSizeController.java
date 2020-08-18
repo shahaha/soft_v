@@ -1,5 +1,6 @@
 package com.skylab.soft_v.controller;
 
+import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.entity.ByteSize;
@@ -63,8 +64,8 @@ public class ByteSizeController {
      */
     @GetMapping("list")
     public ResultBean<List<ByteSize>> list() {
-        List<ByteSize> categories = byteSizeService.queryList();
-        return ResultBean.success(categories);
+        List<ByteSize> byteSizes = byteSizeService.queryList();
+        return ResultBean.success(byteSizes);
     }
 
     /**
@@ -79,7 +80,7 @@ public class ByteSizeController {
             ByteSize insertSelective = byteSizeService.insertSelective(byteSize);
             return ResultBean.success(insertSelective);
         } catch (Exception e) {
-            return ResultBean.error("保存失败");
+            throw new BusinessException(400,"保存失败");
         }
     }
 
@@ -111,7 +112,7 @@ public class ByteSizeController {
             ByteSize update = byteSizeService.update(byteSize);
             return ResultBean.success(update);
         } catch (Exception e) {
-            return ResultBean.error("修改失败");
+            throw new BusinessException(400,"修改失败");
         }
     }
 
