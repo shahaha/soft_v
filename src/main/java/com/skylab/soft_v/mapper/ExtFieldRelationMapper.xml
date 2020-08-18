@@ -203,7 +203,7 @@
         id, field_name, field_des, category, value,is_term
         from soft_manager_sys.ext_field_relation
         where field_name like 'column%' and category != -1 and value is not null and value != ''
-
+    </select>
     <!--查询所有有效行数据，去重-->
     <select id="getShowFields" resultMap="ExtFieldRelationMap">
         select
