@@ -183,7 +183,7 @@
          var dictValue = $("#dictValue");
          getCategory();
 
-         { //初始化选择框
+        //  { //初始化选择框
              function initType() {
                  if ($("#fieldType").val() == 1) {
                      $('#fieldValue').hide();
@@ -284,7 +284,8 @@
                  var value = "[";
                  $(".dict-value>.content input").each(function (key, val) {
                      var kv = $(val).val().split(":");
-                     if (kv.length > 1 && kv[1] !== "") {
+                    //  if (kv.length > 1 && kv[1] !== "") {
+                        if (kv.length > 1 && kv[1] !== "" && kv[0] === kv[1]) {
                          value += "{\"value\":\"" + kv[0] + "\",\"name\":\"" + kv[1] + "\"},";
                          //value += kv[0] + ":" + kv[1] + ",";
                      }
@@ -313,7 +314,7 @@
                      updateDict();
                  }
              });
-         }
+        //  }
 
 
 

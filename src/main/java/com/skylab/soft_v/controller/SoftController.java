@@ -3,12 +3,15 @@ package com.skylab.soft_v.controller;
 import com.skylab.soft_v.bean.SoftVO;
 import cn.hutool.core.lang.UUID;
 import com.skylab.soft_v.common.BusinessException;
+import com.skylab.soft_v.common.Const;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.component.ActionLog;
 import com.skylab.soft_v.entity.Soft;
 import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.service.SoftService;
+import com.skylab.soft_v.service.UserService;
+import com.skylab.soft_v.util.JwtTokenUtil;
 import com.skylab.soft_v.util.SoulPage;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -39,7 +43,8 @@ public class SoftController {
      */
     @Resource
     private SoftService softService;
-
+    @Resource
+    private UserService userService;
     @Value("${filepath}")
     private String filepath;
 
@@ -205,5 +210,19 @@ public class SoftController {
     public Object queryForSoulpage(SoulPage<SoftVO> soulPage, SoftVO softVO)  {
         soulPage.setObj(softVO);
         return softService.queryForSoulpage(soulPage);
+    }
+
+    /**
+     * 查询当前用户上传的软件列表
+     * @param soulPage
+     * @param request
+     * @return
+     */
+    @PostMapping("queryByUserForSoulpage")
+    public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage,HttpServletRequest request)  {
+        String accessToken=request.getHeader(Const.ACCESS_TOKEN);
+        String username = JwtTokenUtil.getUserId(accessToken);
+        User user = userService.queryByUsername(username);
+        return softService.queryByUserForSoulpage(soulPage,user);
     }
 }

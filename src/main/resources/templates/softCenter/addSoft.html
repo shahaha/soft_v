@@ -124,12 +124,12 @@
                 admin.req({
                     url: '/extFieldRelation/getShowFieldsAndDataByCategory?categoryId=' + softType,
                     done: function (data) {
-                        // console.log(data);
+                        console.log(data);
                         //解析生成动态表单
                         $("#items").empty(); //清空div
                         $.each(data.data, function (index, item) {
                             // console.log(item);
-                            if (item.fieldName != 'id' && item.fieldName != 'address') {
+                            if (item.fieldName != 'id' && item.fieldName != 'address' && item.fieldName != 'category') {
                                 if (item.type == "text") {
                                     var form_item = document.createElement("div");
                                     var form_label = document.createElement("label");

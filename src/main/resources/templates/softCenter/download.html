@@ -72,7 +72,7 @@
             admin.req({
                 url: '/category/list',
                 done: function (data) {
-                    console.log(data);
+                    // console.log(data);
                     initId = data.data[0].id;
                     categoryId = data.data[0].id;
                     $.each(data.data, function (index, item) {
@@ -113,7 +113,7 @@
                     url: '/extFieldRelation/getValidFieldsByCategory?category=' +
                         categoryId,
                     done: function (data) {
-                        console.log(data);
+                        // console.log(data);
                         //填充表项
                         cols = []; //清空
                         $.each(data.data, function (index, item) {
@@ -181,7 +181,7 @@
                         statusCode: "200", //规定成功的状态码，默认：0
                     },
                     done: function (res) { //返回数据执行回调函数
-                        console.log(res);
+                        // console.log(res);
                         soulTable.render(this);
                     }
                 });
@@ -191,7 +191,7 @@
                 }
                 table.on("tool(" + id + ")", function (obj) {
                     var data = obj.data;
-                    console.log(data)
+                    // console.log(data)
                     if (obj.event === 'download') {
                         console.log(data.address);
                         downloadFile(data.address);

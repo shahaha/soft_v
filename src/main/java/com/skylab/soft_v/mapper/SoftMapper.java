@@ -2,6 +2,7 @@ package com.skylab.soft_v.mapper;
 
 import com.skylab.soft_v.bean.SoftVO;
 import com.skylab.soft_v.entity.Soft;
+import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.util.SoulPage;
 import org.apache.ibatis.annotations.Param;
 
@@ -102,4 +103,6 @@ public interface SoftMapper {
      * @return 实例对象
      */
     Soft queryByCode(String code);
+
+    List<SoftVO> queryByUserForSoulpage(SoulPage<SoftVO> soulPage,@Param("user") User user);
 }

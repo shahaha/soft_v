@@ -42,7 +42,7 @@
         <div class="layui-form-item">
             <div class="layui-input-block">
                 <button class="layui-btn  layui-btn-submit " lay-submit="" lay-filter="demo1">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <!-- <button type="reset" id="reset" class="layui-btn layui-btn-primary">重置</button> -->
             </div>
         </div>
     </form>
@@ -67,6 +67,7 @@
             //////////////////////////////////////////////////////
             var softType = 1; //软件类型
             var fileData = null; //上传的文件
+
             //伪上传
             upload.render({
                 headers: { //通过 request 头传递
@@ -128,6 +129,11 @@
                                     input.setAttribute('name', item.fieldName)
                                     input.setAttribute('id', item.fieldName)
                                     input.setAttribute('autocomplete', 'off')
+                                    if (item.fieldName == 'code') {
+                                        input.setAttribute('readonly', true);
+                                        input.setAttribute('class',
+                                            'layui-input layui-disabled');
+                                    }
                                     input_block.appendChild(input);
                                     form_item.appendChild(form_label);
                                     form_item.appendChild(input_block);
@@ -146,12 +152,18 @@
                                     input.setAttribute('id', item.fieldName);
                                     var fieldName = item.fieldName;
                                     $.each(item.value, function (index, item) {
-                                        input.append(new Option(item.name, item.value));
+                                        input.append(new Option(item.name, item
+                                            .value));
                                         //给行数据赋初值
                                         if (rowData[fieldName] == item.name) {
                                             rowData[fieldName] = item.value;
                                         }
                                     });
+                                    if (item.fieldName == 'engineer') {
+                                        input.setAttribute('disabled', true);
+                                        input.setAttribute('class',
+                                            'layui-input layui-disabled');
+                                    }
                                     input_block.appendChild(input);
                                     form_item.appendChild(form_label);
                                     form_item.appendChild(input_block);
@@ -171,7 +183,12 @@
 
             }
 
-
+            //监听重置按钮
+            $("#reset").click(() => {
+                console.log(rowData)
+                //将父页面数据填充进表单
+                form.val('form', rowData);
+            })
             //监听提交
             form.on('submit(demo1)', function (data) {
                 var data = data.field;

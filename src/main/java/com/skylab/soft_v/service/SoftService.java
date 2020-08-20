@@ -3,6 +3,7 @@ package com.skylab.soft_v.service;
 import com.skylab.soft_v.bean.SoftVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.Soft;
+import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.util.SoulPage;
 
 import java.util.List;
@@ -96,4 +97,6 @@ public interface SoftService {
      * @return 实例对象
      */
     Soft queryByCode(String code);
+
+    Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage, User user);
 }

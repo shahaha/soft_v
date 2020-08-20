@@ -52,7 +52,7 @@
                 }
             });
             tools = tools.substring(0, tools.lastIndexOf(','));
-            console.log(tools);
+            // console.log(tools);
             table.set({
                 headers: { //通过 request 头传递
                     "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
@@ -96,7 +96,7 @@
                     statusCode: "200", //规定成功的状态码，默认：0
                 },
                 done: function (res) { //返回数据执行回调函数
-                    console.log(res);
+                    // console.log(res);
                 }
             });
             //监听行工具事件

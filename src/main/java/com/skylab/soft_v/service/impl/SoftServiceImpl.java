@@ -172,4 +172,9 @@ public class SoftServiceImpl implements SoftService {
     public Soft queryByCode(String code) {
         return softMapper.queryByCode(code);
     }
+
+    @Override
+    public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage, User user) {
+        return soulPage.setData(softMapper.queryByUserForSoulpage(soulPage,user));
+    }
 }

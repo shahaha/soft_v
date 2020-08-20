@@ -7,6 +7,7 @@
     <title>Document</title>
     <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/soulTable.css}" media="all">
     <style>
         .layui-form-item {
             margin: 5px 0 0 0;
@@ -33,32 +34,46 @@
 
     <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
     <script>
-        var rowData;//用于接受表格的行信息
+        var rowData; //用于接受表格的行信息
         layui.config({
             base: '/layuiadmin/' //静态资源所在路径
         }).extend({
             index: 'lib/index', //主入口模块
-        }).use(['index'], function () {
+            soulTable: 'soulTable/soulTable',
+            tableChild: 'soulTable/tableChild',
+            tableMerge: 'soulTable/tableMerge',
+            tableFilter: 'soulTable/tableFilter',
+            excel: 'soulTable/excel',
+        }).use(['index', 'soulTable'], function () {
             var $ = layui.$,
                 table = layui.table,
                 admin = layui.admin,
                 setter = layui.setter,
                 form = layui.form;
+            var soulTable = layui.soulTable;
+
             var cols = []; //表头
             //请求cols
             admin.req({
                 url: '/extFieldRelation/getShowFields',
                 done: function (data) {
-                    //console.log(data);
+                    console.log(data);
                     //填充表头
                     cols = []; //清空
                     $.each(data.data, function (index, item) {
                         // console.log(item);
-                        obj = {};
+                        obj = new Object;
                         obj.field = item.fieldName;
                         obj.title = item.fieldDes;
                         obj.align = "center";
-                        obj.width = "120";
+                        // obj.width = "120";
+                        obj.sort = true;
+                        obj.filter = true;
+                        if (item.fieldName == "uploadDate") {
+                            obj.filter = {
+                                type: 'date[yyyy-MM-dd HH:mm:ss]'
+                            };
+                        }
                         cols.push(obj);
                     });
                     //添加操作栏
@@ -90,7 +105,8 @@
                         "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
                         "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
                     },
-                    url: '/soft/pageList',
+                    url: '/soft/queryByUserForSoulpage',
+                    method: "post",
                     toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
                     height: 'full-20', //铺满离最下方差多少
                     cols: [cols],
@@ -99,16 +115,15 @@
                     response: { //如果你想重新规定返回的数据格式
                         statusCode: "200", //规定成功的状态码，默认：0
                     },
-                    parseData: function (res) { //res 即为原始返回的数据
-                        return {
-                            "code": res.code, //解析接口状态
-                            "msg": res.msg, //解析提示文本
-                            "count": res.data.total, //解析数据长度
-                            "data": res.data.rows //回调数据
-                        };
+                    cellMinWidth: 100, //每列最小宽度
+                    // toolbar: '#labTableToolbar', //开启头部工具栏，并为其绑定左侧模板
+                    filter: {
+                        items: ['column', 'data', 'condition', 'editCondition', 'excel', 'clearCache'],
+                        cache: true
                     },
                     done: function (res) { //返回数据执行回调函数
                         console.log(res);
+                        soulTable.render(this);
                     }
                 });
             }
