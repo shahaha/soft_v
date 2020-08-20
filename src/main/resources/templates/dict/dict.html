@@ -183,138 +183,136 @@
          var dictValue = $("#dictValue");
          getCategory();
 
-        //  { //初始化选择框
-             function initType() {
-                 if ($("#fieldType").val() == 1) {
-                     $('#fieldValue').hide();
-                 } else {
-                     $('#fieldValue').show();
-                 }
+         //初始化选择框
+         function initType() {
+             if ($("#fieldType").val() == 1) {
+                 $('#fieldValue').hide();
+             } else {
+                 $('#fieldValue').show();
              }
+         }
 
-             //把value转换成kv
-             function toMap(value) {
-                 var box = $(".dict-value>.content");
-                 box.empty();
-                 if (value !== null && value !== "") {
-                     value.forEach(function (val) {
-                         var t = val.value + ":" + val.name;
-                         box.append(option.clone().val(t));
-                     });
-                 }
-             }
-
-             // 获取焦点是选项事件
-             $(document).on("focus", ".dict-option", function () {
-                 if (active != null) {
-                     active.removeClass("active");
-                 }
-                 active = $(this).addClass("active");
-             });
-
-             // 失去焦点是选项事件
-             $(document).on("blur", ".dict-option", function () {
-                 var kv = $(this).val().split(":");
-                 if (kv.length > 1 && kv[1] !== "") {
-                     $(this).removeClass("error");
-                     updateDict();
-                 } else {
-                     $(this).addClass("error");
-                 }
-             });
-
-             // 向下添加
-             var addOption = function () {
-                 var clone = option.clone().val("").addClass("active");
-                 active.after(clone).removeClass("active");
-                 clone.focus();
-             };
-
-             // 输入框回车事件
-             $(document).on("keypress", ".dict-option", function (e) {
-                 if (e.keyCode === 13) {
-                     e.preventDefault();
-                     addOption();
-                 }
-             });
-
-             // 添加字段
-             $(document).on("click", ".field-add", function (e) {
-                 e.preventDefault();
-                 if (active != null) {
-                     addOption();
-                 } else {
-                     var clone = option.clone();
-                     $(".dict-value>.content").append(clone);
-                     clone.focus().addClass("active");
-                 }
-             });
-
-             // 删除字段
-             $(document).on("click", ".field-del", function (e) {
-                 e.preventDefault();
-                 if (active != null) {
-                     active.remove();
-                     active = null;
-                 }
-                 updateDict();
-             });
-
-             // 上移字段
-             $(document).on("click", ".field-up", function (e) {
-                 e.preventDefault();
-                 if (active != null) {
-                     var prev = active.prev();
-                     active.insertBefore(prev);
-                 }
-                 updateDict();
-             });
-
-             // 下移字段
-             $(document).on("click", ".field-down", function (e) {
-                 e.preventDefault();
-                 if (active != null) {
-                     active.insertAfter(active.next());
-                 }
-                 updateDict();
-             });
-
-             // 更新字典值
-             var updateDict = function () {
-                 var value = "[";
-                 $(".dict-value>.content input").each(function (key, val) {
-                     var kv = $(val).val().split(":");
-                    //  if (kv.length > 1 && kv[1] !== "") {
-                        if (kv.length > 1 && kv[1] !== "" && kv[0] === kv[1]) {
-                         value += "{\"value\":\"" + kv[0] + "\",\"name\":\"" + kv[1] + "\"},";
-                         //value += kv[0] + ":" + kv[1] + ",";
-                     }
+         //把value转换成kv
+         function toMap(value) {
+             var box = $(".dict-value>.content");
+             box.empty();
+             if (value !== null && value !== "") {
+                 value.forEach(function (val) {
+                     var t = val.value + ":" + val.name;
+                     box.append(option.clone().val(t));
                  });
-                 if (value === "[") {
-                     value = "";
-                 }
-                 if (value !== "") {
-                     value = value.substr(0, value.length - 1);
-                     value += "]";
-                 }
-                 dictValue.val(value);
              }
+         }
 
-             //监听下拉列表改变
-             form.on('select(fieldNameSelect)', function (data) {
-                 $('#fieldId').val(data.value);
-             });
-             //监听下拉列表改变
-             form.on('select(fieldType)', function (data) {
-                 if (data.value === "1") {
-                     $('#fieldValue').hide();
-                     dictValue.val("");
-                 } else {
-                     $('#fieldValue').show();
-                     updateDict();
+         // 获取焦点是选项事件
+         $(document).on("focus", ".dict-option", function () {
+             if (active != null) {
+                 active.removeClass("active");
+             }
+             active = $(this).addClass("active");
+         });
+
+         // 失去焦点是选项事件
+         $(document).on("blur", ".dict-option", function () {
+             var kv = $(this).val().split(":");
+             if (kv.length > 1 && kv[1] !== "") {
+                 $(this).removeClass("error");
+                 updateDict();
+             } else {
+                 $(this).addClass("error");
+             }
+         });
+
+         // 向下添加
+         var addOption = function () {
+             var clone = option.clone().val("").addClass("active");
+             active.after(clone).removeClass("active");
+             clone.focus();
+         };
+
+         // 输入框回车事件
+         $(document).on("keypress", ".dict-option", function (e) {
+             if (e.keyCode === 13) {
+                 e.preventDefault();
+                 addOption();
+             }
+         });
+
+         // 添加字段
+         $(document).on("click", ".field-add", function (e) {
+             e.preventDefault();
+             if (active != null) {
+                 addOption();
+             } else {
+                 var clone = option.clone();
+                 $(".dict-value>.content").append(clone);
+                 clone.focus().addClass("active");
+             }
+         });
+
+         // 删除字段
+         $(document).on("click", ".field-del", function (e) {
+             e.preventDefault();
+             if (active != null) {
+                 active.remove();
+                 active = null;
+             }
+             updateDict();
+         });
+
+         // 上移字段
+         $(document).on("click", ".field-up", function (e) {
+             e.preventDefault();
+             if (active != null) {
+                 var prev = active.prev();
+                 active.insertBefore(prev);
+             }
+             updateDict();
+         });
+
+         // 下移字段
+         $(document).on("click", ".field-down", function (e) {
+             e.preventDefault();
+             if (active != null) {
+                 active.insertAfter(active.next());
+             }
+             updateDict();
+         });
+
+         // 更新字典值
+         var updateDict = function () {
+             var value = "[";
+             $(".dict-value>.content input").each(function (key, val) {
+                 var kv = $(val).val().split(":");
+                 if (kv.length > 1 && kv[1] !== "" && kv[0] === kv[1]) {
+                     value += "{\"value\":\"" + kv[0] + "\",\"name\":\"" + kv[1] + "\"},";
+                     //value += kv[0] + ":" + kv[1] + ",";
                  }
              });
-        //  }
+             if (value === "[") {
+                 value = "";
+             }
+             if (value !== "") {
+                 value = value.substr(0, value.length - 1);
+                 value += "]";
+             }
+             dictValue.val(value);
+         }
+
+         //监听下拉列表改变
+         form.on('select(fieldNameSelect)', function (data) {
+             $('#fieldId').val(data.value);
+         });
+         //监听下拉列表改变
+         form.on('select(fieldType)', function (data) {
+             if (data.value === "1") {
+                 $('#fieldValue').hide();
+                 dictValue.val("");
+             } else {
+                 $('#fieldValue').show();
+                 updateDict();
+             }
+         });
 
 
 

@@ -49,12 +49,12 @@ public interface SoftToolService {
     /**
      * 通过实体作为筛选条件查询并分页
      *
-     * @param softTool 实例对象
+     * @param toolName 实例对象
      * @param page     查询起始位置
      * @param limit    查询条数
      * @return 对象列表
      */
-    Pager<SoftTool> queryByExampleAndPage(SoftTool softTool, int page, int limit);
+    Pager<SoftTool> queryByNameAndPage(String toolName, int page, int limit);
 
     /**
      * 新增数据
@@ -96,4 +96,10 @@ public interface SoftToolService {
     List<SoftTool> queryByType(int i);
 
     List<SoftToolVO> queryList2SoftToolVO(String tools);
+    /**
+     * 判断是否在使用
+     * @param id id
+     * @return 是否使用
+     */
+    boolean inUser(Integer id);
 }

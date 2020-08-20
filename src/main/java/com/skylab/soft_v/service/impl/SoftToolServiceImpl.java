@@ -71,13 +71,14 @@ public class SoftToolServiceImpl implements SoftToolService {
     /**
      * 通过实体作为筛选条件查询并分页
      *
-     * @param softTool 实例对象
+     * @param toolName 实例对象
      * @param page     查询起始位置
      * @param limit    查询条数
      * @return 对象列表
      */
-    public Pager<SoftTool> queryByExampleAndPage(SoftTool softTool, int page, int limit) {
-        List<SoftTool> list = softToolMapper.queryByExample(softTool);
+    @Override
+    public Pager<SoftTool> queryByNameAndPage(String toolName, int page, int limit) {
+        List<SoftTool> list = softToolMapper.queryByName(toolName);
         Pager<SoftTool> pager = new Pager<SoftTool>();
         int count = list.size();
         pager.setTotal(count);
@@ -148,5 +149,15 @@ public class SoftToolServiceImpl implements SoftToolService {
     @Override
     public List<SoftToolVO> queryList2SoftToolVO(String tools) {
         return softToolMapper.queryList2SoftToolVO(tools);
+    }
+    /**
+     * 判断是否在使用
+     *
+     * @param id id
+     * @return 是否使用
+     */
+    @Override
+    public boolean inUser(Integer id) {
+        return softToolMapper.inUser(id) > 0;
     }
 }

@@ -82,7 +82,7 @@ public class SoftController {
     @PostMapping("add")
     @RequiresPermissions("soft_add")
     @ActionLog("添加一个软件并上传附件")
-    public ResultBean<Soft> add(Soft soft,@RequestParam(value = "file") MultipartFile file){
+    public ResultBean<Soft> add(Soft soft,@RequestParam(value = "file",required = false) MultipartFile file){
         if (file == null || file.isEmpty()){
             return ResultBean.error("文件不能为空！");
         }
@@ -143,6 +143,9 @@ public class SoftController {
             return ResultBean.error("id不能为空");
         }
         Soft example = softService.queryById(soft.getId());
+        if (example == null){
+            return ResultBean.error("修改的软件不存在");
+        }
         if (!example.getCategory().equals(soft.getCategory())){
             return ResultBean.error("软件类型不能修改！");
         }

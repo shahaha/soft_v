@@ -136,4 +136,19 @@
         </where>
     </select>
 
+    <select id="queryByName" resultMap="SoftToolMap">
+        select
+        id, type, name, address
+        from soft_v_sys.soft_tool
+        <where>
+            <if test="toolName != null and toolName != ''">
+                and name like concat('%',#{toolName},'%')
+            </if>
+        </where>
+    </select>
+    <select id="inUser" resultType="int">
+        select count(1)
+        from soft_v_sys.soft
+        where label_print_tool = #{id} or GPIO_detection = #{id} or burn_tool = #{id} or detection_tool = #{id} or product_test_tool = #{id}
+    </select>
 </mapper>

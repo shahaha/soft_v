@@ -81,4 +81,6 @@ public class indexController {
     @GetMapping("/downloadTools")
     public String downloadTools() { return "softCenter/downloadTools"; }
 
+    @GetMapping("/softType")
+    public String softType() { return "softCenter/softType"; }
 }
