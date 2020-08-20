@@ -65,11 +65,11 @@
     <table class="layui-show" id="demo" name="table" lay-filter="test"></table>
     <!-- 操作栏模板 -->
     <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
         {{#  if(d.pid != 0){ }}
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
         {{#  } else { }}
-        <a class="layui-btn layui-btn-disabled layui-btn-xs">删除</a>
+        <a class="layui-btn layui-btn-disabled layui-btn-sm">删除</a>
         {{#  } }}
     </script>
 </body>

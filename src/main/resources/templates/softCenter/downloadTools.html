@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <style>
+        /* 弹窗中select被遮挡 */
+        .layui-form-select dl {
+            max-height: 220px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 表格 -->
+    <table class="layui-show" id="demo" name="table" lay-filter="test"></table>
+    <!-- 操作栏模板 -->
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-sm" lay-event="download">
+            下载</a>
+    </script>
+
+    <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+    <script>
+        layui.config({
+            base: '/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'dtree'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.jquery,
+                upload = layui.upload,
+                setter = layui.setter,
+                table = layui.table,
+                admin = layui.admin;
+
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            var rowData = eval('(' + parent.rowData + ')'); //父页面行数据
+            var tools = ""; //工具软件id
+            // console.log(rowData);
+            //填充 tools 1,2,3
+            $.each(rowData, function (index, item) {
+                if (index == "labelPrintTool" || index == "burnTool" || index == "detectionTool" ||
+                    index == "productTestTool" || index == "GPIODetection") {
+                    if (item != null && item != "")
+                        tools += item + ",";
+                }
+            });
+            tools = tools.substring(0, tools.lastIndexOf(','));
+            console.log(tools);
+            table.set({
+                headers: { //通过 request 头传递
+                    "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                    "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
+                }
+            })
+            table.render({
+                id: "table", //定义id 方便重载
+                elem: '#demo',
+                loading: true, //翻页加loading
+                url: '/softTool/list2SoftToolVO',
+                where: {
+                    tools: tools
+                },
+                height: 'full-20', //铺满离最下方差多少
+                even: true,
+                skin: 'row',
+                // toolbar: '#labTableToolbar', //开启头部工具栏，并为其绑定左侧模板
+                cols: [
+                    [{
+                        type: 'numbers',
+                        title: '序号',
+                        align: "center",
+                    }, {
+                        field: 'typeName',
+                        title: '工具类型',
+                        align: 'center',
+                    }, {
+                        field: 'name',
+                        title: '工具名称',
+                        align: 'center',
+                    }, {
+                        align: 'center',
+                        fixed: 'right',
+                        toolbar: '#barDemo',
+                        title: '操作',
+                        width: 100,
+                    }]
+                ],
+                response: { //如果你想重新规定返回的数据格式
+                    statusCode: "200", //规定成功的状态码，默认：0
+                },
+                done: function (res) { //返回数据执行回调函数
+                    console.log(res);
+                }
+            });
+            //监听行工具事件
+            table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                // console.log(obj);
+                var data = obj.data, //获得当前行数据          
+                    layEvent = obj.event; //获得 lay-event 对应的值
+                if (layEvent === 'download') {
+                    downloadFile(data.address);
+                } 
+            });
+            //文件下载
+            function downloadFile(address) {
+                if (!address) {
+                    layer.msg("文件为空！");
+                    return;
+                }
+                // window.location.href="/api/file/"+data.id;
+                // 获取XMLHttpRequest
+                var xmlResquest = new XMLHttpRequest();
+                // 发起请求
+                xmlResquest.open("GET", "/file/download?address=" + address, true);
+                // console.log(layui.data(setter.tableName)['token'])
+                xmlResquest.setRequestHeader("authorization", layui.data(setter.tableName)['authorization']);
+                xmlResquest.setRequestHeader("refreshToken", layui.data(setter.tableName)['refreshToken']);
+                xmlResquest.responseType = "blob";
+                // 返回
+                xmlResquest.onload = function (oEvent) {
+                    if (this.status == 200) {
+                        var content = xmlResquest.response;
+                        // console.log(xmlResquest);
+                        if (content.type == 'application/json') {
+                            var fr = new FileReader(); //FileReader可以读取Blob内容
+                            fr.readAsText(content); //二进制转换成text
+                            fr.onload = function (e) { //转换完成后，调用onload方法
+                                var result = fr.result;
+                                layer.msg(JSON.parse(result).msg);
+                            }
+                        } else {
+                            // 组装a标签
+                            var elink = document.createElement("a");
+                            //设置文件下载路径
+                            elink.download = address.substring((address.lastIndexOf("-")) + 1);
+                            elink.style.display = "none";
+                            //把后端response响应二进制文件放到blob
+                            var blob = new Blob([content]);
+                            //解决下载不存在文件的问题，根据blob大小判断
+                            if (blob.size == 0) {
+                                layer.msg('服务器没找到此文件，请联系管理员!');
+                            } else {
+                                //通过url去下载
+                                elink.href = URL.createObjectURL(blob);
+                                document.body.appendChild(elink);
+                                elink.click();
+                                document.body.removeChild(elink);
+                            }
+                        }
+                    }
+                };
+                xmlResquest.send();
+                //location.href = "/file/download?address=" + data.address ; //下载软件
+            }
+
+        });
+    </script>
+</body>
+
+</html>

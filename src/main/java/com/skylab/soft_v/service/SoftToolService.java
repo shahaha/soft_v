@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service;
 
+import com.skylab.soft_v.bean.SoftToolVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.SoftTool;
 
@@ -93,4 +94,6 @@ public interface SoftToolService {
      * @return 工具列表
      */
     List<SoftTool> queryByType(int i);
+
+    List<SoftToolVO> queryList2SoftToolVO(String tools);
 }

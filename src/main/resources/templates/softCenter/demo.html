@@ -8,9 +8,23 @@
     <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
     <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
     <link rel="stylesheet" th:href="@{/layuiadmin/style/soulTable.css}" media="all">
+    <style>
+        .layui-form-item {
+            margin: 5px 0 0 0;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width:70px;">软件类型：</label>
+            <div class="layui-input-inline">
+                <select id="softType" lay-filter="softType" lay-verify="required">
+                </select>
+            </div>
+        </div>
+    </form> -->
     <!-- 表头工具栏模板 -->
     <script type="text/html" id="labTableToolbar" style="height:100px;">
         <form class="layui-form">
@@ -19,9 +33,6 @@
                 <select id="softType" lay-filter="softType" lay-verify="required">
                 </select>
             </div>
-            <button lay-event="clearFilter" type="button" class="layui-btn">
-                <i class="layui-icon layui-icon-refresh"></i>清空筛选条件
-            </button>
         </form>
     </script>
     <!-- 表格模板 -->
@@ -54,7 +65,7 @@
                 setter = layui.setter,
                 admin = layui.admin;
             var soulTable = layui.soulTable;
-            var softType = ""; //软件类型
+            var categoryId = ""; //软件类型 id
             var cols = []; //动态表项
             table.set({
                 headers: { //通过 request 头传递
@@ -75,24 +86,26 @@
                             value: item.categoryName
                         });
                     });
-                    softType = data.data[0].id;
-                    getValidFields(softType);
+                    categoryId = data.data[0].id;
+                    getValidFields(categoryId);
                 },
                 fail: function (data) {
                     layer.msg(data.msg);
                 }
             });
+
             //监听下拉列表改变
             form.on('select(softType)', function (data) {
                 // console.log(data.value);
-                if (data.value == softType) {
+                if (data.value == categoryId) {
                     return;
                 }
-                softType = data.value;
-                getValidFields(softType);
+                categoryId = data.value;
+                soulTable.clearFilter('testTable'); //清空筛选条件
+                getValidFields(categoryId);
             });
 
-            //获取需要展示的表头字段
+            //获取需要展示的表头字段 表格初始化时使用
             function getValidFields(categoryId) {
                 admin.req({
                     url: '/extFieldRelation/getValidFieldsByCategory?category=' +
@@ -107,7 +120,8 @@
                             obj.field = item.fieldName;
                             obj.title = item.fieldDes;
                             obj.align = "center";
-                            obj.width = "120";
+                            obj.sort = true;
+                            // obj.width = "120";
                             if (item.isTerm) {
                                 obj.filter = true;
                                 if (item.fieldName == "uploadDate")
@@ -130,30 +144,35 @@
                         //     console.log(item)
                         // })
                         //加载表格
-                        tableRender(softType);
+                        tableRender(categoryId);
                     },
                     fail: function (data) {
                         layer.msg(data.msg);
                     }
                 });
             }
+
             //表格
-            function tableRender(softType) {
+            function tableRender(categoryId) {
                 table.render({
                     id: "testTable", //定义id 方便重载
                     elem: '#test',
                     url: '/soft/queryForSoulpage',
                     method: "post",
                     where: {
-                        category: softType
+                        category: categoryId
                     },
                     height: 'full-90', //铺满离最下方差多少
+                    cellMinWidth: 100, //每列最小宽度
                     toolbar: '#labTableToolbar', //开启头部工具栏，并为其绑定左侧模板
                     cols: [cols],
                     filter: {
                         items: ['column', 'data', 'condition', 'editCondition', 'excel', 'clearCache'],
                         cache: true
                     },
+                    // autoColumnWidth: {
+                    //     init: true ,//表格列宽自适应
+                    // },
                     page: true, //开启分页
                     limit: 10, //每页数据条目
                     response: { //如果你想重新规定返回的数据格式
@@ -162,14 +181,83 @@
                     done: function (res) { //返回数据执行回调函数
                         console.log(res);
                         soulTable.render(this);
+                        //清空重新渲染下拉列表
+                        $("#softType").empty();
                         $.each(layui.data('softTypes'), function (index, item) {
                             $('#softType').append(new Option(item, index));
                         });
-                        $('#softType').val(softType);
+                        $('#softType').val(categoryId);
                         form.render("select");
                     }
                 });
             }
+
+            //监听行工具事件
+            table.on('tool(test)', function (obj) {
+                var data = obj.data;
+                if (obj.event === 'download') {
+                    console.log(data.address);
+                    if(!data.address){
+                        layer.msg("文件为空！");
+                        return;
+                    }
+                    // window.location.href="/api/file/"+data.id;
+                    // 获取XMLHttpRequest
+                    var xmlResquest = new XMLHttpRequest();
+                    // 发起请求
+                    xmlResquest.open("GET", "/file/download?address=" + data.address, true);
+                    // console.log(layui.data(setter.tableName)['token'])
+                    xmlResquest.setRequestHeader("authorization", layui.data(setter.tableName)['authorization'] );
+                    xmlResquest.setRequestHeader("refreshToken", layui.data(setter.tableName)['refreshToken']);
+                    xmlResquest.responseType = "blob";
+                    // 返回
+                    xmlResquest.onload = function (oEvent) {
+                        if (this.status == 200) {
+                            var content = xmlResquest.response;
+                            console.log(xmlResquest);
+                            if (content.type == 'application/json'){
+                                var fr = new FileReader(); //FileReader可以读取Blob内容
+                                fr.readAsText(content); //二进制转换成text
+                                fr.onload = function (e) {  //转换完成后，调用onload方法
+                                    var result = fr.result;
+                                    layer.msg(JSON.parse(result).msg);
+                                }
+                            }else {
+                                // 组装a标签
+                                var elink = document.createElement("a");
+                                //设置文件下载路径
+                                elink.download = data.address.substring((data.address.lastIndexOf("-")) + 1);
+
+                                elink.style.display = "none";
+                                //把后端response响应二进制文件放到blob
+                                var blob = new Blob([content]);
+                                //解决下载不存在文件的问题，根据blob大小判断
+                                if (blob.size == 0) {
+                                    layer.msg('服务器没找到此文件，请联系管理员!');
+                                } else {
+                                    //通过url去下载
+                                    elink.href = URL.createObjectURL(blob);
+                                    document.body.appendChild(elink);
+                                    elink.click();
+                                    document.body.removeChild(elink);
+                                }
+                            }
+                        }
+                    };
+                    xmlResquest.send();
+                    //location.href = "/file/download?address=" + data.address ; //下载软件
+                } else if (obj.event === 'tools') {
+                    layer.prompt({
+                        formType: 2,
+                        value: data.code
+                    }, function (value, index) {
+                        obj.update({
+                            code: value
+                        });
+                        layer.close(index);
+                    });
+                }
+            });
         });
     </script>
 </body>

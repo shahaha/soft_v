@@ -426,7 +426,7 @@ public class ExtFieldRelationController {
         for (int i = 0; i < extFieldRelations.size(); i++) {
 //            System.out.println(extFieldRelations.get(i).getFieldName());
             //剔除一些字段不展示
-            if (extFieldRelations.get(i).getFieldName().endsWith("tool") || "id".equals(extFieldRelations.get(i).getFieldName()) || "address".equals(extFieldRelations.get(i).getFieldName()) || "category".equals(extFieldRelations.get(i).getFieldName())) {
+            if (extFieldRelations.get(i).getFieldName().endsWith("tool") || "id".equals(extFieldRelations.get(i).getFieldName()) || "address".equals(extFieldRelations.get(i).getFieldName()) || "category".equals(extFieldRelations.get(i).getFieldName())|| "GPIO_detection".equals(extFieldRelations.get(i).getFieldName())) {
                 extFieldRelations.remove(i--);
             } else {
                 extFieldRelations.get(i).setFieldName(StrUtil.toCamelCase(extFieldRelations.get(i).getFieldName()));

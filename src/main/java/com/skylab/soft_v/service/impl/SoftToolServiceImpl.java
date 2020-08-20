@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service.impl;
 
+import com.skylab.soft_v.bean.SoftToolVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.SoftTool;
 import com.skylab.soft_v.mapper.SoftToolMapper;
@@ -142,5 +143,10 @@ public class SoftToolServiceImpl implements SoftToolService {
     @Override
     public List<SoftTool> queryByType(int i) {
         return softToolMapper.queryByType(i);
+    }
+
+    @Override
+    public List<SoftToolVO> queryList2SoftToolVO(String tools) {
+        return softToolMapper.queryList2SoftToolVO(tools);
     }
 }

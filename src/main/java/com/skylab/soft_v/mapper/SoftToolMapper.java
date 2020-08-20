@@ -1,6 +1,8 @@
 package com.skylab.soft_v.mapper;
 
+import com.skylab.soft_v.bean.SoftToolVO;
 import com.skylab.soft_v.entity.SoftTool;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -91,4 +93,6 @@ public interface SoftToolMapper {
      * @return 工具列表
      */
     List<SoftTool> queryByType(int i);
+
+    List<SoftToolVO> queryList2SoftToolVO(@Param("tools") String tools);
 }

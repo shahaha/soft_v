@@ -78,4 +78,7 @@ public class indexController {
     @GetMapping("/password")
     public String password() { return "user/password"; }
 
+    @GetMapping("/downloadTools")
+    public String downloadTools() { return "softCenter/downloadTools"; }
+
 }

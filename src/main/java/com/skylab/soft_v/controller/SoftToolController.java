@@ -1,5 +1,6 @@
 package com.skylab.soft_v.controller;
 
+import com.skylab.soft_v.bean.SoftToolVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.entity.SoftTool;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -140,5 +142,17 @@ public class SoftToolController {
         Pager<SoftTool> pager = softToolService.queryByExampleAndPage(softTool, page, limit);
         return ResultBean.success(pager);
     }
-
+    /**
+     * 查询所有记录
+     *包含软件类型描述
+     * @return 响应数据
+     */
+    @GetMapping("list2SoftToolVO")
+    public ResultBean<List<SoftToolVO>> list2SoftToolVO(String tools) {
+        if(tools.isEmpty()){
+            return ResultBean.error("无数据");
+        }
+        List<SoftToolVO> categories = softToolService.queryList2SoftToolVO(tools);
+        return ResultBean.success(categories);
+    }
 }

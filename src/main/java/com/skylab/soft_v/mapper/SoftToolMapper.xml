@@ -123,4 +123,17 @@
             </if>
         </where>
     </select>
+    <!--查询 返回SoftToolVO-->
+    <select id="queryList2SoftToolVO" resultType="com.skylab.soft_v.bean.SoftToolVO">
+        select
+        a.id, a.type, name, address,b.type typeName
+        from soft_v_sys.soft_tool a LEFT JOIN tool_type b on a.type = b.id
+        <where>
+            1=1
+            <if test="tools != null and tools != ''">
+                and  a.id in (${tools})
+            </if>
+        </where>
+    </select>
+
 </mapper>
