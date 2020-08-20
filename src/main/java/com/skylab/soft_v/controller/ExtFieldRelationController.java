@@ -312,7 +312,6 @@ public class ExtFieldRelationController {
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(softTools);
                 } else if ("gpioDetection".equals(extFieldRelation.getFieldName())) {
-                    log.info("================"+extFieldRelation.getFieldName());
                     extFieldRelationVO.setFieldName("GPIODetection");
                     List<SoftTool> softToolList = softToolService.queryByType(2);
                     List<JsonToObj> softTools = new ArrayList<>();
