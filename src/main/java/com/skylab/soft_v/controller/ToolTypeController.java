@@ -4,6 +4,7 @@ import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.component.ActionLog;
+import com.skylab.soft_v.entity.SoftTool;
 import com.skylab.soft_v.entity.ToolType;
 import com.skylab.soft_v.service.ToolTypeService;
 import io.swagger.annotations.Api;
@@ -35,17 +36,16 @@ public class ToolTypeController {
     private ToolTypeService toolTypeService;
 
     /**
-     * 分页查询
+     * 通过Id查询对象
      *
-     * @param page  当前页
-     * @param limit 每页行数
+     * @param id id
      * @return 响应数据
      */
-    @GetMapping("pageList")
+    @GetMapping("queryById")
     @RequiresPermissions("data_select")
-    public ResultBean<Pager<ToolType>> pageList(int page, int limit) {
-        Pager<ToolType> pager = toolTypeService.queryAllByPage(page, limit);
-        return ResultBean.success(pager);
+    public ResultBean<ToolType> queryById(int id) {
+        ToolType toolType = toolTypeService.queryById(id);
+        return ResultBean.success(toolType);
     }
 
     /**

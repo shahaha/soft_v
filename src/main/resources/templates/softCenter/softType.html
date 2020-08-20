@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+    <style>
+        /* 弹窗中select被遮挡 */
+        .layui-layer-page .layui-layer-content {
+            overflow: visible !important;
+        }
+    </style>
+</head>
+
+<body>
+<table id="table" class="layui-show" lay-filter="test" style="width: 80%"></table>
+
+<form class="layui-form" id="addToolTypeDialog" lay-filter="dialog" style="display: none;">
+    <input type="hidden" name="id" id="id"/>
+    <div class="layui-form-item" style="padding-top: 5%;">
+        <div class="layui-inline">
+            <label class="layui-form-label">工具类型:</label>
+            <div class="layui-input-inline">
+                <select name="type" id="toolType" lay-filter="toolTypeSelect">
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">工具名称:</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="name" placeholder="请输入工具名" lay-verify="required">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">上传附件：</label>
+        <div class="layui-inline">
+            <button type="button" class="layui-btn layui-btn-radius" id="toolUpload">
+                <i class="layui-icon">&#xe67c;</i>附件
+            </button>
+            <span id="imgText"></span>
+        </div>
+    </div>
+    <div class="layui-form-item" style="display: none;">
+        <button class="layui-btn" lay-submit id="LAY-hide-submit" lay-filter="LAY-hide-submit">提交</button>
+    </div>
+</form>
+
+<script type="text/javascript" th:src="@{/layuiadmin/layui/layui.js}"></script>
+
+<script type="text/html" id="operation">
+    <a class="layui-btn layui-btn-xs" lay-event="download">下载</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</script>
+
+<script type="text/html" id="labTableToolbar">
+    <div class="layui-inline" style="width: 25%;">
+        <input name="search" id="LAY-search-labTable-address" placeholder="输入工具名称" class="layui-input">
+    </div>
+    <button lay-event="search" type="button" class="layui-btn">
+        <i class="layui-icon">&#xe615;</i>搜索
+    </button>
+    <button lay-event="add" type="button" class="layui-btn">
+        <i class="layui-icon">&#xe608;</i>添加
+    </button>
+</script>
+
+<script type="text/javascript">
+    layui.config({
+        base: '/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'layer', 'table', 'element', 'upload'], function () {
+        var $ = layui.$,
+            admin = layui.admin,
+            layer = layui.layer,
+            table = layui.table,
+            upload = layui.upload,
+            setter = layui.setter,
+            form = layui.form; //元素操作
+        table.set({
+            headers: { //通过 request 头传递
+                "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
+            }
+        })
+        // 默认变量
+        var openIndex;
+        var fileData;
+        var typeList;
+        var toDo;
+        //初始化下拉框
+        admin.req({
+            url: '/toolType/list',
+            done: function (res) {
+                typeList = res.data;
+                var obj = document.getElementById("toolType"); //定位id
+                obj.options.length = 0;
+                for (var i = 0; i < res.data.length; i++) {
+                    obj.options.add(new Option(res.data[i].type, res.data[i].id));
+                }
+                form.render();
+                initTable();
+            },
+            fail: function (res) {
+                layer.msg(res.msg, {
+                    offset: '15px',
+                    icon: 2,
+                    time: 2000
+                });
+            }
+        })
+        //加载文件上传按钮
+        upload.render({
+            elem: '#toolUpload',
+            headers: { //通过 request 头传递
+                "authorization": layui.data(setter.tableName)[setter.request.tokenName] || '',
+                "refreshToken": layui.data(setter.tableName)[setter.request.refreshToken] || ''
+            }
+            , url: '/softTool/add'
+            , accept: 'file'
+            , auto: false
+            , size: 10 * 1024
+            , multiple: false
+            //,field: 'address'
+            , choose: function (obj) {
+                obj.preview(function (index, file, result) {
+                    $("#imgText").text(file.name);
+                    fileData = file;
+                });
+            }
+        });
+        //执行一个 table 实例
+        function initTable() {
+            table.render({
+                elem: '#table',
+                height: 'full-20',
+                url: '/softTool/queryByNameAndPage' //数据接口
+                ,
+                title: '字段列表',
+                skin: 'line ',
+                even: true,
+                id: 'toolTable',
+                page: true //开启分页
+                ,
+                limits: [10, 20, 30, 40] //每页条数的选择项，默认：[10,20,30,40,50,60,70,80,90]。
+                ,
+                limit: 10 //每页默认显示的数量
+                ,
+                toolbar: '#labTableToolbar' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+                ,
+                method: 'get',
+                cellMinWidth: 20
+                ,
+                cols: [
+                    [
+                        {
+                            field: "type",
+                            title: "工具类型",
+                            align: "center",
+                            templet: function (d) {
+                                let typeName = '';
+                                $.each(typeList,function (index,value) {
+                                    if (d.type === value.id){
+                                        typeName = value.type;
+                                        return false;
+                                    }
+                                })
+                                return typeName;
+                                // let str = '';
+                                // admin.req({
+                                //     url: '/toolType/queryById',
+                                //     async: false,
+                                //     data: {
+                                //         id: d.type
+                                //     },
+                                //     done: function (res) {
+                                //         str = res.data.type
+                                //     },
+                                //     fail: function (res) {
+                                //     }
+                                // })
+                                // return str;
+                            }
+                        },
+                        {
+                            field: "name",
+                            title: "工具名",
+                            align: "center"
+                        },
+                        {
+                            title: "操作",
+                            toolbar: '#operation',
+                            align: "center",
+                            fixed: 'right'
+                        }
+                    ]
+                ],
+                response: {
+                    statusCode: 200,
+                },
+                parseData: function (res) { //res 即为原始返回的数据
+                    //console.log(res);
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "count": res.data.total, //解析数据长度
+                        "data": res.data.rows //解析数据列表
+                    };
+                }
+            })
+        }
+
+
+        //监听头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            switch (obj.event) {
+                case 'add':
+                    $("#addToolTypeDialog")[0].reset();
+                    $("#imgText").text("");
+                    toDo = 'add';
+                    openIndex = layer.open({
+                        type: 1,
+                        title: `<i class="layui-icon layui-icon-add-1">添加字段</i>`,
+                        area: ['auto', 'auto'],
+                        content: $('#addToolTypeDialog'),
+                        skin: 'layui-layer-molv',
+                        offset: 'auto',
+                        btn: ['确定', '取消'],
+                        yes: function (index, layero) {
+                            var submited = document.getElementById('LAY-hide-submit');
+                            submited.click();
+                        }
+                    });
+                    break;
+                case 'search':
+                    var text = document.getElementById('LAY-search-labTable-address').value;
+                    table.reload('toolTable', {
+                        where: {
+                            toolName: text
+                        }
+                    })
+                    $('#LAY-search-labTable-address').val(text);
+                    break;
+            }
+        });
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data, //获得当前行数据
+                layEvent = obj.event; //获得 lay-event 对应的值
+            //console.log(data);
+            if (layEvent === 'edit') {
+                toDo = 'edit';
+                $("#imgText").text(data.address.substring((data.address.lastIndexOf("-")) + 1));
+                form.val("dialog", data);
+                openIndex = layer.open({
+                    type: 1,
+                    title: `<i class="layui-icon layui-icon-edit">修改字段</i>`,
+                    area: ['auto', 'auto'],
+                    content: $('#addToolTypeDialog'),
+                    skin: 'layui-layer-molv',
+                    offset: 'auto',
+                    btn: ['确定', '取消'],
+                    yes: function (index, layero) {
+                        var submited = document.getElementById('LAY-hide-submit');
+                        submited.click();
+                    }
+                });
+            } else if (layEvent === 'delete') {
+                layer.confirm('是否删除软件工具<span style="color: #FF5722;">'+data.name+'</span>', function (index) {
+                    layer.close(index);
+                    admin.req({
+                        type: 'POST',
+                        url: "/softTool/delete",
+                        data: {
+                            id: data.id
+                        },
+                        done: function (res) {
+                            layer.msg("删除成功");
+                            table.reload('toolTable');
+                        },
+                        fail: function (res) {
+                            layer.msg(res.msg, {
+                                offset: '15px',
+                                icon: 2,
+                                time: 2000
+                            });
+                        }
+                    })
+                });
+            }else if (layEvent === 'download') {
+                if(!data.address){
+                    layer.msg("没有附件！");
+                    return;
+                }
+                var xmlResquest = new XMLHttpRequest();
+                // 发起请求
+                xmlResquest.open("GET", "/file/download?address=" + data.address, true);
+                // console.log(layui.data(setter.tableName)['token'])
+                xmlResquest.setRequestHeader("authorization", layui.data(setter.tableName)[setter.request.tokenName] || '');
+                xmlResquest.setRequestHeader("refreshToken", layui.data(setter.tableName)[setter.request.refreshToken] || '');
+                xmlResquest.responseType = "blob";
+                // 返回
+                xmlResquest.onload = function (oEvent) {
+                    if (this.status == 200) {
+                        var content = xmlResquest.response;
+                        //console.log(xmlResquest);
+                        if (content.type == 'application/json'){
+                            var fr = new FileReader(); //FileReader可以读取Blob内容
+                            fr.readAsText(content); //二进制转换成text
+                            fr.onload = function (e) {  //转换完成后，调用onload方法
+                                var result = fr.result;
+                                layer.msg(JSON.parse(result).msg);
+                            }
+                        }else {
+                            // 组装a标签
+                            var elink = document.createElement("a");
+                            //设置文件下载路径
+                            elink.download = data.address.substring((data.address.lastIndexOf("-")) + 1);
+
+                            elink.style.display = "none";
+                            //把后端response响应二进制文件放到blob
+                            var blob = new Blob([content]);
+                            //解决下载不存在文件的问题，根据blob大小判断
+                            if (blob.size == 0) {
+                                layer.msg('服务器没找到此文件，请联系管理员!');
+                            } else {
+                                //通过url去下载
+                                elink.href = URL.createObjectURL(blob);
+                                document.body.appendChild(elink);
+                                elink.click();
+                                document.body.removeChild(elink);
+                            }
+                        }
+                    }
+                };
+                xmlResquest.send();
+            }
+        });
+
+        //提交表单
+        form.on('submit(LAY-hide-submit)', function (data) {
+            //console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+            let url = '';
+            var formData = new FormData();
+            if (toDo === 'add')
+                url = '/softTool/add';
+            if (toDo === 'edit'){
+                url = '/softTool/update';
+                formData.append("id",data.field.id);
+            }
+            formData.append("type",data.field.type);
+            formData.append("name",data.field.name);``
+            formData.append("file",fileData);
+            admin.req({
+                url: url,
+                data: formData,
+                type: 'post',
+                contentType: false,
+                processData: false,
+                done: function (res) {
+                    layer.close(openIndex);
+                    layer.msg("操作成功");
+                    table.reload('toolTable');
+                },
+                fail: function (res) {
+                    layer.msg(res.msg, {
+                        offset: '15px',
+                        icon: 2,
+                        time: 2000
+                    });
+                }
+            })
+            return false;
+        });
+
+    })
+</script>
+</body>
+
+</html>

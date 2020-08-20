@@ -91,4 +91,19 @@ public interface SoftToolMapper {
      * @return 工具列表
      */
     List<SoftTool> queryByType(int i);
+
+    /**
+     * 根据名称模糊查询
+     * @param toolName 工具名
+     * @return 对象列表
+     */
+    List<SoftTool> queryByName(String toolName);
+
+    /**
+     * 判断是否在使用
+     *
+     * @param id id
+     * @return 是否使用
+     */
+    int inUser(Integer id);
 }

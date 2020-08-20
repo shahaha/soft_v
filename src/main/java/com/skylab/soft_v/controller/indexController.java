@@ -78,4 +78,6 @@ public class indexController {
     @GetMapping("/password")
     public String password() { return "user/password"; }
 
+    @GetMapping("/softType")
+    public String softType() { return "softCenter/softType"; }
 }

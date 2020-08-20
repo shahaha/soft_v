@@ -228,13 +228,14 @@
                     // 发起请求
                     xmlResquest.open("GET", "/file/download?address=" + data.address, true);
                     // console.log(layui.data(setter.tableName)['token'])
-                    xmlResquest.setRequestHeader("token", layui.data(setter.tableName)['token']);
+                    xmlResquest.setRequestHeader("authorization", layui.data(setter.tableName)[setter.request.tokenName] || '');
+                    xmlResquest.setRequestHeader("refreshToken", layui.data(setter.tableName)[setter.request.refreshToken] || '');
                     xmlResquest.responseType = "blob";
                     // 返回
                     xmlResquest.onload = function (oEvent) {
                         if (this.status == 200) {
                             var content = xmlResquest.response;
-                            console.log(xmlResquest);
+                            //console.log(xmlResquest);
                             if (content.type == 'application/json'){
                                 var fr = new FileReader(); //FileReader可以读取Blob内容
                                 fr.readAsText(content); //二进制转换成text

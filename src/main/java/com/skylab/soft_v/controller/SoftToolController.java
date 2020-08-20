@@ -1,17 +1,23 @@
 package com.skylab.soft_v.controller;
 
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.StrUtil;
+import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
+import com.skylab.soft_v.component.ActionLog;
 import com.skylab.soft_v.entity.SoftTool;
 import com.skylab.soft_v.service.SoftToolService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -31,41 +37,8 @@ public class SoftToolController {
     @Resource
     private SoftToolService softToolService;
 
-    /**
-     * 通过Id查询对象
-     *
-     * @param id id
-     * @return 响应数据
-     */
-    @GetMapping("queryById")
-    public ResultBean<SoftTool> queryById(int id) {
-        SoftTool softTool = softToolService.queryById(id);
-        return ResultBean.success(softTool);
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("pageList")
-    public ResultBean<Pager<SoftTool>> pageList(int page, int limit) {
-        Pager<SoftTool> pager = softToolService.queryAllByPage(page, limit);
-        return ResultBean.success(pager);
-    }
-
-    /**
-     * 查询所有记录
-     *
-     * @return 响应数据
-     */
-    @GetMapping("list")
-    public ResultBean<List<SoftTool>> list() {
-        List<SoftTool> categories = softToolService.queryList();
-        return ResultBean.success(categories);
-    }
+    @Value("${filepath}")
+    private String filepath;
 
     /**
      * 添加记录
@@ -74,12 +47,34 @@ public class SoftToolController {
      * @return 响应数据
      */
     @PostMapping("add")
-    public ResultBean<SoftTool> add(SoftTool softTool) {
+    @RequiresPermissions("softTool_add")
+    @ActionLog("添加一个软件工具")
+    public ResultBean<SoftTool> add(SoftTool softTool,@RequestParam(value = "file",required = false) MultipartFile file) {
+        if (file == null || file.isEmpty()){
+            return ResultBean.error("文件不能为空！");
+        }
+        if (StrUtil.isBlank(softTool.getName())){
+            return ResultBean.error("工具名不能为空！");
+        }
+        SoftTool example = new SoftTool();
+        example.setName(softTool.getName());
+        List<SoftTool> exist = softToolService.queryByExample(example);
+        if (!exist.isEmpty()){
+            return ResultBean.error("该工具名已存在！");
+        }
         try {
+            String fileName = file.getOriginalFilename();
+            fileName = UUID.randomUUID() + "-" + fileName;
+            File dest = new File((filepath + fileName));
+            if (!dest.getParentFile().exists()){
+                dest.getParentFile().mkdirs();
+            }
+            file.transferTo(dest);
+            softTool.setAddress(fileName);
             SoftTool insertSelective = softToolService.insertSelective(softTool);
             return ResultBean.success(insertSelective);
         } catch (Exception e) {
-            return ResultBean.error("保存失败");
+            throw new BusinessException(400,"保存失败");
         }
     }
 
@@ -90,7 +85,12 @@ public class SoftToolController {
      * @return 响应数据
      */
     @PostMapping("delete")
+    @RequiresPermissions("softTool_delete")
+    @ActionLog("删除一个软件工具")
     public ResultBean<SoftTool> delete(Integer id) {
+        if (softToolService.inUser(id)){
+            return ResultBean.error("工具正在使用，不能删除！");
+        }
         final boolean b = softToolService.deleteById(id);
         if (b) {
             return ResultBean.success("删除成功！");
@@ -106,12 +106,38 @@ public class SoftToolController {
      * @return 响应数据
      */
     @PostMapping("update")
-    public ResultBean<SoftTool> update(SoftTool softTool) {
+    @RequiresPermissions("softTool_update")
+    @ActionLog("修改一个软件工具")
+    public ResultBean<SoftTool> update(SoftTool softTool,@RequestParam(value = "file",required = false) MultipartFile file) {
+        if (softTool.getId() == null){
+            return ResultBean.error("id不能为空");
+        }
+        SoftTool exist = softToolService.queryById(softTool.getId());
+        if(exist == null){
+            return ResultBean.error("修改的软件工具不存在");
+        }
+        if (!exist.getType().equals(softTool.getType())){
+            return ResultBean.error("工具类型不能修改");
+        }
+        if (file != null && !file.isEmpty()){
+            String fileName = file.getOriginalFilename();
+            fileName = UUID.randomUUID() + "-" + fileName;
+            File dest = new File((filepath + fileName));
+            if (!dest.getParentFile().exists()){
+                dest.getParentFile().mkdirs();
+            }
+            try {
+                file.transferTo(dest);
+                softTool.setAddress(fileName);
+            }catch (IOException e){
+                throw new BusinessException(400,"文件上传失败");
+            }
+        }
         try {
             SoftTool update = softToolService.update(softTool);
             return ResultBean.success(update);
         } catch (Exception e) {
-            return ResultBean.error("修改失败");
+            throw new BusinessException(400,"修改失败");
         }
     }
 
@@ -122,6 +148,7 @@ public class SoftToolController {
      * @return 响应数据
      */
     @GetMapping("queryByExample")
+    @RequiresPermissions("softTool_select")
     public ResultBean<List<SoftTool>> queryByExample(SoftTool softTool) {
         List<SoftTool> list = softToolService.queryByExample(softTool);
         return ResultBean.success(list);
@@ -130,14 +157,15 @@ public class SoftToolController {
     /**
      * 根据条件查询并分页
      *
-     * @param softTool 查询条件
+     * @param toolName 查询条件
      * @param page     当前页
      * @param limit    每页行数
      * @return 响应数据
      */
-    @GetMapping("queryByExampleAndPage")
-    public ResultBean<Pager<SoftTool>> queryByExampleAndPage(SoftTool softTool, int page, int limit) {
-        Pager<SoftTool> pager = softToolService.queryByExampleAndPage(softTool, page, limit);
+    @GetMapping("queryByNameAndPage")
+    @RequiresPermissions("softTool_select")
+    public ResultBean<Pager<SoftTool>> queryByNameAndPage(String toolName, int page, int limit) {
+        Pager<SoftTool> pager = softToolService.queryByNameAndPage(toolName, page, limit);
         return ResultBean.success(pager);
     }
 
