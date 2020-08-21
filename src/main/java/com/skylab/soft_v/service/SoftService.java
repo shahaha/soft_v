@@ -99,4 +99,6 @@ public interface SoftService {
     Soft queryByCode(String code);
 
     Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage, User user);
+
+    Object queryAllForSoulpage(SoulPage<SoftVO> soulPage);
 }

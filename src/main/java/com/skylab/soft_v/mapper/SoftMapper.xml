@@ -72,7 +72,7 @@
     <!--查询单个-->
     <select id="queryById" resultMap="SoftMap">
         select
-          id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30
+          id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware,serial_port_config, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30
         from soft_v_sys.soft
         where id = #{id}
     </select>
@@ -80,7 +80,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByPage" resultMap="SoftMap">
         select
-          id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30
+          id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, serial_port_config,flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30
         from soft_v_sys.soft
         limit #{page}, #{limit}
     </select>
@@ -88,7 +88,7 @@
     <!--查询所有行数据-->
     <select id="queryList" resultMap="SoftMap">
         select
-          id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30
+          id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware,serial_port_config, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30
         from soft_v_sys.soft
     </select>
 
@@ -96,7 +96,7 @@
     <select id="queryByExample" resultMap="SoftMap">
         select
         id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date,
-        burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate,
+        burning_process, config_info, custom_hardware, serial_port_config,flash, WAN, DDR, IRAM, open_short_detection, baud_rate,
         ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool,
         detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4,
         column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15,
@@ -145,6 +145,9 @@
             </if>
             <if test="customHardware != null">
                 and custom_hardware = #{customHardware}
+            </if>
+            <if test="serialPortConfig != null">
+                and serial_port_config = #{serialPortConfig}
             </if>
             <if test="flash != null">
                 and flash = #{flash}
@@ -298,8 +301,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into soft_v_sys.soft(code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30)
-        values (#{code}, #{modelId}, #{chipId}, #{version}, #{engineer}, #{sale}, #{initialCustomer}, #{remark}, #{inUse}, #{uploadDate}, #{burningProcess}, #{configInfo}, #{customHardware}, #{flash}, #{WAN}, #{DDR}, #{IRAM}, #{openShortDetection}, #{baudRate}, #{ephemeris}, #{accuracy}, #{TCXO}, #{frequency}, #{needBurnFirmware}, #{labelPrintTool}, #{GPIODetection}, #{burnTool}, #{detectionTool}, #{productTestTool}, #{productTestCode}, #{category}, #{address}, #{column1}, #{column2}, #{column3}, #{column4}, #{column5}, #{column6}, #{column7}, #{column8}, #{column9}, #{column10}, #{column11}, #{column12}, #{column13}, #{column14}, #{column15}, #{column16}, #{column17}, #{column18}, #{column19}, #{column20}, #{column21}, #{column22}, #{column23}, #{column24}, #{column25}, #{column26}, #{column27}, #{column28}, #{column29}, #{column30})
+        insert into soft_v_sys.soft(code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date, burning_process, config_info, custom_hardware,serial_port_config, flash, WAN, DDR, IRAM, open_short_detection, baud_rate, ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool, detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4, column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15, column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26, column27, column28, column29, column30)
+        values (#{code}, #{modelId}, #{chipId}, #{version}, #{engineer}, #{sale}, #{initialCustomer}, #{remark}, #{inUse}, #{uploadDate}, #{burningProcess}, #{configInfo}, #{customHardware}, #{serialPortConfig},#{flash}, #{WAN}, #{DDR}, #{IRAM}, #{openShortDetection}, #{baudRate}, #{ephemeris}, #{accuracy}, #{TCXO}, #{frequency}, #{needBurnFirmware}, #{labelPrintTool}, #{GPIODetection}, #{burnTool}, #{detectionTool}, #{productTestTool}, #{productTestCode}, #{category}, #{address}, #{column1}, #{column2}, #{column3}, #{column4}, #{column5}, #{column6}, #{column7}, #{column8}, #{column9}, #{column10}, #{column11}, #{column12}, #{column13}, #{column14}, #{column15}, #{column16}, #{column17}, #{column18}, #{column19}, #{column20}, #{column21}, #{column22}, #{column23}, #{column24}, #{column25}, #{column26}, #{column27}, #{column28}, #{column29}, #{column30})
     </insert>
 
     <!--新增非空列-->
@@ -344,6 +347,9 @@
             </if>
             <if test="customHardware != null">
                 custom_hardware,
+            </if>
+            <if test="serialPortConfig != null">
+                serial_port_config,
             </if>
             <if test="flash != null">
                 flash,
@@ -533,6 +539,9 @@
             <if test="customHardware != null">
                 #{customHardware},
             </if>
+            <if test="serialPortConfig != null">
+                #{serialPortConfig},
+            </if>
             <if test="flash != null">
                 #{flash},
             </if>
@@ -714,6 +723,9 @@
             config_info = #{configInfo},
             <if test="customHardware != null">
                 custom_hardware = #{customHardware},
+            </if>
+            <if test="serialPortConfig != null">
+                serial_port_config = #{serialPortConfig},
             </if>
             <if test="flash != null">
                 flash = #{flash},
@@ -904,7 +916,7 @@
     <select id="queryByCode" resultMap="SoftMap">
         select
         id, code, model_id, chip_id, version, engineer, sale, initial_customer, remark, in_use, upload_date,
-        burning_process, config_info, custom_hardware, flash, WAN, DDR, IRAM, open_short_detection, baud_rate,
+        burning_process, config_info, custom_hardware,serial_port_config, flash, WAN, DDR, IRAM, open_short_detection, baud_rate,
         ephemeris, accuracy, TCXO, frequency, need_burn_firmware, label_print_tool, GPIO_detection, burn_tool,
         detection_tool, product_test_tool, product_test_code, category, address, column1, column2, column3, column4,
         column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15,
@@ -913,7 +925,7 @@
         from soft_v_sys.soft
         where code = #{code}
     </select>
-
+<!--根据用户查询软件 工程师-->
     <select id="queryByUserForSoulpage" resultType="com.skylab.soft_v.bean.SoftVO">
         SELECT  a.id,code,e.model_name modelId,d.chip_name chipId,version,b.real_name engineer, f.real_name sale,a.initial_customer initialCustomer,remark,if(a.in_use = 1 ,'是','否') inUse,
         a.upload_date uploadDate,a.burning_process burningProcess,a.config_info configInfo,if(a.custom_hardware = 1 ,'是','否') customHardware,a.serial_port_config serialPortConfig,i.size flash,WAN,h.size DDR,g.size IRAM,if(a.open_short_detection = 1 ,'是','否') openShortDetection,
@@ -941,5 +953,28 @@
                 and a.engineer = #{user.id}
             </if>
         </where>
+    </select>
+    <!--返回所有软件 管理员-->
+    <select id="queryAllForSoulpage" resultType="com.skylab.soft_v.bean.SoftVO">
+        SELECT  a.id,code,e.model_name modelId,d.chip_name chipId,version,b.real_name engineer, f.real_name sale,a.initial_customer initialCustomer,remark,if(a.in_use = 1 ,'是','否') inUse,
+                a.upload_date uploadDate,a.burning_process burningProcess,a.config_info configInfo,if(a.custom_hardware = 1 ,'是','否') customHardware,a.serial_port_config serialPortConfig,i.size flash,WAN,h.size DDR,g.size IRAM,if(a.open_short_detection = 1 ,'是','否') openShortDetection,
+                a.baud_rate baudRate,if(ephemeris = 1 ,'是','否') ephemeris,accuracy,TCXO,frequency,if(a.need_burn_firmware = 1 ,'是','否') needBurnFirmware,k.`name` labelPrintTool,l.`name` gpioDetection,j.`name` burnTool,m.`name` detectionTool,
+                n.`name` productTestTool,a.product_test_code productTestCode,c.category_name category,a.address address, column1, column2, column3, column4,
+            column5, column6, column7, column8, column9, column10, column11, column12, column13, column14, column15,
+            column16, column17, column18, column19, column20, column21, column22, column23, column24, column25, column26,
+            column27, column28, column29, column30
+        from soft_v_sys.soft a LEFT JOIN `user` b on a.engineer = b.id
+            LEFT JOIN category c on a.category = c.id
+            LEFT JOIN chip d on a.chip_id = d.id
+            LEFT JOIN model e on a.model_id = e.id
+            LEFT JOIN `user` f on a.sale = f.id
+            LEFT JOIN byte_size g on a.IRAM = g.id
+            LEFT JOIN byte_size h on a.DDR = h.id
+            LEFT JOIN byte_size i on a.flash = i.id
+            LEFT JOIN soft_tool j on a.burn_tool = j.id
+            LEFT JOIN soft_tool k on a.label_print_tool = k.id
+            LEFT JOIN soft_tool l on a.GPIO_detection = l.id
+            LEFT JOIN soft_tool m on a.detection_tool = m.id
+            LEFT JOIN soft_tool n on a.product_test_tool = n.id
     </select>
 </mapper>

@@ -176,6 +176,7 @@ public class SoftToolController {
      * @return 响应数据
      */
     @GetMapping("list2SoftToolVO")
+    @RequiresPermissions("softTool_select")
     public ResultBean<List<SoftToolVO>> list2SoftToolVO(String tools) {
         if(tools.isEmpty()){
             return ResultBean.error("无数据");

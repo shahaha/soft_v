@@ -105,4 +105,6 @@ public interface SoftMapper {
     Soft queryByCode(String code);
 
     List<SoftVO> queryByUserForSoulpage(SoulPage<SoftVO> soulPage,@Param("user") User user);
+
+    List<SoftVO> queryAllForSoulpage(SoulPage<SoftVO> soulPage);
 }

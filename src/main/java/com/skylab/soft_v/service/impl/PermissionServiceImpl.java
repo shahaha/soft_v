@@ -81,6 +81,7 @@ public class PermissionServiceImpl implements PermissionService {
         Pager<Permission> pager = new Pager<Permission>();
         int count = list.size();
         pager.setTotal(count);
+        page = Math.min(page,(count/limit)+1);
         int fromIndex = (page - 1) * limit;
         int toIndex = fromIndex + limit;
         pager.setRows(list.subList(fromIndex, Math.min(toIndex, count)));

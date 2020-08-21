@@ -103,6 +103,7 @@ public class SoftServiceImpl implements SoftService {
         Pager<Soft> pager = new Pager<Soft>();
         int count = list.size();
         pager.setTotal(count);
+        page = Math.min(page,(count/limit)+1);
         int fromIndex = (page - 1) * limit;
         int toIndex = fromIndex + limit;
         pager.setRows(list.subList(fromIndex, Math.min(toIndex, count)));
@@ -176,5 +177,10 @@ public class SoftServiceImpl implements SoftService {
     @Override
     public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage, User user) {
         return soulPage.setData(softMapper.queryByUserForSoulpage(soulPage,user));
+    }
+
+    @Override
+    public Object queryAllForSoulpage(SoulPage<SoftVO> soulPage) {
+        return soulPage.setData(softMapper.queryAllForSoulpage(soulPage));
     }
 }

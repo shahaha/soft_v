@@ -15,6 +15,8 @@ import com.skylab.soft_v.util.JwtTokenUtil;
 import com.skylab.soft_v.util.SoulPage;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.security.SecurityUtil;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.security.Security;
 import java.util.Date;
 import java.util.List;
 
@@ -184,6 +187,7 @@ public class SoftController {
      * @return 响应数据
      */
     @GetMapping("queryByExample")
+    @RequiresPermissions("soft_select")
     public ResultBean<List<Soft>> queryByExample(Soft soft) {
         List<Soft> list = softService.queryByExample(soft);
         return ResultBean.success(list);
@@ -198,6 +202,7 @@ public class SoftController {
      * @return 响应数据
      */
     @GetMapping("queryByExampleAndPage")
+    @RequiresPermissions("soft_select")
     public ResultBean<Pager<Soft>> queryByExampleAndPage(Soft soft, int page, int limit) {
         Pager<Soft> pager = softService.queryByExampleAndPage(soft, page, limit);
         return ResultBean.success(pager);
@@ -210,6 +215,7 @@ public class SoftController {
      * @return SoulPage
      */
     @PostMapping("queryForSoulpage")
+    @RequiresPermissions("soft_select")
     public Object queryForSoulpage(SoulPage<SoftVO> soulPage, SoftVO softVO)  {
         soulPage.setObj(softVO);
         return softService.queryForSoulpage(soulPage);
@@ -222,10 +228,16 @@ public class SoftController {
      * @return
      */
     @PostMapping("queryByUserForSoulpage")
+    @RequiresPermissions("soft_select")
     public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage,HttpServletRequest request)  {
         String accessToken=request.getHeader(Const.ACCESS_TOKEN);
         String username = JwtTokenUtil.getUserId(accessToken);
-        User user = userService.queryByUsername(username);
-        return softService.queryByUserForSoulpage(soulPage,user);
+        if(SecurityUtils.getSubject().hasRole("admin")){
+            return softService.queryAllForSoulpage(soulPage);
+        }else {
+            User user = userService.queryByUsername(username);
+            return softService.queryByUserForSoulpage(soulPage,user);
+        }
+
     }
 }

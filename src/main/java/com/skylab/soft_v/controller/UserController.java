@@ -58,26 +58,27 @@ public class UserController {
 
     /**
      * 用户登录
+     *
      * @param username 用户名
      * @param password 密码
      * @return 响应数据
      */
     @PostMapping(value = "login")
-    public ResultBean<UserVO> login(String username, String password){
+    public ResultBean<UserVO> login(String username, String password) {
         log.info("login");
         User user = userService.queryByUsername(username);
         //验证账号是否存在
-        if(user == null){
+        if (user == null) {
             return ResultBean.error("账号无效");
         }
-        if(!user.getPassword().equals(password)){
+        if (!user.getPassword().equals(password)) {
             return ResultBean.error("用戶名或密码错误");
         }
         UserVO loginUser = new UserVO();
         loginUser.setId(user.getId());
         loginUser.setRealName(user.getRealName());
         loginUser.setUsername(user.getUsername());
-        Map<String, Object> claims=new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
         List<String> roleNames = new ArrayList<>();
         List<String> pNames = new ArrayList<>();
         Set<Role> roles = roleService.queryByUserId(user.getId());
@@ -88,46 +89,46 @@ public class UserController {
                 pNames.add(permission.getPName());
             }
         }
-        claims.put(Const.ROLES_INFOS_KEY,roleNames);
-        claims.put(Const.PERMISSIONS_INFOS_KEY,pNames);
-        claims.put(Const.JWT_USER_NAME,user.getUsername());
-        String token = JwtTokenUtil.getAccessToken(user.getUsername(),claims);
-        String refreshToken=JwtTokenUtil.getRefreshToken(user.getUsername(),claims);
+        claims.put(Const.ROLES_INFOS_KEY, roleNames);
+        claims.put(Const.PERMISSIONS_INFOS_KEY, pNames);
+        claims.put(Const.JWT_USER_NAME, user.getUsername());
+        String token = JwtTokenUtil.getAccessToken(user.getUsername(), claims);
+        String refreshToken = JwtTokenUtil.getRefreshToken(user.getUsername(), claims);
         loginUser.setAccessToken(token);
         loginUser.setRefreshToken(refreshToken);
-        return ResultBean.success("登录成功",loginUser);
+        return ResultBean.success("登录成功", loginUser);
     }
 
     @PostMapping("/logout")
-    public ResultBean<User> logout(HttpServletRequest request){
+    public ResultBean<User> logout(HttpServletRequest request) {
         try {
-            String accessToken=request.getHeader(Const.ACCESS_TOKEN);
-            String refreshToken=request.getHeader(Const.REFRESH_TOKEN);
-            if(StringUtils.isEmpty(accessToken)||StringUtils.isEmpty(refreshToken)){
-                throw new BusinessException(500,"传入数据异常");
+            String accessToken = request.getHeader(Const.ACCESS_TOKEN);
+            String refreshToken = request.getHeader(Const.REFRESH_TOKEN);
+            if (StringUtils.isEmpty(accessToken) || StringUtils.isEmpty(refreshToken)) {
+                throw new BusinessException(500, "传入数据异常");
             }
             Subject subject = SecurityUtils.getSubject();
-            if(subject!=null){
+            if (subject != null) {
                 subject.logout();
             }
             String userId = JwtTokenUtil.getUserId(accessToken);
             /**
              * 把accessToken 加入黑名单
              */
-            redisService.set(Const.JWT_ACCESS_TOKEN_BLACKLIST+accessToken,userId,JwtTokenUtil.getRemainingTime(accessToken), TimeUnit.MILLISECONDS);
+            redisService.set(Const.JWT_ACCESS_TOKEN_BLACKLIST + accessToken, userId, JwtTokenUtil.getRemainingTime(accessToken), TimeUnit.MILLISECONDS);
             /**
              * 把refreshToken 加入黑名单
              */
-            redisService.set(Const.JWT_REFRESH_IDENTIFICATION+refreshToken,userId,JwtTokenUtil.getRemainingTime(refreshToken),TimeUnit.MILLISECONDS);
+            redisService.set(Const.JWT_REFRESH_IDENTIFICATION + refreshToken, userId, JwtTokenUtil.getRemainingTime(refreshToken), TimeUnit.MILLISECONDS);
         } catch (Exception e) {
-            log.error("logout:{}",e);
+            log.error("logout:{}", e);
         }
         return ResultBean.success();
     }
 
     @PostMapping("/getLoginUser")
-    public ResultBean<User> getLoginUser(HttpServletRequest request){
-        String accessToken=request.getHeader(Const.ACCESS_TOKEN);
+    public ResultBean<User> getLoginUser(HttpServletRequest request) {
+        String accessToken = request.getHeader(Const.ACCESS_TOKEN);
         String username = JwtTokenUtil.getUserId(accessToken);
         User user = userService.queryByUsername(username);
         return ResultBean.success(user);
@@ -148,7 +149,7 @@ public class UserController {
 
 
     @PostMapping("soulpage")
-    public Object soulpage(SoulPage<User> soulPage,User user) {
+    public Object soulpage(SoulPage<User> soulPage, User user) {
         soulPage.setObj(user);
         return userService.dataGrid(soulPage);
     }
@@ -173,16 +174,16 @@ public class UserController {
     @PostMapping("add")
     @RequiresPermissions("user_add")
     @ActionLog("添加一个用户")
-    public ResultBean<User> add(User user,@RequestParam(defaultValue = "") String roleIds) {
-        if (StrUtil.isBlank(user.getRealName()) || StrUtil.isBlank(user.getUsername()) || StrUtil.isBlank(user.getPassword())){
+    public ResultBean<User> add(User user, @RequestParam(defaultValue = "") String roleIds) {
+        if (StrUtil.isBlank(user.getRealName()) || StrUtil.isBlank(user.getUsername()) || StrUtil.isBlank(user.getPassword())) {
             return ResultBean.error("用户信息不完整");
         }
-        if (StrUtil.isBlank(roleIds)){
+        if (StrUtil.isBlank(roleIds)) {
             return ResultBean.error("角色不能为空");
         }
         User exit = userService.queryByUsername(user.getUsername());
-        if (exit != null){
-           return ResultBean.error("该用户名已存在，无法添加");
+        if (exit != null) {
+            return ResultBean.error("该用户名已存在，无法添加");
         }
         try {
             String[] split = roleIds.split(",");
@@ -195,10 +196,10 @@ public class UserController {
                     roles.add(Integer.parseInt(roleId));
                 }
             }
-            User insertSelective = userService.insertSelective(user,roles);
+            User insertSelective = userService.insertSelective(user, roles);
             return ResultBean.success(insertSelective);
         } catch (Exception e) {
-            throw new BusinessException(400,"保存失败");
+            throw new BusinessException(400, "保存失败");
         }
     }
 
@@ -212,7 +213,7 @@ public class UserController {
     @RequiresPermissions("user_delete")
     @ActionLog("删除一个用户")
     public ResultBean<User> delete(Integer id) {
-        if (userService.inUser(id)){
+        if (userService.inUser(id)) {
             return ResultBean.error("用户正在使用，不能删除！");
         }
         final boolean b = userService.deleteById(id);
@@ -232,18 +233,18 @@ public class UserController {
     @PostMapping("update")
     @RequiresPermissions("user_update")
     @ActionLog("修改一个用户")
-    public ResultBean<User> update(User user,@RequestParam(defaultValue = "") String roleIds) {
-        if (user.getId() == null){
+    public ResultBean<User> update(User user, @RequestParam(defaultValue = "") String roleIds) {
+        if (user.getId() == null) {
             return ResultBean.error("用户Id不存在");
         }
-        if (StrUtil.isBlank(user.getRealName())){
+        if (StrUtil.isBlank(user.getRealName())) {
             return ResultBean.error("用户信息不完整");
         }
-        if (StrUtil.isBlank(roleIds)){
+        if (StrUtil.isBlank(roleIds)) {
             return ResultBean.error("角色不能为空");
         }
         User exit = userService.queryByUsername(user.getUsername());
-        if (exit != null && !exit.getId().equals(user.getId())){
+        if (exit != null && !exit.getId().equals(user.getId())) {
             return ResultBean.error("该用户名已存在，无法添加");
         }
         try {
@@ -257,7 +258,7 @@ public class UserController {
                     roles.add(Integer.parseInt(roleId));
                 }
             }
-            User update = userService.update(user,roles);
+            User update = userService.update(user, roles);
             return ResultBean.success(update);
         } catch (Exception e) {
             return ResultBean.error("修改失败");
@@ -279,6 +280,7 @@ public class UserController {
         Pager<AccountVO> pager = new Pager<>();
         int count = accountVOS.size();
         pager.setTotal(count);
+        page = Math.min(page, (count / limit) + 1);
         int fromIndex = (page - 1) * limit;
         int toIndex = fromIndex + limit;
         pager.setRows(accountVOS.subList(fromIndex, Math.min(toIndex, count)));
@@ -287,16 +289,16 @@ public class UserController {
 
     @PostMapping("resetPassword")
     @ActionLog("修改密码")
-    public ResultBean<User> updatePwd(String passwordOld, String passwordNew, HttpServletRequest request){
-        if (StrUtil.isBlank(passwordOld)){
+    public ResultBean<User> updatePwd(String passwordOld, String passwordNew, HttpServletRequest request) {
+        if (StrUtil.isBlank(passwordOld)) {
             return ResultBean.error("旧密码不能为空");
         }
-        if (StrUtil.isBlank(passwordNew)){
+        if (StrUtil.isBlank(passwordNew)) {
             return ResultBean.error("新密码不能为空");
         }
-        String accessToken=request.getHeader(Const.ACCESS_TOKEN);
-        String refresgToken=request.getHeader(Const.REFRESH_TOKEN);
-        userService.userUpdatePwd(passwordOld,passwordNew,accessToken,refresgToken);
+        String accessToken = request.getHeader(Const.ACCESS_TOKEN);
+        String refresgToken = request.getHeader(Const.REFRESH_TOKEN);
+        userService.userUpdatePwd(passwordOld, passwordNew, accessToken, refresgToken);
         return ResultBean.success("修改成功");
     }
 

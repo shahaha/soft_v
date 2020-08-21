@@ -31,8 +31,8 @@
     </div>
     <!-- 操作栏模板 -->
     <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-sm" lay-event="tools">工具</a>
-        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="download">下载</a>
+        <a class="layui-btn layui-btn-sm" lay-event="tools" shiro:hasPermission="softTool_select" >工具</a>
+        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="download" shiro:hasPermission="file_download">下载</a>
     </script>
 
 

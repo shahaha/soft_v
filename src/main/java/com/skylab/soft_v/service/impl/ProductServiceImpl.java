@@ -80,6 +80,7 @@ public class ProductServiceImpl implements ProductService {
         Pager<Product> pager = new Pager<Product>();
         int count = list.size();
         pager.setTotal(count);
+        page = Math.min(page,(count/limit)+1);
         int fromIndex = (page - 1) * limit;
         int toIndex = fromIndex + limit;
         pager.setRows(list.subList(fromIndex, Math.min(toIndex, count)));
