@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.skylab.soft_v.bean.AccountVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.User;
@@ -99,7 +100,7 @@ public interface UserService {
      */
     User queryByUsername(String username);
 
-    Object dataGrid(SoulPage<User> soulPage);
+    Object dataGrid(SoulPage<User> soulPage) throws JsonProcessingException;
     /**
      * 根据条件查询用户及角色列表
      * @param msg 条件

@@ -1,7 +1,11 @@
 package com.skylab.soft_v.util;
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skylab.soft_v.bean.JsonToObj;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -81,6 +85,9 @@ public class SoulPage<T> {
     @JsonIgnore
     private String order = "asc";
 
+    @JsonIgnore
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     public SoulPage () {
 
     }
@@ -89,8 +96,10 @@ public class SoulPage<T> {
         this.limit = limit;
     }
 
-    public List<FilterSo> getFilterSos() {
-        return JSON.parseArray(filterSos, FilterSo.class);
+    public List<FilterSo> getFilterSos() throws JsonProcessingException {
+        return StrUtil.isNotBlank(filterSos) ? objectMapper.readValue(filterSos, new TypeReference<List<FilterSo>>() {
+        }) : new ArrayList<>();
+        //return JSON.parseArray(filterSos, FilterSo.class);
     }
 
     public void setFilterSos(String filterSos) {
@@ -125,7 +134,7 @@ public class SoulPage<T> {
         return data;
     }
 
-    public Object setData(List<T> data) {
+    public Object setData(List<T> data) throws JsonProcessingException {
         if (isColumn()) {
             Map<String, Map<String, String>> typeMap = getTypeMap();
             Map<String, Set<String>> columnMap = new HashMap<>();
@@ -207,8 +216,8 @@ public class SoulPage<T> {
         this.order = order;
     }
 
-    public List<String> getColumns() {
-        return StringUtils.isNotBlank(columns)? JSON.parseArray(columns, String.class):new ArrayList<>();
+    public List<String> getColumns() throws JsonProcessingException {
+        return StringUtils.isNotBlank(columns)? objectMapper.readValue(columns, new TypeReference<List<String>>() {}) : new ArrayList<>();
     }
 
     public void setColumns(String columns) {
@@ -229,10 +238,10 @@ public class SoulPage<T> {
      * @return
      */
     @JsonIgnore
-    public Map<String, Map<String, String>> getTypeMap() {
+    public Map<String, Map<String, String>> getTypeMap() throws JsonProcessingException {
         Map<String, Map<String, String>> typeMap = new HashMap<>();
         if (StringUtils.isNotEmpty(tableFilterType)) {
-            Map<String, String> filterType = JSON.parseObject(tableFilterType, Map.class);
+            Map<String, String> filterType = objectMapper.readValue(tableFilterType,Map.class);
             filterType.forEach((k,v)->{
                 Map<String, String> map = new HashMap<>();
                 map.put("type", v.substring(0, v.indexOf("[")));
@@ -272,7 +281,7 @@ public class SoulPage<T> {
      * 是否是列查询
      * @return
      */
-    public boolean isColumn () {
+    public boolean isColumn () throws JsonProcessingException {
         return !getColumns().isEmpty();
     }
 

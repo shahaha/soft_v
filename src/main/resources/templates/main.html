@@ -16,7 +16,6 @@
 </head>
 
 <body class="layui-layout-body">
-
   <div id="LAY_app">
     <div class="layui-layout layui-layout-admin">
       <div class="layui-header">
@@ -37,10 +36,10 @@
               <i class="layui-icon layui-icon-refresh-3"></i>
             </a>
           </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search"
-              layadmin-event="serach" lay-action="template/search.html?keywords=">
-          </li>
+<!--          <li class="layui-nav-item layui-hide-xs" lay-unselect>-->
+<!--            <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search"-->
+<!--              layadmin-event="serach" lay-action="template/search.html?keywords=">-->
+<!--          </li>-->
         </ul>
         <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
 
@@ -112,22 +111,22 @@
                 <!-- <dd><a lay-href="/index/demo" shiro:hasPermission="demo:test">demo</a></dd> -->
                 <dd><a lay-href="/index/download" shiro:hasPermission="soft_select">软件下载</a></dd>
                 <dd><a lay-href="/index/upload" shiro:hasPermission="soft_add">我的软件</a></dd>
-                <dd><a lay-href="/index/softType" shiro:hasAllPermissions="softTool_select,softTool_update"shiro:hasPermission="softTool_select">软件工具</a></dd>
+                <dd><a lay-href="/index/softType" shiro:hasAllPermissions="softTool_select,softTool_update">软件工具</a></dd>
               </dl>
             </li>
 
-            <li data-name="dataCenter" class="layui-nav-item" shiro:hasPermission="log_select">
+            <li data-name="dataCenter" class="layui-nav-item" shiro:hasAnyPermissions="log_select">
               <a href="javascript:;" lay-tips="数据中心" lay-direction="2">
                 <i class="layui-icon layui-icon-form"></i>
                 <cite>数据中心</cite>
               </a>
               <dl class="layui-nav-child">
-                <dd data-name="label" >
+                <dd data-name="label" shiro:hasPermission="log_select">
                   <a lay-href="/index/log">操作日志</a>
                 </dd>
               </dl>
             </li>
-            <li data-name="userCenter" class="layui-nav-item" >
+            <li data-name="userCenter" class="layui-nav-item" shiro:hasAnyPermissions="role_select,user_select">
               <a href="javascript:;" lay-tips="用户中心" lay-direction="2">
                 <i class="layui-icon layui-icon-username"></i>
                 <cite>用户中心</cite>
@@ -206,14 +205,6 @@
         done: function (res) {
           // console.log(res);
           $("#userRealName").text(res.data.realName);
-          // if (layui.data('currentUser') || layui.data('currentUser').username != res.data.username) {
-          //   layui.data('currentUser', {
-          //     key: 'username',
-          //     value: res.data.username
-          //   });
-            
-          // }
-          // console.log(layui.data('currentUser').username)
         },
         fail: function (res) {
           layer.msg(res.msg, {
@@ -223,15 +214,6 @@
           });
         }
       })
-      // top.location.href = '/index/success'; //后台主页
-      window.onload = function () {
-        var url = document.location.href; //获取浏览器访问栏里的地址
-        if (url.indexOf("r=") == -1 ) { //判断地址后面是否多了某些值，没有就进方法里进行刷新
-          var t = new Date();
-          window.location.href = '/index/success?r=' + t.getTime();
-        }
-      }
-
     });
   </script>
 </body>

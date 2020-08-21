@@ -35,31 +35,6 @@ public class ChipController {
     private ChipService chipService;
 
     /**
-     * 通过Id查询对象
-     *
-     * @param id id
-     * @return 响应数据
-     */
-    @GetMapping("queryById")
-    public ResultBean<Chip> queryById(int id) {
-        Chip chip = chipService.queryById(id);
-        return ResultBean.success(chip);
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @GetMapping("pageList")
-    public ResultBean<Pager<Chip>> pageList(int page, int limit) {
-        Pager<Chip> pager = chipService.queryAllByPage(page, limit);
-        return ResultBean.success(pager);
-    }
-
-    /**
      * 查询所有记录
      *
      * @return 响应数据

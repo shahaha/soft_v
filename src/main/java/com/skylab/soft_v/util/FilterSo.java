@@ -1,5 +1,7 @@
 package com.skylab.soft_v.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 /**
@@ -8,6 +10,7 @@ import java.util.List;
  * @author Yujie Yang
  * @date 2019-01-02 10:00
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FilterSo {
 
 	/**

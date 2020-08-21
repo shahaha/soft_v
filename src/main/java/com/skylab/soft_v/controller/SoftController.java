@@ -1,5 +1,6 @@
 package com.skylab.soft_v.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.skylab.soft_v.bean.SoftVO;
 import cn.hutool.core.lang.UUID;
 import com.skylab.soft_v.common.BusinessException;
@@ -216,7 +217,7 @@ public class SoftController {
      */
     @PostMapping("queryForSoulpage")
     @RequiresPermissions("soft_select")
-    public Object queryForSoulpage(SoulPage<SoftVO> soulPage, SoftVO softVO)  {
+    public Object queryForSoulpage(SoulPage<SoftVO> soulPage, SoftVO softVO) throws JsonProcessingException {
         soulPage.setObj(softVO);
         return softService.queryForSoulpage(soulPage);
     }
@@ -229,7 +230,7 @@ public class SoftController {
      */
     @PostMapping("queryByUserForSoulpage")
     @RequiresPermissions("soft_select")
-    public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage,HttpServletRequest request)  {
+    public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage,HttpServletRequest request) throws JsonProcessingException {
         String accessToken=request.getHeader(Const.ACCESS_TOKEN);
         String username = JwtTokenUtil.getUserId(accessToken);
         if(SecurityUtils.getSubject().hasRole("admin")){

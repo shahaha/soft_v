@@ -1,6 +1,7 @@
 package com.skylab.soft_v.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.skylab.soft_v.bean.AccountVO;
 import com.skylab.soft_v.bean.UserVO;
 import com.skylab.soft_v.common.BusinessException;
@@ -134,35 +135,12 @@ public class UserController {
         return ResultBean.success(user);
     }
 
-    /**
-     * 分页查询
-     *
-     * @param page  当前页
-     * @param limit 每页行数
-     * @return 响应数据
-     */
-    @PostMapping("pageList")
-    public ResultBean<Pager<User>> pageList(int page, int limit) {
-        Pager<User> pager = userService.queryAllByPage(page, limit);
-        return ResultBean.success(pager);
-    }
-
 
     @PostMapping("soulpage")
-    public Object soulpage(SoulPage<User> soulPage, User user) {
+    @RequiresPermissions("user_select")
+    public Object soulpage(SoulPage<User> soulPage, User user) throws JsonProcessingException {
         soulPage.setObj(user);
         return userService.dataGrid(soulPage);
-    }
-
-    /**
-     * 查询所有记录
-     *
-     * @return 响应数据
-     */
-    @GetMapping("list")
-    public ResultBean<List<User>> list() {
-        List<User> categories = userService.queryList();
-        return ResultBean.success(categories);
     }
 
     /**

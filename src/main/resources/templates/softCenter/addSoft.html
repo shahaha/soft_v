@@ -124,7 +124,7 @@
                 admin.req({
                     url: '/extFieldRelation/getShowFieldsAndDataByCategory?categoryId=' + softType,
                     done: function (data) {
-                        console.log(data);
+                        //console.log(data);
                         //解析生成动态表单
                         $("#items").empty(); //清空div
                         $.each(data.data, function (index, item) {
