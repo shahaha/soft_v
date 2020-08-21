@@ -103,7 +103,8 @@
                 <cite>主页</cite>
               </a>
             <li>
-            <li data-name="softCenter" class="layui-nav-item" shiro:hasAnyPermissions="soft_select,soft_add,softTool_select">
+            <li data-name="softCenter" class="layui-nav-item"
+              shiro:hasAnyPermissions="soft_select,soft_add,softTool_select">
               <a href="javascript:;" lay-tips="软件中心" lay-direction="2">
                 <i class="layui-icon layui-icon-app"></i>
                 <cite>软件中心</cite>
@@ -112,7 +113,8 @@
                 <!-- <dd><a lay-href="/index/demo" shiro:hasPermission="demo:test">demo</a></dd> -->
                 <dd><a lay-href="/index/download" shiro:hasPermission="soft_select">软件下载</a></dd>
                 <dd><a lay-href="/index/upload" shiro:hasPermission="soft_add">我的软件</a></dd>
-                <dd><a lay-href="/index/softType" shiro:hasAllPermissions="softTool_select,softTool_update"shiro:hasPermission="softTool_select">软件工具</a></dd>
+                <dd><a lay-href="/index/softType" shiro:hasAllPermissions="softTool_select,softTool_update"
+                    shiro:hasPermission="softTool_select">软件工具</a></dd>
               </dl>
             </li>
 
@@ -122,12 +124,12 @@
                 <cite>数据中心</cite>
               </a>
               <dl class="layui-nav-child">
-                <dd data-name="label" >
+                <dd data-name="label">
                   <a lay-href="/index/log">操作日志</a>
                 </dd>
               </dl>
             </li>
-            <li data-name="userCenter" class="layui-nav-item" >
+            <li data-name="userCenter" class="layui-nav-item">
               <a href="javascript:;" lay-tips="用户中心" lay-direction="2">
                 <i class="layui-icon layui-icon-username"></i>
                 <cite>用户中心</cite>
@@ -190,6 +192,8 @@
     </div>
   </div>
 
+  <p id="principal"><shiro:principal /></p>
+
   <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
   <script>
     layui.config({
@@ -204,16 +208,11 @@
         url: '/user/getLoginUser', //实际使用请改成服务端真实接口
         method: 'post',
         done: function (res) {
-          // console.log(res);
+          //shiro:principal为空代表shior标签未生效 刷新页面
+          if (!$("#principal").html()) {
+            top.location.reload();
+          }
           $("#userRealName").text(res.data.realName);
-          // if (layui.data('currentUser') || layui.data('currentUser').username != res.data.username) {
-          //   layui.data('currentUser', {
-          //     key: 'username',
-          //     value: res.data.username
-          //   });
-            
-          // }
-          // console.log(layui.data('currentUser').username)
         },
         fail: function (res) {
           layer.msg(res.msg, {
@@ -223,14 +222,6 @@
           });
         }
       })
-      // top.location.href = '/index/success'; //后台主页
-      window.onload = function () {
-        var url = document.location.href; //获取浏览器访问栏里的地址
-        if (url.indexOf("r=") == -1 ) { //判断地址后面是否多了某些值，没有就进方法里进行刷新
-          var t = new Date();
-          window.location.href = '/index/success?r=' + t.getTime();
-        }
-      }
 
     });
   </script>
