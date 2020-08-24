@@ -194,12 +194,14 @@
 
          //把value转换成kv
          function toMap(value) {
+             console.log(value);
              var box = $(".dict-value>.content");
              box.empty();
              if (value !== null && value !== "") {
                  value.forEach(function (val) {
-                     var t = val.value + ":" + val.name;
-                     box.append(option.clone().val(t));
+                     console.log(val);
+                     //var t = val.value + ":" + val.name;
+                     box.append(option.clone().val(val.value));
                  });
              }
          }
@@ -214,13 +216,20 @@
 
          // 失去焦点是选项事件
          $(document).on("blur", ".dict-option", function () {
-             var kv = $(this).val().split(":");
-             if (kv.length > 1 && kv[1] !== "") {
+             var val = $(this).val();
+             if (val !== "") {
                  $(this).removeClass("error");
                  updateDict();
              } else {
                  $(this).addClass("error");
              }
+             // var kv = $(this).val().split(":");
+             // if (kv.length > 1 && kv[1] !== "") {
+             //     $(this).removeClass("error");
+             //     updateDict();
+             // } else {
+             //     $(this).addClass("error");
+             // }
          });
 
          // 向下添加
@@ -283,11 +292,14 @@
          var updateDict = function () {
              var value = "[";
              $(".dict-value>.content input").each(function (key, val) {
-                 var kv = $(val).val().split(":");
-                 if (kv.length > 1 && kv[1] !== "" && kv[0] === kv[1]) {
-                     value += "{\"value\":\"" + kv[0] + "\",\"name\":\"" + kv[1] + "\"},";
-                     //value += kv[0] + ":" + kv[1] + ",";
+                 console.log($(val).val());
+                 if ($(val).val() !== ""){
+                     value += "{\"value\":\"" + $(val).val() + "\",\"name\":\"" + $(val).val() + "\"},";
                  }
+                 // var kv = $(val).val().split(":");
+                 // if (kv.length > 1 && kv[1] !== "" && kv[0] === kv[1]) {
+                 //     value += "{\"value\":\"" + kv[0] + "\",\"name\":\"" + kv[1] + "\"},";
+                 // }
              });
              if (value === "[") {
                  value = "";
@@ -394,6 +406,7 @@
                      getInvalidFields();
                      $("#addDictDialog")[0].reset();
                      $(".dict-value>.content").children().remove();
+                     initType();
                      form.render();
                      openIndex = layer.open({
                          type: 1,

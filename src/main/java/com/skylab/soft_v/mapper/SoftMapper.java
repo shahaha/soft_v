@@ -107,4 +107,12 @@ public interface SoftMapper {
     List<SoftVO> queryByUserForSoulpage(SoulPage<SoftVO> soulPage,@Param("user") User user);
 
     List<SoftVO> queryAllForSoulpage(SoulPage<SoftVO> soulPage);
+
+    /**
+     * 清空fieldName中值为value的单元
+     * @param fieldName 列名
+     * @param value 值
+     * @return 影响行数
+     */
+    int cleanByColumnAndValue(String fieldName, String value);
 }

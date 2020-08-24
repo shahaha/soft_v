@@ -1,5 +1,6 @@
 package com.skylab.soft_v.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.skylab.soft_v.bean.SoftVO;
 import cn.hutool.core.lang.UUID;
 import com.skylab.soft_v.common.BusinessException;
@@ -7,8 +8,10 @@ import com.skylab.soft_v.common.Const;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.component.ActionLog;
+import com.skylab.soft_v.entity.Category;
 import com.skylab.soft_v.entity.Soft;
 import com.skylab.soft_v.entity.User;
+import com.skylab.soft_v.service.CategoryService;
 import com.skylab.soft_v.service.SoftService;
 import com.skylab.soft_v.service.UserService;
 import com.skylab.soft_v.util.JwtTokenUtil;
@@ -47,6 +50,8 @@ public class SoftController {
      */
     @Resource
     private SoftService softService;
+    @Resource
+    private CategoryService categoryService;
     @Resource
     private UserService userService;
     @Value("${filepath}")
@@ -93,9 +98,23 @@ public class SoftController {
         if (soft.getCode() == null || "".equals(soft.getCode())){
             return ResultBean.error("编码不能为空");
         }
+        if (soft.getCategory() == null){
+            return ResultBean.error("业务类型不能为空");
+        }
+        if (soft.getEngineer() == null){
+            return ResultBean.error("工程师不能为空");
+        }
         Soft exist = softService.queryByCode(soft.getCode());
         if (exist != null){
             return ResultBean.error("该编码已存在，请更换编码！");
+        }
+        Category existingCategory = categoryService.queryById(soft.getCategory());
+        if (existingCategory == null){
+            return ResultBean.error("业务类型不存在！");
+        }
+        User existingEngineer = userService.queryById(soft.getEngineer());
+        if (existingEngineer == null){
+            return ResultBean.error("工程师不存在！");
         }
         String fileName = file.getOriginalFilename();
         fileName = UUID.randomUUID() + "-" + fileName;
@@ -217,7 +236,7 @@ public class SoftController {
      */
     @PostMapping("queryForSoulpage")
     @RequiresPermissions("soft_select")
-    public Object queryForSoulpage(SoulPage<SoftVO> soulPage, SoftVO softVO)  {
+    public Object queryForSoulpage(SoulPage<SoftVO> soulPage, SoftVO softVO) throws JsonProcessingException {
         soulPage.setObj(softVO);
         return softService.queryForSoulpage(soulPage);
     }
@@ -230,7 +249,7 @@ public class SoftController {
      */
     @PostMapping("queryByUserForSoulpage")
     @RequiresPermissions("soft_select")
-    public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage,HttpServletRequest request)  {
+    public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage,HttpServletRequest request) throws JsonProcessingException {
         String accessToken=request.getHeader(Const.ACCESS_TOKEN);
         String username = JwtTokenUtil.getUserId(accessToken);
         if(SecurityUtils.getSubject().hasRole("admin")){

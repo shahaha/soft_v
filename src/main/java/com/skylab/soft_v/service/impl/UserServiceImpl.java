@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.skylab.soft_v.bean.AccountVO;
 import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Const;
@@ -177,7 +178,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Object dataGrid(SoulPage<User> soulPage) {
+    public Object dataGrid(SoulPage<User> soulPage) throws JsonProcessingException {
         return soulPage.setData(userMapper.dataGrid(soulPage, (User) soulPage.getObj()));
     }
     /**

@@ -1,21 +1,16 @@
 package com.skylab.soft_v.service.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skylab.soft_v.bean.JsonToObj;
 import com.skylab.soft_v.bean.SoftVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.*;
 import com.skylab.soft_v.mapper.*;
 import com.skylab.soft_v.service.SoftService;
-import com.skylab.soft_v.util.ReflectByProperty;
 import com.skylab.soft_v.util.SoulPage;
-import javafx.application.Platform;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -158,7 +153,7 @@ public class SoftServiceImpl implements SoftService {
     }
 
     @Override
-    public Object queryForSoulpage(SoulPage<SoftVO> soulPage) {
+    public Object queryForSoulpage(SoulPage<SoftVO> soulPage) throws JsonProcessingException {
         return soulPage.setData(softMapper.queryForSoulpage(soulPage,(SoftVO)soulPage.getObj()));
     }
 
@@ -175,12 +170,12 @@ public class SoftServiceImpl implements SoftService {
     }
 
     @Override
-    public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage, User user) {
+    public Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage, User user) throws JsonProcessingException {
         return soulPage.setData(softMapper.queryByUserForSoulpage(soulPage,user));
     }
 
     @Override
-    public Object queryAllForSoulpage(SoulPage<SoftVO> soulPage) {
+    public Object queryAllForSoulpage(SoulPage<SoftVO> soulPage) throws JsonProcessingException {
         return soulPage.setData(softMapper.queryAllForSoulpage(soulPage));
     }
 }

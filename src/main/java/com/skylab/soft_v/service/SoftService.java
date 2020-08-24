@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.skylab.soft_v.bean.SoftVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.Soft;
@@ -90,7 +91,7 @@ public interface SoftService {
      */
     boolean deleteById(Integer id);
 
-    Object queryForSoulpage(SoulPage<SoftVO> soulPage);
+    Object queryForSoulpage(SoulPage<SoftVO> soulPage) throws JsonProcessingException;
     /**
      * 根据编码查询
      * @param code 软件编码
@@ -98,7 +99,7 @@ public interface SoftService {
      */
     Soft queryByCode(String code);
 
-    Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage, User user);
+    Object queryByUserForSoulpage(SoulPage<SoftVO> soulPage, User user) throws JsonProcessingException;
 
-    Object queryAllForSoulpage(SoulPage<SoftVO> soulPage);
+    Object queryAllForSoulpage(SoulPage<SoftVO> soulPage) throws JsonProcessingException;
 }
