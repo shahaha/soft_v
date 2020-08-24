@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -245,21 +246,28 @@ public class ExtFieldRelationServiceImpl implements ExtFieldRelationService {
     @Override
     @Transactional
     public ExtFieldRelation extendField(ExtFieldRelation exits) throws JsonProcessingException {
+        List<JsonToObj> oldKV = new ArrayList<>();
+        List<JsonToObj> newKV = new ArrayList<>();
         ExtFieldRelation oldField = this.queryById(exits.getId());
-        List<JsonToObj> oldKV = objectMapper.readValue(oldField.getValue(), new TypeReference<List<JsonToObj>>() {
-        });
+        if (StrUtil.isNotBlank(oldField.getValue())){
+            oldKV = objectMapper.readValue(oldField.getValue(), new TypeReference<List<JsonToObj>>() {
+            });
+        }
         extFieldRelationMapper.extendField(exits);
         ExtFieldRelation newField = this.queryById(exits.getId());
-        List<JsonToObj> newKV = objectMapper.readValue(newField.getValue(), new TypeReference<List<JsonToObj>>() {
-        });
-        for (JsonToObj jsonToObj : oldKV) {
-            if (!newKV.contains(jsonToObj)){
-                softMapper.cleanByColumnAndValue(newField.getFieldName(),jsonToObj.getValue());
+        if (StrUtil.isNotBlank(newField.getValue())){
+            newKV = objectMapper.readValue(newField.getValue(), new TypeReference<List<JsonToObj>>() {
+            });
+            if (oldKV != null){
+                for (JsonToObj jsonToObj : oldKV) {
+                    if (!newKV.contains(jsonToObj)){
+                        softMapper.cleanByColumnAndValue(newField.getFieldName(),jsonToObj.getValue());
+                    }
+                }
             }
         }
         return newField;
     }
-
     /**
      * 查询展示字段
      *
