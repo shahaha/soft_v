@@ -140,14 +140,14 @@
                 <dd><a lay-href="/index/account" shiro:hasPermission="user_select">账号管理</a></dd>
               </dl>
             </li>
-            <li data-name="sysManager" class="layui-nav-item" shiro:hasAnyPermissions="field_select,data_select">
+            <li data-name="sysManager" class="layui-nav-item" shiro:hasAnyPermissions="data_update,field_update">
               <a href="javascript:;" lay-tips="软件中心" lay-direction="2">
                 <i class="layui-icon layui-icon-set"></i>
                 <cite>系统管理</cite>
               </a>
-              <dl class="layui-nav-child">
-                <dd><a lay-href="/index/dict/dict" shiro:hasPermission="field_select">字段管理</a></dd>
-                <dd><a lay-href="/index/dict/dictData" shiro:hasPermission="data_select">数据管理</a></dd>
+              <dl class="layui-nav-child" >
+                <dd><a lay-href="/index/dict/dict" shiro:hasPermission="data_update">字段管理</a></dd>
+                <dd><a lay-href="/index/dict/dictData" shiro:hasPermission="field_update">数据管理</a></dd>
               </dl>
             </li>
           </ul>
@@ -202,14 +202,15 @@
       index: 'lib/index' //主入口模块
     }).use('index', function () {
       var $ = layui.$,
-        admin = layui.admin;
+        admin = layui.admin
+        setter = layui.setter;
 
       admin.req({
         url: '/user/getLoginUser', //实际使用请改成服务端真实接口
         method: 'post',
         done: function (res) {
-          //shiro:principal为空代表shior标签未生效 刷新页面
-          if (!$("#principal").html()) {
+          //shiro:principal为空代表shior标签未生效 token不同表示用户发生变更 刷新页面
+          if (!$("#principal").html() || layui.data(setter.tableName)['authorization'] != $("#principal").html()) {
             top.location.reload();
           }
           $("#userRealName").text(res.data.realName);

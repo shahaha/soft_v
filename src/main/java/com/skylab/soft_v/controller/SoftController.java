@@ -12,6 +12,7 @@ import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.service.SoftService;
 import com.skylab.soft_v.service.UserService;
 import com.skylab.soft_v.util.JwtTokenUtil;
+import com.skylab.soft_v.util.ReflectHelper;
 import com.skylab.soft_v.util.SoulPage;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -240,4 +241,9 @@ public class SoftController {
         }
 
     }
+    //将softVO中使用到的扩展字段key替换成value
+//    public SoftVO json2Java (SoftVO softVO){
+//        softVO.setColumn1(ReflectHelper.getValueByFieldName());
+//        return softVO;
+//    }
 }
