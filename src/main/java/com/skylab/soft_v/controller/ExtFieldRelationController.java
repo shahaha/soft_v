@@ -148,7 +148,7 @@ public class ExtFieldRelationController {
             ExtFieldRelation update = extFieldRelationService.extendField(exits);
             return ResultBean.success(update);
         } catch (Exception e) {
-            throw new BusinessException(400,"修改失败");
+            throw new BusinessException(400,e.getMessage());
         }
     }
 

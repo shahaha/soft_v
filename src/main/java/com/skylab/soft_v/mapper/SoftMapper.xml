@@ -876,10 +876,10 @@
         update soft_v_sys.soft
         set ${fieldName} = null
     </update>
-    <update id="cleanByColumnAndValue">
+    <update id="updateByColumnAndValue">
         update soft_v_sys.soft
-        set ${fieldName} = null
-        where ${fieldName} = #{value}
+        set ${fieldName} = #{newVal}
+        where ${fieldName} = #{oldVal}
     </update>
 
     <!--通过主键删除-->

@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 扩展字段关联表(ExtFieldRelation)表服务实现类
@@ -245,19 +248,43 @@ public class ExtFieldRelationServiceImpl implements ExtFieldRelationService {
     @Override
     @Transactional
     public ExtFieldRelation extendField(ExtFieldRelation exits) throws JsonProcessingException {
+        List<JsonToObj> oldKV = new ArrayList<>();
+        List<JsonToObj> tempKV = new ArrayList<>();
+        Set<JsonToObj> newKV = new HashSet<>();
+        int count = 0;
         ExtFieldRelation oldField = this.queryById(exits.getId());
-        List<JsonToObj> oldKV = objectMapper.readValue(oldField.getValue(), new TypeReference<List<JsonToObj>>() {
-        });
-        extFieldRelationMapper.extendField(exits);
-        ExtFieldRelation newField = this.queryById(exits.getId());
-        List<JsonToObj> newKV = objectMapper.readValue(newField.getValue(), new TypeReference<List<JsonToObj>>() {
-        });
-        for (JsonToObj jsonToObj : oldKV) {
-            if (!newKV.contains(jsonToObj)){
-                softMapper.cleanByColumnAndValue(newField.getFieldName(),jsonToObj.getValue());
+        if (StrUtil.isNotBlank(oldField.getValue())){
+            oldKV = objectMapper.readValue(oldField.getValue(), new TypeReference<List<JsonToObj>>() {
+            });
+        }
+        if (StrUtil.isNotBlank(exits.getValue())){
+            tempKV = objectMapper.readValue(exits.getValue(), new TypeReference<List<JsonToObj>>() {
+            });
+            for (JsonToObj jsonToObj : tempKV) {
+                if (jsonToObj.getValue().equals(jsonToObj.getName())){
+                    if(!newKV.add(jsonToObj)){
+                        throw new BusinessException(400,"存在相同的键值对！");
+                    }
+                }else {
+                    count++;
+                    if (count > 1){
+                        throw new BusinessException(400,"每次只能修改一个键值对！");
+                    }
+                    for (JsonToObj obj : oldKV) {
+                        if (jsonToObj.getValue().equals(obj.getValue())){
+                            softMapper.updateByColumnAndValue(exits.getFieldName(),jsonToObj.getValue(),jsonToObj.getName());
+                            JsonToObj toObj = new JsonToObj(jsonToObj.getName(),jsonToObj.getName());
+                            newKV.add(toObj);
+                            break;
+                        }
+                    }
+                }
             }
         }
-        return newField;
+        String s = objectMapper.writeValueAsString(newKV);
+        exits.setValue(s);
+        extFieldRelationMapper.extendField(exits);
+        return this.queryById(exits.getId());
     }
 
     /**

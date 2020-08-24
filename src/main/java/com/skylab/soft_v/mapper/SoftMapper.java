@@ -111,8 +111,9 @@ public interface SoftMapper {
     /**
      * 清空fieldName中值为value的单元
      * @param fieldName 列名
-     * @param value 值
+     * @param oldVal 旧值
+     * @param newVal 新值
      * @return 影响行数
      */
-    int cleanByColumnAndValue(String fieldName, String value);
+    int updateByColumnAndValue(String fieldName, String oldVal, String newVal);
 }
