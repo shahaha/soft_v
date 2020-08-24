@@ -243,9 +243,21 @@ public class ExtFieldRelationServiceImpl implements ExtFieldRelationService {
      * @return 实例对象
      */
     @Override
-    public ExtFieldRelation extendField(ExtFieldRelation exits) {
+    @Transactional
+    public ExtFieldRelation extendField(ExtFieldRelation exits) throws JsonProcessingException {
+        ExtFieldRelation oldField = this.queryById(exits.getId());
+        List<JsonToObj> oldKV = objectMapper.readValue(oldField.getValue(), new TypeReference<List<JsonToObj>>() {
+        });
         extFieldRelationMapper.extendField(exits);
-        return this.queryById(exits.getId());
+        ExtFieldRelation newField = this.queryById(exits.getId());
+        List<JsonToObj> newKV = objectMapper.readValue(newField.getValue(), new TypeReference<List<JsonToObj>>() {
+        });
+        for (JsonToObj jsonToObj : oldKV) {
+            if (!newKV.contains(jsonToObj)){
+                softMapper.cleanByColumnAndValue(newField.getFieldName(),jsonToObj.getValue());
+            }
+        }
+        return newField;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.skylab.soft_v.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.skylab.soft_v.bean.ExtFieldRelationVO;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.entity.ExtFieldRelation;
@@ -129,7 +130,7 @@ public interface ExtFieldRelationService {
      * @param exits 字段对象
      * @return 实例对象
      */
-    ExtFieldRelation extendField(ExtFieldRelation exits);
+    ExtFieldRelation extendField(ExtFieldRelation exits) throws JsonProcessingException;
 
     /**
      * 查询展示字段

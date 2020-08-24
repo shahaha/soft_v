@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skylab.soft_v.bean.ExtFieldRelationVO;
 import com.skylab.soft_v.bean.JsonToObj;
+import com.skylab.soft_v.common.BusinessException;
 import com.skylab.soft_v.common.Pager;
 import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.component.ActionLog;
@@ -147,7 +148,7 @@ public class ExtFieldRelationController {
             ExtFieldRelation update = extFieldRelationService.extendField(exits);
             return ResultBean.success(update);
         } catch (Exception e) {
-            return ResultBean.error("修改失败");
+            throw new BusinessException(400,"修改失败");
         }
     }
 
