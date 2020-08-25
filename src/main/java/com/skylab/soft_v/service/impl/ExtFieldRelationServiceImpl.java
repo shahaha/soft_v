@@ -281,7 +281,7 @@ public class ExtFieldRelationServiceImpl implements ExtFieldRelationService {
                 }
             }
         }
-        String s = objectMapper.writeValueAsString(newKV);
+        String s = newKV.size() == 0 ? null : objectMapper.writeValueAsString(newKV);
         exits.setValue(s);
         extFieldRelationMapper.extendField(exits);
         return this.queryById(exits.getId());
