@@ -286,7 +286,6 @@ public class ExtFieldRelationServiceImpl implements ExtFieldRelationService {
         extFieldRelationMapper.extendField(exits);
         return this.queryById(exits.getId());
     }
-
     /**
      * 查询展示字段
      *

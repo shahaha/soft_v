@@ -57,7 +57,8 @@ spring:
     # 连接超时时间（10秒）
     timeout: PT10S
 filepath: C:/file/
-
+#是否启动swagger 出于安全考虑生产环境关闭
+swagger.is.enable: true
 #JWT配置
 jwt:
   secretKey: 78944878877848fg)

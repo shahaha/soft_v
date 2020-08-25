@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     username: root
-    password: 123456
+    password: tdlbs@1013
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/soft_v_sys?useUnicode=trueuse&characterEncoding=UTF-8useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2b8
     type: com.alibaba.druid.pool.DruidDataSource
@@ -32,7 +32,7 @@ spring:
     # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
   thymeleaf:
-#    cache: false
+    cache: true
   jackson:
     date-format: yyyy-MM-dd
     time-zone: GMT+8
@@ -56,8 +56,9 @@ spring:
         min-idle: 0
     # 连接超时时间（10秒）
     timeout: PT10S
-filepath: D:/file/
-
+filepath: D:/soft_manage/file/
+#是否启动swagger 出于安全考虑生产环境关闭
+swagger.is.enable: false
 #JWT配置
 jwt:
   secretKey: 78944878877848fg)
