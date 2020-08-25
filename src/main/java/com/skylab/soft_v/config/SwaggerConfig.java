@@ -1,6 +1,7 @@
 package com.skylab.soft_v.config;
 
 import com.skylab.soft_v.common.Const;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -29,6 +30,8 @@ import java.util.List;
 @Configuration//加载到springboot配置里面
 @EnableSwagger2//开启swagger2
 public class SwaggerConfig {
+    @Value("${swagger.is.enable}")
+    private boolean swagger_is_enable;
     /**
      * 配置swagger2
      * 注册一个bean属性
@@ -40,6 +43,7 @@ public class SwaggerConfig {
     @Bean
     public Docket docket() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .enable(swagger_is_enable)
                 .apiInfo(apiInfo())
                 .groupName("天工")//组名称
                 //.enable(true)

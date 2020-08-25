@@ -115,5 +115,5 @@ public interface SoftMapper {
      * @param newVal 新值
      * @return 影响行数
      */
-    int updateByColumnAndValue(String fieldName, String oldVal, String newVal);
+    int updateByColumnAndValue(@Param("fieldName") String fieldName, @Param("oldVal") String oldVal,@Param("newVal") String newVal);
 }
