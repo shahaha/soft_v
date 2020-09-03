@@ -909,7 +909,7 @@
         LEFT JOIN byte_size h on a.DDR = h.id
         LEFT JOIN byte_size i on a.flash = i.id
         <where>
-        1=1
+            a.in_use = 1
         <if test="softVO.category != null and softVO.category != ''">
         and c.id = #{softVO.category}
         </if>

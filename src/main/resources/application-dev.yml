@@ -68,6 +68,6 @@ jwt:
   issuer: skylab.com
 cross:
   origin: '*'
-mybatis:
-  config-location: classpath:mybatis.xml
+#mybatis:
+#  config-location: classpath:mybatis.xml
 
