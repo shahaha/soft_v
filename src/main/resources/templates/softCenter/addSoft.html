@@ -191,6 +191,10 @@
                     layer.msg("请上传文件后提交");
                     return false;
                 }
+                if(fileData.name.indexOf("-") != -1){
+                    layer.msg("文件名中不能包含 “-” ,请修改文件名后上传！");
+                    return false;
+                }
                 data.file = fileData;
                 var formData = new FormData();
                 for (let key in data) {

@@ -200,6 +200,10 @@
                 for (let key in data) {
                     formData.append(key, data[key]);
                 }
+                if(fileData.name.indexOf("-") != -1){
+                    layer.msg("文件名中不能包含 “-” ,请修改文件名后上传！");
+                    return false;
+                }
                 admin.req({
                     url: '/soft/update',
                     method: "post",
