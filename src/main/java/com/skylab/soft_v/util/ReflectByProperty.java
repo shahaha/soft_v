@@ -1,5 +1,7 @@
 package com.skylab.soft_v.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
@@ -8,6 +10,7 @@ import java.math.BigDecimal;
  * Date 2017/12/29
  * Description:根据属性名反射获取get和set方法
  */
+@Slf4j
 public class ReflectByProperty {
 
     /**
@@ -42,7 +45,8 @@ public class ReflectByProperty {
             Method method =  clazz.getDeclaredMethod(methodName, typeClass);
             method.invoke(obj, getClassTypeValue(typeClass, value));
         }catch(Exception ex){
-            ex.printStackTrace();
+            log.info(ex.getMessage());
+            //ex.printStackTrace();
         }
     }
 

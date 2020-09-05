@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 扩展字段关联表(ExtFieldRelation)表控制层
@@ -231,20 +232,25 @@ public class ExtFieldRelationController {
                     }
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(models);
+                    continue;
                 } else if ("chipId".equals(extFieldRelation.getFieldName())) {
                     List<Chip> chipList = chipService.queryList();
                     List<JsonToObj> chips = new ArrayList<>();
+                    List<JsonToObj> collect = chipList.stream().map(chip -> new JsonToObj(chip.getId().toString(), chip.getChipName())).collect(Collectors.toList());
                     for (Chip chip : chipList) {
                         chips.add(new JsonToObj(chip.getId().toString(), chip.getChipName()));
                     }
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(chips);
+                    continue;
                 } else if ("flash".equals(extFieldRelation.getFieldName())) {
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(byteSizes);
+                    continue;
                 } else if ("DDR".equals(extFieldRelation.getFieldName())) {
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(byteSizes);
+                    continue;
                 } else if ("IRAM".equals(extFieldRelation.getFieldName())) {
                     extFieldRelationVO.setType("select");
                     extFieldRelationVO.setValue(byteSizes);

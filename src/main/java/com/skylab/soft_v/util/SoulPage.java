@@ -244,8 +244,9 @@ public class SoulPage<T> {
             Map<String, String> filterType = objectMapper.readValue(tableFilterType,Map.class);
             filterType.forEach((k,v)->{
                 Map<String, String> map = new HashMap<>();
-                map.put("type", v.substring(0, v.indexOf("[")));
-                map.put("value",v.substring(v.indexOf("[")+1, v.indexOf("]")) );
+                int index = v.indexOf("[");
+                map.put("type",  v.substring(0, index));
+                map.put("value",v.substring(index+1, v.indexOf("]")) );
                 typeMap.put(k, map);
             });
         }

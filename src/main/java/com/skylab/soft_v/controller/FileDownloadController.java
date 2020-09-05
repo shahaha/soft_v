@@ -49,7 +49,8 @@ public class FileDownloadController {
                 }
                 return null;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.info(e.getMessage());
+                //e.printStackTrace();
                 return ResultBean.error("下载失败，下载出错！");
             }
         }
