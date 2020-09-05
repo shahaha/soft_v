@@ -158,6 +158,7 @@
                                     input_block.setAttribute('class', 'layui-input-block');
                                     input.setAttribute('class', 'layui-input');
                                     input.setAttribute('name', item.fieldName);
+                                    input.setAttribute('lay-search', true);
                                     input.setAttribute('id', item.fieldName);
                                     input.append(new Option("请选择", ""));
                                     $.each(item.value, function (index, item) {

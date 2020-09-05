@@ -12,6 +12,8 @@ import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.context.annotation.Import;
+import org.springframework.stereotype.Component;
 //import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -34,10 +36,11 @@ import java.util.Properties;
  * @version 1.0
  */
 @Slf4j
+@Component
 @Intercepts({@Signature(type= StatementHandler.class,method="prepare",args={Connection.class,Integer.class})})
 public class SoulTableInterceptor implements Interceptor {
 //    public static Logger log = Logger.getLogger(SoulTableInterceptor.class);
-    private String dbType;
+    private String dbType = "MYSQL";
 
 	private enum DB_DIALECT {ORACLE, MYSQL};
 

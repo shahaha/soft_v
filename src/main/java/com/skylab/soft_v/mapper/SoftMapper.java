@@ -5,6 +5,7 @@ import com.skylab.soft_v.entity.Soft;
 import com.skylab.soft_v.entity.User;
 import com.skylab.soft_v.util.SoulPage;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -90,12 +91,14 @@ public interface SoftMapper {
 
     /**
      * 清空一列
+     *
      * @param fieldName 列名
      * @return 影响行数
      */
     int cleanByColumn(String fieldName);
 
-    List<SoftVO> queryForSoulpage(SoulPage<SoftVO> soulPage,@Param("softVO") SoftVO softVO);
+    List<SoftVO> queryForSoulpage(SoulPage<SoftVO> soulPage, @Param("softVO") SoftVO softVO);
+
     /**
      * 根据编码查询
      *
@@ -104,16 +107,17 @@ public interface SoftMapper {
      */
     Soft queryByCode(String code);
 
-    List<SoftVO> queryByUserForSoulpage(SoulPage<SoftVO> soulPage,@Param("user") User user);
+    List<SoftVO> queryByUserForSoulpage(SoulPage<SoftVO> soulPage, @Param("user") User user);
 
     List<SoftVO> queryAllForSoulpage(SoulPage<SoftVO> soulPage);
 
     /**
      * 清空fieldName中值为value的单元
+     *
      * @param fieldName 列名
-     * @param oldVal 旧值
-     * @param newVal 新值
+     * @param oldVal    旧值
+     * @param newVal    新值
      * @return 影响行数
      */
-    int updateByColumnAndValue(@Param("fieldName") String fieldName, @Param("oldVal") String oldVal,@Param("newVal") String newVal);
+    int updateByColumnAndValue(@Param("fieldName") String fieldName, @Param("oldVal") String oldVal, @Param("newVal") String newVal);
 }
