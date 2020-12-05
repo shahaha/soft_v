@@ -11,5 +11,8 @@ class SoftVApplicationTests {
     void contextLoads() {
         System.out.println(StrUtil.toCamelCase("GPIO_detection"));
     }
-
+    @Test
+    void t1(){
+        System.out.println("0f6180a3019a003ba586bc4dc6f303db".length());
+    }
 }

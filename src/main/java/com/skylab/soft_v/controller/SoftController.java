@@ -15,6 +15,7 @@ import com.skylab.soft_v.service.CategoryService;
 import com.skylab.soft_v.service.SoftService;
 import com.skylab.soft_v.service.UserService;
 import com.skylab.soft_v.util.JwtTokenUtil;
+import com.skylab.soft_v.util.MD5Utils;
 import com.skylab.soft_v.util.ReflectHelper;
 import com.skylab.soft_v.util.SoulPage;
 import io.swagger.annotations.Api;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.security.SecurityUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Security;
 import java.util.Date;
@@ -91,7 +94,8 @@ public class SoftController {
     @PostMapping("add")
     @RequiresPermissions("soft_add")
     @ActionLog("添加一个软件并上传附件")
-    public ResultBean<Soft> add(Soft soft,@RequestParam(value = "file",required = false) MultipartFile file){
+    public ResultBean<Soft> add(Soft soft,@RequestParam(value = "file",required = false) MultipartFile file,@RequestParam(value = "fileMD5",required = false) String fileMD5){
+
         if (file == null || file.isEmpty()){
             return ResultBean.error("文件不能为空！");
         }
@@ -115,6 +119,9 @@ public class SoftController {
         User existingEngineer = userService.queryById(soft.getEngineer());
         if (existingEngineer == null){
             return ResultBean.error("工程师不存在！");
+        }
+        if(!MD5Utils.getMD5(file).equals(fileMD5)){
+            return ResultBean.error("文件传输过程中损坏，请重新上传！");
         }
         String fileName = file.getOriginalFilename();
         fileName = UUID.randomUUID() + "-" + fileName;
@@ -161,7 +168,7 @@ public class SoftController {
     @PostMapping("update")
     @RequiresPermissions("soft_update")
     @ActionLog("修改一个软件")
-    public ResultBean<Soft> update(Soft soft,@RequestParam(value = "file",required = false) MultipartFile file){
+    public ResultBean<Soft> update(Soft soft,@RequestParam(value = "file",required = false) MultipartFile file,@RequestParam(value = "fileMD5",required = false) String fileMD5){
         if (soft.getId() == null){
             return ResultBean.error("id不能为空");
         }
@@ -179,6 +186,9 @@ public class SoftController {
             return ResultBean.error("工程师不能修改！");
         }
         if (file != null && !file.isEmpty()){
+            if(!MD5Utils.getMD5(file).equals(fileMD5)){
+                return ResultBean.error("文件传输过程中损坏，请重新上传！");
+            }
             String fileName = file.getOriginalFilename();
             fileName = UUID.randomUUID() + "-" + fileName;
             File dest = new File((filepath + fileName));

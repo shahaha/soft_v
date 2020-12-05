@@ -9,6 +9,7 @@ import com.skylab.soft_v.common.ResultBean;
 import com.skylab.soft_v.component.ActionLog;
 import com.skylab.soft_v.entity.SoftTool;
 import com.skylab.soft_v.service.SoftToolService;
+import com.skylab.soft_v.util.MD5Utils;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -51,7 +52,7 @@ public class SoftToolController {
     @PostMapping("add")
     @RequiresPermissions("softTool_add")
     @ActionLog("添加一个软件工具")
-    public ResultBean<SoftTool> add(SoftTool softTool,@RequestParam(value = "file",required = false) MultipartFile file) {
+    public ResultBean<SoftTool> add(SoftTool softTool,@RequestParam(value = "file",required = false) MultipartFile file,@RequestParam(value = "fileMD5",required = false) String fileMD5) {
         if (file == null || file.isEmpty()){
             return ResultBean.error("文件不能为空！");
         }
@@ -63,6 +64,9 @@ public class SoftToolController {
         List<SoftTool> exist = softToolService.queryByExample(example);
         if (!exist.isEmpty()){
             return ResultBean.error("该工具名已存在！");
+        }
+        if(!MD5Utils.getMD5(file).equals(fileMD5)){
+            return ResultBean.error("文件传输过程中损坏，请重新上传！");
         }
         try {
             String fileName = file.getOriginalFilename();
@@ -110,7 +114,7 @@ public class SoftToolController {
     @PostMapping("update")
     @RequiresPermissions("softTool_update")
     @ActionLog("修改一个软件工具")
-    public ResultBean<SoftTool> update(SoftTool softTool,@RequestParam(value = "file",required = false) MultipartFile file) {
+    public ResultBean<SoftTool> update(SoftTool softTool,@RequestParam(value = "file",required = false) MultipartFile file,@RequestParam(value = "fileMD5",required = false) String fileMD5) {
         if (softTool.getId() == null){
             return ResultBean.error("id不能为空");
         }
@@ -122,6 +126,9 @@ public class SoftToolController {
             return ResultBean.error("工具类型不能修改");
         }
         if (file != null && !file.isEmpty()){
+            if(!MD5Utils.getMD5(file).equals(fileMD5)){
+                return ResultBean.error("文件传输过程中损坏，请重新上传！");
+            }
             String fileName = file.getOriginalFilename();
             fileName = UUID.randomUUID() + "-" + fileName;
             File dest = new File((filepath + fileName));
