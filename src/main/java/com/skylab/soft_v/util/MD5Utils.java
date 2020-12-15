@@ -33,7 +33,7 @@ public class MD5Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //长度不够补0 0f6180a3019a003ba586bc4dc6f303db-->f6180a3019a003ba586bc4dc6f303db
+        //长度不够补0 f6180a3019a003ba586bc4dc6f303db --> 0f6180a3019a003ba586bc4dc6f303db
         if (bi.toString(16).length()<32){
             return "0"+bi.toString(16);
         }

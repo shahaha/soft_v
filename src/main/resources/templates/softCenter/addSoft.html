@@ -61,8 +61,16 @@
             var softType = null; //软件类型
             var fileData = null; //上传的文件
             var userId; //当前用户id
-            var fileMD5;//上传文件的MD5值
-
+            var fileMD5; //上传文件的MD5值
+            //自定义验证规则
+            form.verify({
+                phone: [/^[1][3,4,5,7,8][0-9]{9}$/, '请输入正确的手机号码'],
+                identity: [
+                    /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
+                    '请输入正确的身份证号码'
+                ],
+                code:[/^[a-zA-Z]+[0-9]{4}$|^[a-zA-Z]+[0-9]{4}\.[0-9]+\.[0-9]+$/,'编码格式不正确'],
+            });
             admin.req({
                 url: '/user/getLoginUser', //实际使用请改成服务端真实接口
                 type: 'post',
@@ -161,7 +169,7 @@
                 admin.req({
                     url: '/extFieldRelation/getShowFieldsAndDataByCategory?categoryId=' + softType,
                     done: function (data) {
-                        //console.log(data);
+                        // console.log(data);
                         //解析生成动态表单
                         $("#items").empty(); //清空div
                         $.each(data.data, function (index, item) {
@@ -181,6 +189,9 @@
                                     input.setAttribute('name', item.fieldName)
                                     input.setAttribute('id', item.fieldName)
                                     input.setAttribute('autocomplete', 'off')
+                                    if( item.fieldName =='code'){
+                                        input.setAttribute('lay-verify', 'code')
+                                    }
                                     input_block.appendChild(input);
                                     form_item.appendChild(form_label);
                                     form_item.appendChild(input_block);

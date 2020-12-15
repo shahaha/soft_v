@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 
 @RestController
 @RequestMapping("/file")
@@ -27,15 +30,15 @@ public class FileDownloadController {
     @RequiresPermissions("file_download")
     @ActionLog("下载一个文件")
     public ResultBean<?> downLoad(String address, HttpServletResponse response) throws UnsupportedEncodingException {
-        if (address == null || "".equals(address)){
+        if (address == null || "".equals(address)) {
             return ResultBean.error("下载失败，文件名不能为空！");
         }
         File file = new File((filepath + address));
         String fileName = address.substring(address.lastIndexOf("-") + 1);
-        if(file.exists()){
+        if (file.exists()) {
             response.setContentType("application/octet-stream");
             //response.setHeader("content-type", "application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(fileName,"UTF-8"));
+            response.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(fileName, "UTF-8"));
             byte[] buffer = new byte[1024];
             //输出流
             OutputStream os = null;
@@ -44,7 +47,7 @@ public class FileDownloadController {
                 os = response.getOutputStream();
                 int i = bis.read(buffer);
                 while(i != -1){
-                    os.write(buffer);
+                    os.write(buffer,0,i);
                     i = bis.read(buffer);
                 }
                 return null;
@@ -52,6 +55,20 @@ public class FileDownloadController {
                 e.printStackTrace();
                 return ResultBean.error("下载失败，下载出错！");
             }
+//            try {
+//                FileInputStream inStream = new FileInputStream(file);
+//                // 循环取出流中的数据
+//                byte[] b = new byte[1024];
+//                int len;
+//                while ((len = inStream.read(b)) > 0)
+//                    response.getOutputStream().write(b, 0, len);
+//                inStream.close();
+//                return null;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                return ResultBean.error("下载失败，下载出错！");
+//            }
+
         }
         return ResultBean.error("下载失败，不存在该文件！");
     }

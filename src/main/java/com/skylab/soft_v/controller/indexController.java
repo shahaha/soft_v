@@ -83,4 +83,7 @@ public class indexController {
 
     @GetMapping("/softType")
     public String softType() { return "softCenter/softType"; }
+
+    @GetMapping("/checkSoft")
+    public String checkSoft() { return "softCenter/checkSoft"; }
 }

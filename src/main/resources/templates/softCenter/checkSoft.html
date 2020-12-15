@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/layuiadmin/layui/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}" media="all">
+</head>
+<style>
+    .layui-form-pane .layui-form-label {
+        padding: 8px 0px;
+    }
+</style>
+
+<body>
+    <form class="layui-form layui-form-pane" id="form" lay-filter="form" style="margin: 15px 30px 0 50px;">
+
+        <!-- 动态表项 -->
+        <div id="items">
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label" style="padding-left: 10px;">备注</label>
+            <div class="layui-input-block">
+                <textarea  class="layui-textarea" disabled id="remark" name="remark"></textarea>
+            </div>
+        </div>
+
+    </form>
+
+    <script th:src="@{/layuiadmin/layui/layui.all.js}"></script>
+    <script>
+        layui.config({
+            base: '/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'dtree'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.jquery,
+                upload = layui.upload,
+                setter = layui.setter,
+                admin = layui.admin;
+
+            var rowData = eval('(' + parent.rowData + ')'); //父页面行数据
+            console.log(rowData);
+            var softType = 1; //软件类型
+
+            // 获取软件类型
+            admin.req({
+                url: '/category/list',
+                done: function (data) {
+                    // console.log(data);
+                    $.each(data.data, function (index, item) {
+                        if (rowData.category == item.categoryName) {
+                            softType = item.id;
+                        }
+                    });
+                    //动态生成表项
+                    createItem(softType);
+                },
+                fail: function (data) {
+                    layer.msg(data.msg);
+                }
+            });
+            //根据选择的软件类型 生成表单选项
+            function createItem(softType) {
+                // console.log(softType);
+                admin.req({
+                    url: '/extFieldRelation/getShowFieldsAndDataByCategory?categoryId=' + softType,
+                    done: function (data) {
+                        // console.log(data);
+                        // 解析生成动态表单
+                        data = data.data;
+                        var arr = [];
+                        $.each(data, function (index, item) {
+                            if (item.fieldName != 'id' && item.fieldName != 'address' &&
+                                item.fieldName != 'burnTool' && item.fieldName !=
+                                'detectionTool' &&
+                                item.fieldName != 'productTestTool' && item.fieldName !=
+                                'GPIODetection' && item.fieldName != 'remark' && item
+                                .fieldName != 'labelPrintTool'
+                            ) {
+                                arr.push(item);
+                            }
+                        })
+                        // console.log(arr);
+                        var item;
+                        $("#items").empty(); //清空div
+                        for (var i = 0; i < arr.length;) {
+                            item = arr[i++];
+                            // console.log(item);
+                            var form_item = document.createElement("div");
+                            var form_inline = document.createElement("div");
+                            var form_label = document.createElement("label");
+                            var input_inline = document.createElement("div");
+                            var input = document.createElement("input");
+                            var _form_inline = document.createElement("div");
+                            var _form_label = document.createElement("label");
+                            var _input_inline = document.createElement("div");
+                            var _input = document.createElement("input");
+                            form_item.setAttribute('class', 'layui-form-item');
+
+                            form_inline.setAttribute('class', 'layui-inline');
+                            form_label.setAttribute('class', 'layui-form-label');
+                            form_label.innerText = item.fieldDes;
+                            input_inline.setAttribute('class', 'layui-input-inline');
+                            input_inline.setAttribute('style', 'width: 200px;')
+                            input.setAttribute('class', 'layui-input');
+                            input.setAttribute('name', item.fieldName)
+                            input.setAttribute('id', item.fieldName)
+                            input.setAttribute('disabled', true);
+                            input.innerText = item.fieldDes;
+                            input_inline.appendChild(input);
+                            form_inline.appendChild(form_label);
+                            form_inline.appendChild(input_inline);
+                            form_item.appendChild(form_inline);
+                            if (i < arr.length) {
+                                item = arr[i++]
+                                // console.log(item);
+                                _form_inline.setAttribute('class', 'layui-inline');
+                                _form_label.setAttribute('class', 'layui-form-label');
+                                _form_label.innerText = item.fieldDes;
+                                _input_inline.setAttribute('class', 'layui-input-inline');
+                                _input_inline.setAttribute('style', 'width: 200px;')
+                                _input.setAttribute('class', 'layui-input');
+                                _input.setAttribute('name', item.fieldName)
+                                _input.setAttribute('id', item.fieldName)
+                                _input.setAttribute('disabled', true);
+                                _input.innerText = item.fieldDes;
+                                _input_inline.appendChild(_input);
+                                _form_inline.appendChild(_form_label);
+                                _form_inline.appendChild(_input_inline);
+                                form_item.appendChild(_form_inline);
+                            }
+                            document.getElementById("items").appendChild(form_item);
+                        }
+                        //将父页面数据填充进表单
+                        form.val('form', rowData);
+                    },
+                    fail: function (data) {
+                        layer.msg(data.msg);
+                    }
+                });
+
+            }
+
+
+        });
+    </script>
+</body>
+
+</html>

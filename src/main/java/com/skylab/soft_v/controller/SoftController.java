@@ -120,6 +120,8 @@ public class SoftController {
         if (existingEngineer == null){
             return ResultBean.error("工程师不存在！");
         }
+//        System.out.println("+++++++++++getMD5"+MD5Utils.getMD5(file));
+//        System.out.println("+++++++++++fileMD5"+fileMD5);
         if(!MD5Utils.getMD5(file).equals(fileMD5)){
             return ResultBean.error("文件传输过程中损坏，请重新上传！");
         }
